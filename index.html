@@ -15,10 +15,13 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
+        /* gv1.48 final mobile GPS CSS fix by ChatGPT */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        
         :root {
             --mobile-nav-height: 88px;
         }
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        
         body { font-family: 'Inter', sans-serif; background-color: #0f172a !important; color: #f8fafc; overflow: hidden; height: 100vh; }
         main, .main-content { background: linear-gradient(135deg, #1e293b 0%, #0f172a 55%, #020617 100%) !important; }
         aside { background: rgba(15, 23, 42, 0.95) !important; }
@@ -26,8 +29,6 @@
 
         .tab-content { display: none; height: 100%; overflow-y: auto; -webkit-overflow-scrolling: touch; }
         .tab-content.active { display: block; }
-        
-        #map { height: 100%; width: 100%; z-index: 10; background: #020617; }
         
         .glass-card { 
             background: rgba(30, 41, 59, 0.7) !important; 
@@ -59,43 +60,42 @@
         .metric-title-ja { font-size: 14px; color: #94a3b8; font-weight: 800; margin-bottom: 4px; }
         .metric-number-ja { font-size: 28px; font-weight: 900; color: #ffffff; }
 
-        /* Range Bar */
-        .chart-range-bar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 14px; }
+        /* Chart Range Control */
+        .chart-range-wrapper { width: 100%; margin-bottom: 12px; }
+        .chart-range-bar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
         .chart-range-label { font-size: 14px; font-weight: 800; color: #94a3b8; margin-right: 4px; }
         .chart-range-btn { padding: 6px 14px; border-radius: 999px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; font-size: 13px; font-weight: 700; transition: all .15s ease; cursor: pointer; }
         .chart-range-btn.active { background: rgba(56,189,248,.2); border-color: rgba(125,211,252,.4); color: white; }
         
-        /* Playback Range */
-        input[type=range] {
-            -webkit-appearance: none;
+        .mobile-range-select { display: none; }
+
+        /* Chart Container Strict Dimensions */
+        .chart-container {
+            position: relative;
             width: 100%;
-            background: transparent;
+            height: 360px;
+            overflow: hidden;
         }
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            height: 16px; width: 16px;
-            border-radius: 50%;
-            background: #10b981;
-            cursor: pointer;
-            margin-top: -6px;
-            box-shadow: 0 0 10px rgba(16,185,129,0.5);
+        .chart-container canvas {
+            display: block;
+            width: 100% !important;
+            height: 100% !important;
         }
-        input[type=range]::-webkit-slider-runnable-track {
-            width: 100%; height: 4px;
-            cursor: pointer;
-            background: #334155;
-            border-radius: 2px;
-        }
+
+        /* Playback Range */
+        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: #10b981; cursor: pointer; margin-top: -6px; box-shadow: 0 0 10px rgba(16,185,129,0.5); }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: #334155; border-radius: 2px; }
         
         .report-metric-box { background: rgba(15,23,42,0.5); padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
-
         .leaflet-control-layers, .leaflet-control-zoom a { font-size: 14px !important; }
         .leaflet-control-layers label { font-size: 13px !important; }
 
         /* GPS Layout PC Default */
         .gps-sidebar { width: 400px; height: 100%; flex-shrink: 0; display: flex; flex-direction: column; }
-        .gps-map-container { flex: 1 1 auto; min-width: 0; position: relative; }
-        .chart-container { position: relative; height: 280px !important; width: 100%; }
+        .gps-map-container { position: relative; width: 100%; height: 100%; display: flex; flex-direction: column; }
+        #map-wrapper { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 10; background: #020617; }
+        #map { position: absolute; inset: 0; width: 100%; height: 100%; }
 
         /* ==========================================================
            Mobile Real Device CSS (max-width: 768px)
@@ -113,13 +113,14 @@
                 padding-bottom: calc(var(--mobile-nav-height) + 140px + env(safe-area-inset-bottom)) !important;
             }
             .tab-content:not(#tab-gps)::after {
-                content: "";
-                display: block;
-                height: calc(var(--mobile-nav-height) + 72px + env(safe-area-inset-bottom));
-                flex: 0 0 auto;
+                content: ""; display: block; height: calc(var(--mobile-nav-height) + 72px + env(safe-area-inset-bottom)); flex: 0 0 auto;
             }
             
-            .chart-container { height: 250px !important; }
+            .chart-container { height: 320px !important; min-height: 320px !important; }
+            
+            .desktop-range-buttons { display: none !important; }
+            .mobile-range-select { display: block !important; }
+            
             .dashboard-score-card { padding: 16px !important; border-radius: 16px !important; }
             button, select, input[type="date"], input[type="number"] { min-height: 44px; }
             .flex-wrap { flex-wrap: wrap !important; }
@@ -131,105 +132,144 @@
             }
             
             /* GPS Tab Mobile Layout */
-            #tab-gps { height: calc(100dvh - 56px) !important; padding: 0 !important; overflow: hidden !important; }
-            #tab-gps:not(.active) { display: none !important; }
-            #tab-gps.active { display: flex !important; flex-direction: column !important; }
-            
-            #tab-gps .gps-layout-wrapper { height: 100% !important; min-height: 0 !important; overflow: hidden !important; position: relative !important; display: flex !important; flex-direction: column !important; inset: auto !important; }
-            
-            #tab-gps .gps-map-container { order: 1 !important; flex: 0 0 36dvh !important; height: 36dvh !important; min-height: 250px !important; width: 100% !important; position: relative !important; }
-            #map { height: 100% !important; width: 100% !important; }
-            
-            #tab-gps .gps-sidebar { order: 2 !important; width: 100% !important; flex: 1 1 auto !important; min-height: 0 !important; height: auto !important; display: flex !important; flex-direction: column !important; overflow: hidden !important; border-top: 1px solid rgba(255,255,255,0.1) !important; padding-bottom: calc(var(--mobile-nav-height) + 32px + env(safe-area-inset-bottom)) !important; }
-            
-            #tab-gps .gps-sidebar > .p-4 { flex: 0 0 auto !important; padding: 14px !important; }
-            
-            #gps-route-list { flex: 1 1 auto !important; min-height: 0 !important; overflow-y: auto !important; padding-bottom: calc(var(--mobile-nav-height) + 180px + env(safe-area-inset-bottom)) !important; }
-            #tab-gps .custom-scrollbar { padding-bottom: 0 !important; }
-            
-            #gps-type-counts { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 8px; }
-            
-            .map-stats-card { top: 8px !important; right: 8px !important; left: auto !important; transform: none !important; max-width: 210px !important; z-index: 430 !important; }
-            .map-stats-card .glass-card { min-width: 0 !important; width: 210px !important; padding: 8px 10px !important; border-radius: 14px !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 6px 8px !important; }
-            #map-stat-dist, #map-stat-routes { font-size: 22px !important; line-height: 1.05 !important; }
-            #map-stat-time, #map-stat-avg { font-size: 12px !important; line-height: 1.1 !important; }
-            .map-stats-card .text-\[10px\] { font-size: 8px !important; letter-spacing: 0.03em !important; }
-            
-            #gps-playback-control {
-                position: absolute !important; left: 8px !important; right: 8px !important; bottom: 8px !important;
-                width: auto !important; max-width: none !important; transform: none !important; z-index: 440 !important;
+            #tab-gps { 
+                position: absolute !important;
+                top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
+                height: calc(100dvh - var(--mobile-nav-height)) !important; 
+                padding: 0 !important;
+                background-color: transparent !important;
+                overflow-y: auto !important;
+                overflow-x: hidden !important;
+                z-index: 50 !important;
             }
-            #gps-playback-control.hidden { display: none !important; }
-            #gps-playback-control .glass-card { padding: 8px 10px !important; gap: 8px !important; border-radius: 16px !important; align-items: center !important; }
-            #gps-playback-control button { width: 42px !important; height: 42px !important; min-width: 42px !important; min-height: 42px !important; }
-            #gps-playback-control .flex-1 { min-width: 0 !important; }
-            #gps-playback-control .text-xs { font-size: 10px !important; }
-            #gps-speed-btn { min-width: 42px !important; height: 32px !important; font-size: 11px !important; }
-            #gps-time-slider { min-height: 18px !important; }
+            #tab-gps:not(.active) { display: none !important; }
+            #tab-gps.active { display: block !important; }
+            
+            #tab-gps .gps-layout-wrapper { display: flex !important; flex-direction: column !important; height: auto !important; min-height: 100% !important; overflow: visible !important; position: relative !important; inset: auto !important; }
+            
+            .gps-map-container { display: flex !important; flex-direction: column !important; justify-content: flex-end !important; position: relative !important; flex: 0 0 auto !important; min-height: 440px !important; height: 54dvh !important; width: 100% !important; overflow: hidden !important; }
+            #map-wrapper { position: absolute !important; inset: 0 !important; width: 100% !important; height: 100% !important; }
+            
+            .gps-floating-ui { position: relative !important; width: 100% !important; padding: 4px !important; top: auto !important; right: auto !important; bottom: auto !important; left: auto !important; transform: none !important; z-index: 20 !important; }
+            
+            .gps-control-panel { flex: 0 0 auto !important; padding: 12px 14px !important; border-bottom: 1px solid rgba(148,163,184,0.15) !important; width: 100% !important; }
+            .gps-control-panel .mb-4 { margin-bottom: 6px !important; }
+            
+            #tab-gps button, #tab-gps select, #tab-gps input[type="date"] {
+                min-height: 32px !important; height: 32px !important; font-size: 11px !important; padding-top: 2px !important; padding-bottom: 2px !important;
+            }
+            #gps-type-counts { padding: 4px 8px !important; font-size: 10px !important; gap: 4px !important; }
+
+            .gps-route-panel { flex: 0 0 auto !important; height: auto !important; overflow: visible !important; width: 100% !important; }
+            #gps-route-list { min-height: 0 !important; overflow: visible !important; padding: 12px 14px calc(var(--mobile-nav-height) + 40px + env(safe-area-inset-bottom)) !important; margin-top: 0 !important; }
+            #gps-route-list .glass-card, #gps-route-list [id^="route-card-"] { position: relative !important; z-index: 1 !important; transform: none !important; }
+
+            /* Stats Card Mobile Flattening */
+            .map-stats-card { position: absolute !important; left: 8px !important; right: 8px !important; bottom: 8px !important; top: auto !important; transform: none !important; max-width: none !important; z-index: 420 !important; pointer-events: none !important; }
+            .map-stats-card .glass-card { width: 100% !important; min-width: 0 !important; display: grid !important; grid-template-columns: repeat(4, minmax(0, 1fr)) !important; padding: 8px 10px !important; border-radius: 14px !important; gap: 6px !important; opacity: 0.92 !important; background: rgba(15, 23, 42, 0.88) !important; }
+            .map-stats-card .text-center { border: none !important; padding: 2px !important; }
+            #map-stat-dist, #map-stat-routes { font-size: 18px !important; font-weight: 800 !important; }
+            #map-stat-time, #map-stat-avg { font-size: 12px !important; }
+            .map-stats-card .text-\[9px\], .map-stats-card .text-\[10px\] { font-size: 9px !important; margin-top: 0 !important; }
+            
+            /* Playback Control Mobile */
+            #gps-playback-control { position: relative !important; left: auto !important; right: auto !important; bottom: auto !important; width: auto !important; margin: 12px 12px 0 !important; z-index: 5 !important; transform: none !important; padding: 0 !important; }
+            #gps-playback-control .glass-card { padding: 8px 12px !important; gap: 6px !important; border-radius: 12px !important; }
+            #gps-playback-control button { width: 36px !important; height: 36px !important; min-width: 36px !important; }
+            #gps-speed-btn { height: 28px !important; font-size: 11px !important; }
+            #gps-play-start, #gps-play-end { font-size: 10px !important; }
+            #gps-play-current { font-size: 11px !important; padding: 2px 6px !important; }
+            #gps-play-icon { font-size: 14px !important; }
         }
 
         /* ==========================================================
-           Phone Preview Mode for PC (min-width: 769px)
+           Tablet CSS (769px to 1023px)
+           ========================================================== */
+        @media (min-width: 769px) and (max-width: 1023px) {
+            .chart-container { height: 340px !important; }
+            .mobile-range-select { display: none !important; }
+            .gps-sidebar { width: 320px !important; }
+        }
+
+        /* ==========================================================
+           Phone Preview Mode for PC
            ========================================================== */
         @media (min-width: 769px) {
-            body.phone-preview-mode { display: flex; justify-content: center; background-color: #000 !important; align-items: center; }
-            body.phone-preview-mode > .flex { width: 375px !important; max-width: 375px !important; height: 812px !important; max-height: 812px !important; border: 12px solid #334155; border-radius: 40px; overflow: hidden; position: relative; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); flex-direction: column; }
-            body.phone-preview-mode aside { display: none !important; }
-            body.phone-preview-mode nav.fixed.bottom-0, body.phone-preview-mode nav.md\:hidden { display: flex !important; position: absolute; z-index: 9999 !important; }
-            
-            /* Add bottom spacing to prevent nav overlap */
-            body.phone-preview-mode main .flex-1.overflow-y-auto { padding-bottom: 180px !important; scroll-padding-bottom: 180px !important; }
-            body.phone-preview-mode .tab-content:not(#tab-gps) { padding-bottom: 220px !important; }
-            body.phone-preview-mode .tab-content:not(#tab-gps)::after { content: ""; display: block; height: 150px; flex: 0 0 auto; }
-            
-            /* Override Tailwind responsive classes that break mobile layout */
-            body.phone-preview-mode .md\:flex-row { flex-direction: column !important; }
-            body.phone-preview-mode .md\:items-start { align-items: stretch !important; }
-            body.phone-preview-mode .md\:items-center { align-items: stretch !important; }
-            body.phone-preview-mode .md\:justify-between { justify-content: flex-start !important; }
-            
-            body.phone-preview-mode .sm\:grid-cols-2, body.phone-preview-mode .sm\:grid-cols-3, body.phone-preview-mode .md\:grid-cols-2, body.phone-preview-mode .md\:grid-cols-3, body.phone-preview-mode .md\:grid-cols-4, body.phone-preview-mode .lg\:grid-cols-2, body.phone-preview-mode .lg\:grid-cols-3, body.phone-preview-mode .lg\:grid-cols-4, body.phone-preview-mode .xl\:grid-cols-2, body.phone-preview-mode .xl\:grid-cols-3, body.phone-preview-mode .xl\:grid-cols-6, body.phone-preview-mode .xl\:grid-cols-7, body.phone-preview-mode .xl\:grid-cols-8 { grid-template-columns: minmax(0, 1fr) !important; }
-            body.phone-preview-mode .sm\:col-span-2, body.phone-preview-mode .md\:col-span-2, body.phone-preview-mode .lg\:col-span-2, body.phone-preview-mode .xl\:col-span-2 { grid-column: span 1 / span 1 !important; }
-            
-            body.phone-preview-mode .chart-container { height: 250px !important; }
-            body.phone-preview-mode .dashboard-score-card { padding: 16px !important; border-radius: 16px !important; }
-            body.phone-preview-mode button, body.phone-preview-mode select, body.phone-preview-mode input[type="date"] { min-height: 44px; }
-            
-            /* GPS Layout Phone Preview */
-            body.phone-preview-mode #tab-gps { padding: 0 !important; height: 100% !important; }
-            body.phone-preview-mode #tab-gps:not(.active) { display: none !important; }
-            body.phone-preview-mode #tab-gps.active { display: flex !important; flex-direction: column !important; }
-            body.phone-preview-mode .gps-layout-wrapper { position: relative !important; inset: auto !important; height: 100% !important; flex-direction: column !important; display: flex !important; }
-            
-            body.phone-preview-mode #tab-gps .gps-map-container { order: 1 !important; flex: 0 0 36% !important; height: 36% !important; min-height: 250px !important; width: 100% !important; position: relative !important; }
-            body.phone-preview-mode #map { height: 100% !important; width: 100% !important; }
-            
-            body.phone-preview-mode #tab-gps .gps-sidebar { order: 2 !important; width: 100% !important; flex: 1 1 auto !important; height: auto !important; border-right: none !important; border-top: 1px solid rgba(255,255,255,0.1) !important; display: flex !important; flex-direction: column !important; overflow: hidden !important; padding-bottom: 120px !important;}
-            body.phone-preview-mode #gps-route-list { flex: 1 1 auto !important; overflow-y: auto !important; padding-bottom: 180px !important; }
-            
-            body.phone-preview-mode #gps-type-counts { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 8px; }
-            
-            body.phone-preview-mode .map-stats-card { top: 8px !important; right: 8px !important; transform: none !important; max-width: 210px !important; z-index: 430 !important; }
-            body.phone-preview-mode .map-stats-card .glass-card { min-width: 0 !important; width: 210px !important; padding: 8px 10px !important; border-radius: 14px !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 6px 8px !important; }
-            body.phone-preview-mode #map-stat-dist, body.phone-preview-mode #map-stat-routes { font-size: 22px !important; line-height: 1.05 !important; }
-            body.phone-preview-mode #map-stat-time, body.phone-preview-mode #map-stat-avg { font-size: 12px !important; line-height: 1.1 !important; }
-            body.phone-preview-mode .map-stats-card .text-\[10px\] { font-size: 8px !important; letter-spacing: 0.03em !important; }
 
-            body.phone-preview-mode #gps-playback-control { position: absolute !important; left: 8px !important; right: 8px !important; bottom: 8px !important; width: auto !important; max-width: none !important; transform: none !important; z-index: 440 !important; }
-            body.phone-preview-mode #gps-playback-control.hidden { display: none !important; }
-            body.phone-preview-mode #gps-playback-control .glass-card { padding: 8px 10px !important; gap: 8px !important; border-radius: 16px !important; align-items: center !important; }
-            body.phone-preview-mode #gps-playback-control button { width: 42px !important; height: 42px !important; min-width: 42px !important; min-height: 42px !important; }
-            body.phone-preview-mode #gps-playback-control .flex-1 { min-width: 0 !important; }
-            body.phone-preview-mode #gps-playback-control .text-xs { font-size: 10px !important; }
-            body.phone-preview-mode #gps-speed-btn { min-width: 42px !important; height: 32px !important; font-size: 11px !important; }
-            body.phone-preview-mode #gps-time-slider { min-height: 18px !important; }
+        body.phone-preview-mode { display: flex; justify-content: center; background-color: #000 !important; align-items: center; }
+        body.phone-preview-mode > .flex { width: 390px !important; max-width: 390px !important; height: 844px !important; max-height: 844px !important; border: 12px solid #334155; border-radius: 40px; overflow: hidden; position: relative; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); flex-direction: column; }
+        body.phone-preview-mode aside { display: none !important; }
+        body.phone-preview-mode nav.fixed.bottom-0, body.phone-preview-mode nav.md\:hidden { display: flex !important; position: absolute; z-index: 9999 !important; }
+        
+        body.phone-preview-mode main .flex-1.overflow-y-auto { padding-bottom: 180px !important; scroll-padding-bottom: 180px !important; }
+        body.phone-preview-mode .tab-content:not(#tab-gps) { padding-bottom: 220px !important; }
+        body.phone-preview-mode .tab-content:not(#tab-gps)::after { content: ""; display: block; height: 150px; flex: 0 0 auto; }
+        
+        body.phone-preview-mode .md\:flex-row { flex-direction: column !important; }
+        body.phone-preview-mode .md\:items-start { align-items: stretch !important; }
+        body.phone-preview-mode .md\:items-center { align-items: stretch !important; }
+        body.phone-preview-mode .md\:justify-between { justify-content: flex-start !important; }
+        
+        body.phone-preview-mode .sm\:grid-cols-2, body.phone-preview-mode .sm\:grid-cols-3, body.phone-preview-mode .md\:grid-cols-2, body.phone-preview-mode .md\:grid-cols-3, body.phone-preview-mode .md\:grid-cols-4, body.phone-preview-mode .lg\:grid-cols-2, body.phone-preview-mode .lg\:grid-cols-3, body.phone-preview-mode .lg\:grid-cols-4, body.phone-preview-mode .xl\:grid-cols-2, body.phone-preview-mode .xl\:grid-cols-3, body.phone-preview-mode .xl\:grid-cols-6, body.phone-preview-mode .xl\:grid-cols-7, body.phone-preview-mode .xl\:grid-cols-8 { grid-template-columns: minmax(0, 1fr) !important; }
+        body.phone-preview-mode .sm\:col-span-2, body.phone-preview-mode .md\:col-span-2, body.phone-preview-mode .lg\:col-span-2, body.phone-preview-mode .xl\:col-span-2 { grid-column: span 1 / span 1 !important; }
+        
+        body.phone-preview-mode .chart-container { height: 320px !important; min-height: 320px !important; }
+        body.phone-preview-mode .desktop-range-buttons { display: none !important; }
+        body.phone-preview-mode .mobile-range-select { display: block !important; }
+        
+        body.phone-preview-mode .dashboard-score-card { padding: 16px !important; border-radius: 16px !important; }
+        body.phone-preview-mode button, body.phone-preview-mode select, body.phone-preview-mode input[type="date"] { min-height: 44px; }
+        
+        body.phone-preview-mode #tab-gps { 
+            position: absolute !important;
+            top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
+            height: 100% !important; 
+            padding: 0 !important;
+            background-color: transparent !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            z-index: 50 !important;
+        }
+        body.phone-preview-mode #tab-gps:not(.active) { display: none !important; }
+        body.phone-preview-mode #tab-gps.active { display: block !important; }
+        body.phone-preview-mode .gps-layout-wrapper { display: flex !important; flex-direction: column !important; height: auto !important; min-height: 100% !important; overflow: visible !important; position: relative !important; inset: auto !important; }
+        
+        body.phone-preview-mode .gps-map-container { display: flex !important; flex-direction: column !important; justify-content: flex-end !important; position: relative !important; flex: 0 0 auto !important; min-height: 440px !important; height: 54dvh !important; width: 100% !important; overflow: hidden !important; }
+        body.phone-preview-mode #map-wrapper { position: absolute !important; inset: 0 !important; width: 100% !important; height: 100% !important; }
+        body.phone-preview-mode .gps-floating-ui { position: relative !important; width: 100% !important; padding: 4px !important; top: auto !important; right: auto !important; bottom: auto !important; left: auto !important; transform: none !important; z-index: 20 !important; }
+        
+        body.phone-preview-mode .gps-control-panel { flex: 0 0 auto !important; padding: 12px 14px !important; border-bottom: 1px solid rgba(148,163,184,0.15) !important; width: 100% !important; }
+        body.phone-preview-mode .gps-control-panel .mb-4 { margin-bottom: 6px !important; }
+        body.phone-preview-mode #tab-gps button, body.phone-preview-mode #tab-gps select, body.phone-preview-mode #tab-gps input[type="date"] { min-height: 32px !important; height: 32px !important; font-size: 11px !important; padding-top: 2px !important; padding-bottom: 2px !important; }
+        body.phone-preview-mode #gps-type-counts { padding: 4px 8px !important; font-size: 10px !important; gap: 4px !important; }
+        
+        body.phone-preview-mode .gps-route-panel { flex: 0 0 auto !important; height: auto !important; overflow: visible !important; width: 100% !important; }
+        body.phone-preview-mode #gps-route-list { min-height: 0 !important; overflow: visible !important; padding: 12px 14px 180px !important; margin-top: 0 !important; }
+        body.phone-preview-mode #gps-route-list .glass-card, body.phone-preview-mode #gps-route-list [id^="route-card-"] { position: relative !important; z-index: 1 !important; transform: none !important; }
+
+        body.phone-preview-mode .map-stats-card { position: absolute !important; left: 8px !important; right: 8px !important; bottom: 8px !important; top: auto !important; transform: none !important; max-width: none !important; z-index: 420 !important; pointer-events: none !important; }
+        body.phone-preview-mode .map-stats-card .glass-card { width: 100% !important; min-width: 0 !important; display: grid !important; grid-template-columns: repeat(4, minmax(0, 1fr)) !important; padding: 8px 10px !important; border-radius: 14px !important; gap: 6px !important; opacity: 0.92 !important; }
+        body.phone-preview-mode .map-stats-card .text-center { border: none !important; padding: 2px !important; }
+        body.phone-preview-mode #map-stat-dist, body.phone-preview-mode #map-stat-routes { font-size: 18px !important; font-weight: 800 !important; }
+        body.phone-preview-mode #map-stat-time, body.phone-preview-mode #map-stat-avg { font-size: 12px !important; }
+        body.phone-preview-mode .map-stats-card .text-\[9px\], body.phone-preview-mode .map-stats-card .text-\[10px\] { font-size: 9px !important; margin-top: 0 !important; }
+        
+        body.phone-preview-mode #gps-playback-control { position: relative !important; left: auto !important; right: auto !important; bottom: auto !important; width: auto !important; margin: 12px 12px 0 !important; z-index: 5 !important; transform: none !important; padding: 0 !important; }
+        body.phone-preview-mode #gps-playback-control .glass-card { padding: 8px 12px !important; gap: 6px !important; border-radius: 12px !important; }
+        body.phone-preview-mode #gps-playback-control button { width: 36px !important; height: 36px !important; min-width: 36px !important; }
+        body.phone-preview-mode #gps-speed-btn { height: 28px !important; font-size: 11px !important; }
+        body.phone-preview-mode #gps-play-start, body.phone-preview-mode #gps-play-end { font-size: 10px !important; }
+        body.phone-preview-mode #gps-play-current { font-size: 11px !important; padding: 2px 6px !important; }
+        body.phone-preview-mode #gps-play-icon { font-size: 14px !important; }
+
+
         }
     </style>
 </head>
 <body class="text-slate-200 text-sm">
 
     <div class="flex flex-col md:flex-row h-screen">
-        <aside class="hidden md:flex flex-col w-64 border-r border-slate-800 z-[100]">
+        <aside class="hidden md:flex flex-col w-64 border-r border-slate-800 z-[100] flex-shrink-0">
             <div class="p-6">
                 <h1 onclick="goHomeStartup()" class="text-xl font-bold text-blue-500 flex items-center tracking-tight cursor-pointer hover:text-blue-400 transition" title="スタート画面へ戻る">
                     <i class="fas fa-heartbeat mr-2 text-2xl"></i>HealthManager
@@ -262,9 +302,9 @@
         </aside>
 
         <main class="flex-1 flex flex-col h-screen overflow-hidden main-content">
-            <header class="backdrop-blur-md border-b border-slate-800 px-4 md:px-6 py-3 flex justify-between items-center z-[80]">
+            <header class="backdrop-blur-md border-b border-slate-800 px-4 md:px-6 py-3 flex justify-between items-center z-[80] flex-shrink-0">
                 <div class="flex items-center gap-3">
-                    <span id="current-tab-title" class="text-sm font-black tracking-widest uppercase text-slate-300">DASHBOARD</span>
+                    <span id="current-tab-title" onclick="goHomeStartup()" class="text-sm font-black tracking-widest uppercase text-slate-300 cursor-pointer hover:text-white transition" title="トップへ戻る">DASHBOARD</span>
                 </div>
                 <div class="flex items-center gap-3">
                     <div id="sample-badge" class="hidden px-2 py-0.5 bg-amber-500/20 text-amber-400 text-[10px] rounded border border-amber-500/30 font-bold uppercase">Sample Data</div>
@@ -288,18 +328,18 @@
                                 data/health-manager-data.json を最優先で読み込みます。<br>見つからない場合は生データを自動読込します。
                             </p>
                         </div>
-                        <div class="flex flex-col sm:flex-row gap-3 justify-center">
-                            <button onclick="tryAutoLoadDataFiles()" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-xl font-bold shadow-lg transition-all">
+                        <div class="flex flex-col sm:flex-row gap-3 justify-center flex-wrap">
+                            <button onclick="tryAutoLoadDataFiles()" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-xl font-bold shadow-lg transition-all w-full sm:w-auto">
                                 自動読込を再試行
                             </button>
-                            <button onclick="document.getElementById('file-input-main').click()" class="bg-emerald-700 hover:bg-emerald-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg transition-all">
+                            <button onclick="document.getElementById('file-input-main').click()" class="bg-emerald-700 hover:bg-emerald-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg transition-all w-full sm:w-auto">
                                 ZIP / JSON を手動読込
                             </button>
-                            <button onclick="loadSampleData()" class="bg-slate-800 border border-slate-700 text-slate-300 px-6 py-3 rounded-xl font-bold hover:bg-slate-700 transition-all">
-                                デモ・サンプルデータを表示
+                            <button onclick="startDesktopDemoMode()" class="bg-slate-800 border border-slate-700 text-slate-300 px-6 py-3 rounded-xl font-bold hover:bg-slate-700 transition-all w-full sm:w-auto">
+                                <i class="fas fa-desktop mr-2"></i>デスクトップモード
                             </button>
-                            <button onclick="togglePhonePreviewMode()" class="btn-phone-preview bg-slate-800 border border-slate-700 text-slate-300 px-6 py-3 rounded-xl font-bold hover:bg-slate-700 transition-all">
-                                <i class="fas fa-mobile-alt mr-2"></i>スマホ確認モード
+                            <button onclick="startPhoneDemoMode()" class="bg-slate-800 border border-slate-700 text-slate-300 px-6 py-3 rounded-xl font-bold hover:bg-slate-700 transition-all w-full sm:w-auto">
+                                <i class="fas fa-mobile-alt mr-2"></i>スマホモード
                             </button>
                         </div>
                         <input type="file" id="file-input-main" class="hidden" onchange="handleFileSelect(event)">
@@ -313,7 +353,7 @@
                             </div>
                             <div class="flex flex-wrap items-center gap-2">
                                 <button onclick="moveDashboardDate(-1)" class="bg-slate-800 hover:bg-slate-700 text-white px-3 py-2 rounded-lg font-bold transition text-sm flex items-center gap-1 shadow"><i class="fas fa-chevron-left"></i> 前日</button>
-                                <input type="date" id="dashboard-date-input" onchange="setDashboardDate(this.value)" class="bg-slate-900 border border-slate-700 text-white px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-emerald-500 cursor-pointer shadow">
+                                <input type="date" id="dashboard-date-input" onchange="setDashboardDate(this.value)" class="flex-1 sm:flex-none bg-slate-900 border border-slate-700 text-white px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-emerald-500 cursor-pointer shadow min-h-[44px]">
                                 <button onclick="moveDashboardDate(1)" class="bg-slate-800 hover:bg-slate-700 text-white px-3 py-2 rounded-lg font-bold transition text-sm flex items-center gap-1 shadow">翌日 <i class="fas fa-chevron-right"></i></button>
                             </div>
                         </div>
@@ -386,15 +426,13 @@
                         </div>
                     </div>
 
-                    <div class="mt-6 glass-card p-4 bg-slate-900/30 border border-cyan-500/20">
+                    <div class="mt-6 glass-card p-4 md:p-6 bg-slate-900/30 border border-cyan-500/20 w-full max-w-full">
                         <div class="flex items-center justify-between mb-3">
                             <h3 class="text-sm md:text-base font-black text-cyan-100">
                                 <i class="fas fa-chart-line mr-2 text-cyan-300"></i>総合健康指数トレンド
                             </h3>
                         </div>
-                        <div class="chart-container">
-                            <canvas id="chart-health-score-trend"></canvas>
-                        </div>
+                        <div class="chart-container"><canvas id="chart-health-score-trend"></canvas></div>
                         <div id="health-score-trend-comment" class="mt-3 text-sm md:text-base text-slate-100 leading-relaxed"></div>
                     </div>
 
@@ -578,11 +616,11 @@
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                        <div class="glass-card p-5">
+                        <div class="glass-card p-4 md:p-5 w-full max-w-full">
                             <h3 class="text-sm font-bold mb-4 text-slate-300 uppercase tracking-widest"><i class="fas fa-chart-line mr-2 text-blue-500"></i>体重トレンド</h3>
                             <div class="chart-container"><canvas id="chart-weight-dash"></canvas></div>
                         </div>
-                        <div class="glass-card p-5">
+                        <div class="glass-card p-4 md:p-5 w-full max-w-full">
                             <h3 class="text-sm font-bold mb-4 text-slate-300 uppercase tracking-widest"><i class="fas fa-shoe-prints mr-2 text-blue-500"></i>歩数トレンド</h3>
                             <div class="chart-container"><canvas id="chart-steps-dash"></canvas></div>
                         </div>
@@ -590,11 +628,11 @@
                 </section>
 
                 <!-- Weight Tab -->
-                <section id="tab-weight" class="tab-content p-4 md:p-6 space-y-6">
+                <section id="tab-weight" class="tab-content p-4 md:p-6 space-y-6 pb-20">
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <div class="lg:col-span-2 glass-card p-5">
+                        <div class="lg:col-span-2 glass-card p-4 md:p-5 w-full max-w-full">
                             <h3 class="font-bold mb-4 text-slate-300 text-sm uppercase tracking-widest">体重推移 & 目標ライン</h3>
-                            <div class="chart-container h-[450px]"><canvas id="chart-weight-full"></canvas></div>
+                            <div class="chart-container"><canvas id="chart-weight-full"></canvas></div>
                         </div>
                         <div class="space-y-4">
                             <div class="glass-card p-6">
@@ -669,7 +707,7 @@
                 </section>
 
                 <!-- Condition Tab -->
-                <section id="tab-condition" class="tab-content p-4 md:p-6 space-y-6">
+                <section id="tab-condition" class="tab-content p-4 md:p-6 space-y-6 pb-20">
                     <div class="glass-card p-4 flex flex-wrap gap-4 items-center bg-slate-800/50">
                         <div class="text-sm font-bold text-slate-300 mr-2"><i class="fas fa-info-circle text-blue-400 mr-1"></i>睡眠評価の目安:</div>
                         <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-green-500"></span><span class="text-sm">良好 (7h〜)</span></div>
@@ -726,11 +764,11 @@
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="glass-card p-5">
+                        <div class="glass-card p-4 md:p-5 w-full max-w-full">
                             <h3 class="text-sm font-bold mb-4 text-slate-300 uppercase tracking-widest">睡眠サイクル</h3>
                             <div class="chart-container"><canvas id="chart-sleep-full"></canvas></div>
                         </div>
-                        <div class="glass-card p-5">
+                        <div class="glass-card p-4 md:p-5 w-full max-w-full">
                             <h3 class="text-sm font-bold mb-4 text-slate-300 uppercase tracking-widest">安静時心拍の波</h3>
                             <div class="chart-container"><canvas id="chart-heart-full"></canvas></div>
                         </div>
@@ -744,11 +782,11 @@
                 </section>
 
                 <!-- Activity Tab -->
-                <section id="tab-activity" class="tab-content p-4 md:p-6 space-y-6">
+                <section id="tab-activity" class="tab-content p-4 md:p-6 space-y-6 pb-20">
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <div class="lg:col-span-2 glass-card p-5">
+                        <div class="lg:col-span-2 glass-card p-4 md:p-5 w-full max-w-full">
                             <h3 class="text-sm font-bold mb-4 text-slate-300 uppercase tracking-widest">日次歩数履歴</h3>
-                            <div class="chart-container h-[400px]"><canvas id="chart-steps-full"></canvas></div>
+                            <div class="chart-container"><canvas id="chart-steps-full"></canvas></div>
                         </div>
                         <div class="glass-card p-6 space-y-6 flex flex-col">
                             <div class="flex justify-between items-start">
@@ -837,129 +875,134 @@
 
                 <!-- GPS Tab -->
                 <section id="tab-gps" class="tab-content h-full relative overflow-hidden">
-                    <div class="gps-layout-wrapper absolute inset-0 flex flex-col md:flex-row overflow-hidden">
+                    <div class="gps-layout-wrapper absolute inset-0 md:grid md:grid-cols-[400px_1fr] md:grid-rows-[auto_1fr] flex flex-col overflow-hidden bg-slate-950">
                         
-                        <div class="gps-sidebar flex flex-col order-2 md:order-1 h-2/5 md:h-full border-t md:border-t-0 md:border-r border-slate-800 shadow-2xl relative w-full md:w-[400px]">
-                            <div class="p-4 bg-slate-900/95 backdrop-blur-xl border-b border-slate-800 z-20">
-                                <div class="flex items-center justify-between mb-4">
-                                    <h3 class="text-sm font-bold text-slate-300 uppercase tracking-widest">移動ログエクスプローラー</h3>
-                                    <span id="route-count-badge" class="text-xs font-mono bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full border border-blue-500/30">0</span>
+                        <!-- 1. 操作パネル (PC: 左上, スマホ: 一番上) -->
+                        <div class="gps-control-panel p-4 bg-slate-900/95 backdrop-blur-xl border-b border-slate-800 z-20 md:col-start-1 md:row-start-1 flex-shrink-0">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-sm font-bold text-slate-300 uppercase tracking-widest">移動ログエクスプローラー</h3>
+                                <span id="route-count-badge" class="text-xs font-mono bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full border border-blue-500/30">0</span>
+                            </div>
+                            
+                            <div class="flex flex-col gap-2 mb-4">
+                                <div class="flex gap-2">
+                                    <select id="gps-period-filter" onchange="updateGpsFilterInputs()" class="flex-1 bg-slate-800 border border-slate-700 text-sm rounded-lg px-3 py-2.5 focus:outline-none focus:ring-1 focus:ring-emerald-500/50 text-slate-200 cursor-pointer min-h-[44px]">
+                                        <option value="1d" selected>1日間</option>
+                                        <option value="7">1週間</option>
+                                        <option value="14">2週間</option>
+                                        <option value="30">1か月</option>
+                                        <option value="90">3か月</option>
+                                        <option value="180">6か月</option>
+                                        <option value="365">1年</option>
+                                        <option value="all">全期間</option>
+                                        <option value="custom">任意期間</option>
+                                    </select>
+                                    <button onclick="resetGpsFocus()" class="bg-slate-700 hover:bg-slate-600 px-4 rounded-lg transition text-slate-200 min-h-[44px]" title="リセット">
+                                        <i class="fas fa-compress-arrows-alt text-sm"></i>
+                                    </button>
                                 </div>
                                 
-                                <div class="flex flex-col gap-2 mb-4">
+                                <div id="gps-filter-base-container" class="flex flex-col gap-1">
+                                    <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider pl-1 flex items-center justify-between">
+                                        <span>基準日（この日までの期間を表示）</span>
+                                        <button onclick="resetGpsBaseDateToLatest()" class="text-[9px] bg-slate-800 hover:bg-slate-700 text-blue-400 px-2 py-0.5 rounded border border-slate-700 transition">最新日へ</button>
+                                    </div>
                                     <div class="flex gap-2">
-                                        <select id="gps-period-filter" onchange="updateGpsFilterInputs()" class="flex-1 bg-slate-800 border border-slate-700 text-sm rounded-lg px-3 py-2.5 focus:outline-none focus:ring-1 focus:ring-emerald-500/50 text-slate-200 cursor-pointer">
-                                            <option value="1d" selected>1日間</option>
-                                            <option value="7">1週間</option>
-                                            <option value="14">2週間</option>
-                                            <option value="30">1か月</option>
-                                            <option value="90">3か月</option>
-                                            <option value="180">6か月</option>
-                                            <option value="365">1年</option>
-                                            <option value="all">全期間</option>
-                                            <option value="custom">任意期間</option>
-                                        </select>
-                                        <button onclick="resetGpsFocus()" class="bg-slate-700 hover:bg-slate-600 px-4 rounded-lg transition text-slate-200" title="リセット">
-                                            <i class="fas fa-compress-arrows-alt text-sm"></i>
-                                        </button>
-                                    </div>
-                                    
-                                    <div id="gps-filter-base-container" class="flex flex-col gap-1">
-                                        <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider pl-1 flex items-center justify-between">
-                                            <span>基準日（この日までの期間を表示）</span>
-                                            <button onclick="resetGpsBaseDateToLatest()" class="text-[9px] bg-slate-800 hover:bg-slate-700 text-blue-400 px-2 py-0.5 rounded border border-slate-700 transition">最新日へ</button>
-                                        </div>
-                                        <div class="flex gap-2">
-                                            <button onclick="moveGpsBaseDate(-1)" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-2 rounded-lg text-xs font-bold transition flex-shrink-0 border border-slate-700 shadow-sm"><i class="fas fa-chevron-left mr-1"></i>前日</button>
-                                            <input type="date" id="gps-filter-base-date" onchange="setGpsBaseDate(this.value)" class="flex-1 bg-slate-800 border border-slate-700 text-sm rounded-lg px-2 py-2 focus:outline-none focus:ring-1 focus:ring-emerald-500/50 text-slate-200 cursor-pointer">
-                                            <button onclick="moveGpsBaseDate(1)" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-2 rounded-lg text-xs font-bold transition flex-shrink-0 border border-slate-700 shadow-sm">翌日<i class="fas fa-chevron-right ml-1"></i></button>
-                                        </div>
-                                    </div>
-                                    
-                                    <div id="gps-filter-custom-container" class="hidden flex-wrap gap-2">
-                                        <input type="date" id="gps-filter-start" onchange="setGpsCustomDateRange()" class="flex-1 bg-slate-800 border border-slate-700 text-xs rounded-lg px-2 py-2 focus:outline-none focus:ring-1 focus:ring-emerald-500/50 text-slate-200 cursor-pointer">
-                                        <span class="text-slate-400 self-center">〜</span>
-                                        <input type="date" id="gps-filter-end" onchange="setGpsCustomDateRange()" class="flex-1 bg-slate-800 border border-slate-700 text-xs rounded-lg px-2 py-2 focus:outline-none focus:ring-1 focus:ring-emerald-500/50 text-slate-200 cursor-pointer">
-                                    </div>
-                                    
-                                    <div class="flex justify-between items-center mt-1">
-                                        <div id="gps-active-period-label" class="text-[10px] font-bold text-emerald-400/80 uppercase tracking-widest bg-emerald-500/10 px-2 py-1 rounded border border-emerald-500/20">表示期間: --</div>
-                                        <button id="gps-legend-toggle" onclick="toggleGpsLegend()" class="text-[10px] text-slate-400 underline hover:text-slate-300">ルート色凡例を表示</button>
+                                        <button onclick="moveGpsBaseDate(-1)" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-2 rounded-lg text-xs font-bold transition flex-shrink-0 border border-slate-700 shadow-sm min-h-[44px]"><i class="fas fa-chevron-left mr-1"></i>前日</button>
+                                        <input type="date" id="gps-filter-base-date" onchange="setGpsBaseDate(this.value)" class="flex-1 bg-slate-800 border border-slate-700 text-sm rounded-lg px-2 py-2 focus:outline-none focus:ring-1 focus:ring-emerald-500/50 text-slate-200 cursor-pointer min-h-[44px]">
+                                        <button onclick="moveGpsBaseDate(1)" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-2 rounded-lg text-xs font-bold transition flex-shrink-0 border border-slate-700 shadow-sm min-h-[44px]">翌日<i class="fas fa-chevron-right ml-1"></i></button>
                                     </div>
                                 </div>
-
-                                <div id="gps-type-counts" class="flex justify-between text-[11px] sm:text-xs text-slate-300 font-bold bg-black/40 p-2.5 rounded-lg border border-slate-800">
-                                    <div><i class="fas fa-plane text-blue-400 mr-1"></i>移動:<span id="count-travel" class="ml-1">0</span></div>
-                                    <div><i class="fas fa-walking text-emerald-400 mr-1"></i>歩行:<span id="count-walking" class="ml-1">0</span></div>
-                                    <div><i class="fas fa-running text-rose-400 mr-1"></i>ラン:<span id="count-running" class="ml-1">0</span></div>
-                                    <div><i class="fas fa-bicycle text-amber-400 mr-1"></i>自転車:<span id="count-cycling" class="ml-1">0</span></div>
+                                
+                                <div id="gps-filter-custom-container" class="hidden flex-wrap gap-2">
+                                    <input type="date" id="gps-filter-start" onchange="setGpsCustomDateRange()" class="flex-1 bg-slate-800 border border-slate-700 text-xs rounded-lg px-2 py-2 focus:outline-none focus:ring-1 focus:ring-emerald-500/50 text-slate-200 cursor-pointer min-h-[44px]">
+                                    <span class="text-slate-400 self-center">〜</span>
+                                    <input type="date" id="gps-filter-end" onchange="setGpsCustomDateRange()" class="flex-1 bg-slate-800 border border-slate-700 text-xs rounded-lg px-2 py-2 focus:outline-none focus:ring-1 focus:ring-emerald-500/50 text-slate-200 cursor-pointer min-h-[44px]">
                                 </div>
-                                <div id="gps-legend" class="mt-2 text-[9px] text-slate-400 flex flex-wrap gap-2 bg-slate-900/50 p-2 rounded-lg border border-slate-800 justify-center hidden">
-                                    <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full" style="background: #10b981;"></span> 歩行</div>
-                                    <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full" style="background: #f43f5e;"></span> ラン</div>
-                                    <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full" style="background: #f59e0b;"></span> 自転車</div>
-                                    <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full" style="background: #818cf8;"></span> 電車</div>
-                                    <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full" style="background: #fb923c;"></span> バス</div>
-                                    <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full" style="background: #60a5fa;"></span> 車両</div>
-                                    <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full" style="background: #38bdf8;"></span> 飛行機</div>
-                                    <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full" style="background: #3b82f6;"></span> 他移動</div>
+                                
+                                <div class="flex justify-between items-center mt-1">
+                                    <div id="gps-active-period-label" class="text-[10px] font-bold text-emerald-400/80 uppercase tracking-widest bg-emerald-500/10 px-2 py-1 rounded border border-emerald-500/20">表示期間: --</div>
+                                    <button id="gps-legend-toggle" onclick="toggleGpsLegend()" class="text-[10px] text-slate-400 underline hover:text-slate-300">ルート色凡例を表示</button>
                                 </div>
                             </div>
-                            
-                            <div class="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-0 pb-24 md:pb-4 bg-slate-950/80 relative">
-                                <div class="absolute top-0 bottom-0 left-[27px] w-0.5 bg-slate-700 z-0"></div>
-                                <div id="gps-route-list" class="relative z-10"></div>
+
+                            <div id="gps-type-counts" class="flex justify-between text-[11px] sm:text-xs text-slate-300 font-bold bg-black/40 p-2.5 rounded-lg border border-slate-800">
+                                <div><i class="fas fa-plane text-blue-400 mr-1"></i>移動:<span id="count-travel" class="ml-1">0</span></div>
+                                <div><i class="fas fa-walking text-emerald-400 mr-1"></i>歩行:<span id="count-walking" class="ml-1">0</span></div>
+                                <div><i class="fas fa-running text-rose-400 mr-1"></i>ラン:<span id="count-running" class="ml-1">0</span></div>
+                                <div><i class="fas fa-bicycle text-amber-400 mr-1"></i>自転車:<span id="count-cycling" class="ml-1">0</span></div>
+                            </div>
+                            <div id="gps-legend" class="mt-2 text-[9px] text-slate-400 flex flex-wrap gap-2 bg-slate-900/50 p-2 rounded-lg border border-slate-800 justify-center hidden">
+                                <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full" style="background: #10b981;"></span> 歩行</div>
+                                <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full" style="background: #f43f5e;"></span> ラン</div>
+                                <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full" style="background: #f59e0b;"></span> 自転車</div>
+                                <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full" style="background: #818cf8;"></span> 電車</div>
+                                <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full" style="background: #fb923c;"></span> バス</div>
+                                <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full" style="background: #60a5fa;"></span> 車両</div>
+                                <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full" style="background: #38bdf8;"></span> 飛行機</div>
+                                <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full" style="background: #3b82f6;"></span> 他移動</div>
                             </div>
                         </div>
 
-                        <div class="gps-map-container flex-1 order-1 md:order-2 relative bg-slate-900">
-                            <div id="map"></div>
+                        <!-- 2. 地図エリア (PC: 右全体, スマホ: 2番目) -->
+                        <div class="gps-map-container relative z-10 md:col-start-2 md:row-start-1 md:row-span-2 w-full flex-shrink-0">
+                            <div id="map-wrapper" class="absolute inset-0 w-full h-full"><div id="map" class="w-full h-full"></div></div>
                             
-                            <div class="absolute top-4 right-4 z-[400] pointer-events-none map-stats-card">
-                                <div class="glass-card shadow-2xl pointer-events-auto bg-slate-900/95 border border-emerald-500/30 grid rounded-2xl">
-                                    <div class="text-center">
-                                        <div id="map-stat-dist" class="text-3xl font-black text-emerald-400">0.0</div>
-                                        <div class="text-[10px] text-slate-400 uppercase font-bold tracking-widest">総移動距離</div>
-                                    </div>
-                                    <div class="text-center">
-                                        <div id="map-stat-routes" class="text-3xl font-black text-white">0</div>
-                                        <div class="text-[10px] text-slate-400 uppercase font-bold tracking-widest">表示ログ数</div>
-                                    </div>
-                                    <div class="text-center pt-3 border-t border-slate-700/50">
-                                        <div id="map-stat-time" class="text-sm font-bold text-slate-200">--</div>
-                                        <div class="text-[10px] text-slate-500 uppercase font-bold tracking-widest mt-1">合計時間</div>
-                                    </div>
-                                    <div class="text-center pt-3 border-t border-slate-700/50">
-                                        <div id="map-stat-avg" class="text-sm font-bold text-slate-200">0.0</div>
-                                        <div class="text-[10px] text-slate-500 uppercase font-bold tracking-widest mt-1">平均速度</div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div id="gps-playback-control" class="hidden">
-                                <div class="glass-card shadow-2xl bg-slate-900/95 border border-slate-700 flex items-center">
-                                    <button onclick="toggleGpsPlayback()" class="flex-shrink-0 bg-emerald-600 hover:bg-emerald-500 rounded-full flex items-center justify-center text-white shadow-[0_4px_15px_rgba(16,185,129,0.4)] transition transform active:scale-95">
-                                        <i id="gps-play-icon" class="fas fa-play text-lg pl-1"></i>
-                                    </button>
-                                    <div class="flex-1 flex flex-col gap-2">
-                                        <div class="flex justify-between items-center text-xs font-bold text-slate-400">
-                                            <span id="gps-play-start">00:00</span>
-                                            <span id="gps-play-current" class="text-emerald-400 text-sm bg-emerald-900/30 px-3 py-1 rounded-full border border-emerald-500/30">--:--</span>
-                                            <span id="gps-play-end">23:59</span>
+                            <div class="map-stats-card pointer-events-none z-[400] md:absolute md:top-4 md:right-4 p-2 md:p-0">
+                                <div class="glass-card shadow-2xl pointer-events-auto bg-slate-900/95 border border-emerald-500/30 rounded-xl md:rounded-2xl p-3 md:p-0">
+                                    <div class="grid grid-cols-4 md:grid-cols-1 md:divide-y md:divide-slate-700/50 gap-2 md:gap-0">
+                                        <div class="text-center md:p-4">
+                                            <div id="map-stat-dist" class="text-xl md:text-3xl font-black text-emerald-400 leading-tight">0.0</div>
+                                            <div class="text-[9px] md:text-[10px] text-slate-400 uppercase font-bold tracking-widest mt-1">総距離</div>
                                         </div>
-                                        <input type="range" id="gps-time-slider" min="0" max="100" value="0">
+                                        <div class="text-center md:p-4 border-l border-slate-700/50 md:border-l-0">
+                                            <div id="map-stat-routes" class="text-xl md:text-3xl font-black text-white leading-tight">0</div>
+                                            <div class="text-[9px] md:text-[10px] text-slate-400 uppercase font-bold tracking-widest mt-1">ログ数</div>
+                                        </div>
+                                        <div class="text-center md:p-4 border-l border-slate-700/50 md:border-l-0">
+                                            <div id="map-stat-time" class="text-sm md:text-sm font-bold text-slate-200 mt-1 md:mt-0">--</div>
+                                            <div class="text-[9px] md:text-[10px] text-slate-500 uppercase font-bold tracking-widest mt-1">合計時間</div>
+                                        </div>
+                                        <div class="text-center md:p-4 border-l border-slate-700/50 md:border-l-0">
+                                            <div id="map-stat-avg" class="text-sm md:text-sm font-bold text-slate-200 mt-1 md:mt-0">0.0</div>
+                                            <div class="text-[9px] md:text-[10px] text-slate-500 uppercase font-bold tracking-widest mt-1">平均速度</div>
+                                        </div>
                                     </div>
-                                    <button onclick="cycleGpsSpeed()" id="gps-speed-btn" class="flex-shrink-0 bg-slate-800 hover:bg-slate-700 rounded-full flex items-center justify-center text-emerald-400 font-bold border border-slate-700 transition" title="再生速度を変更">
-                                        1x
-                                    </button>
                                 </div>
                             </div>
                         </div>
+
+                        <!-- 3. GPS再生バー (PC: 地図下部中央, スマホ: 地図の直下) -->
+                        <div id="gps-playback-control" class="hidden z-[440] md:absolute md:bottom-6 md:left-[calc(50%+200px)] md:-translate-x-1/2 w-full md:w-auto p-2 md:p-0 flex-shrink-0">
+                            <div class="glass-card shadow-2xl bg-slate-900/95 border border-slate-700 flex items-center p-2 px-3 md:p-3 md:px-4 gap-3 md:gap-4 md:rounded-2xl">
+                                <button onclick="toggleGpsPlayback()" class="flex-shrink-0 w-10 h-10 md:w-12 md:h-12 bg-emerald-600 hover:bg-emerald-500 rounded-full flex items-center justify-center text-white shadow-[0_4px_15px_rgba(16,185,129,0.4)] transition transform active:scale-95">
+                                    <i id="gps-play-icon" class="fas fa-play text-base md:text-lg pl-1"></i>
+                                </button>
+                                <div class="flex-1 flex flex-col gap-2 min-w-[200px]">
+                                    <div class="flex justify-between items-center text-xs font-bold text-slate-400">
+                                        <span id="gps-play-start">00:00</span>
+                                        <span id="gps-play-current" class="text-emerald-400 text-sm bg-emerald-900/30 px-3 py-1 rounded-full border border-emerald-500/30">--:--</span>
+                                        <span id="gps-play-end">23:59</span>
+                                    </div>
+                                    <input type="range" id="gps-time-slider" min="0" max="100" value="0">
+                                </div>
+                                <button onclick="cycleGpsSpeed()" id="gps-speed-btn" class="flex-shrink-0 w-10 h-8 md:w-12 md:h-10 bg-slate-800 hover:bg-slate-700 rounded-full flex items-center justify-center text-emerald-400 font-bold border border-slate-700 transition text-xs md:text-sm" title="再生速度を変更">
+                                    1x
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 4. 経路カード一覧 (PC: 左下, スマホ: 再生バーの下) -->
+                        <div class="gps-route-panel relative md:col-start-1 md:row-start-2 md:border-r border-slate-800 bg-slate-950/80 md:overflow-hidden flex-1 min-h-0">
+                            <div class="absolute top-0 bottom-0 left-[27px] w-0.5 bg-slate-700 z-0 hidden md:block"></div>
+                            <div id="gps-route-list" class="relative z-10 h-full overflow-visible md:overflow-y-auto custom-scrollbar p-4 md:pb-4"></div>
+                        </div>
+                        
                     </div>
                 </section>
 
                 <!-- Settings Tab -->
-                <section id="tab-settings" class="tab-content p-6">
+                <section id="tab-settings" class="tab-content p-6 pb-24">
                     <div class="max-w-3xl mx-auto space-y-8">
                         <div class="glass-card p-8 space-y-8 bg-slate-900/50">
                             <h2 class="text-xl font-bold flex items-center gap-3 uppercase"><i class="fas fa-user-cog text-blue-500"></i> プロフィール設定</h2>
@@ -967,11 +1010,11 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <div>
                                     <label class="block text-xs font-bold text-slate-400 uppercase mb-2">身長 (cm)</label>
-                                    <input type="number" id="setting-height" value="170" step="0.1" onchange="updateProfile()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white text-base focus:ring-2 focus:ring-blue-500 outline-none transition">
+                                    <input type="number" id="setting-height" value="170" step="0.1" onchange="updateProfile()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white text-base focus:ring-2 focus:ring-blue-500 outline-none transition min-h-[44px]">
                                 </div>
                                 <div>
                                     <label class="block text-xs font-bold text-slate-400 uppercase mb-2">目標体重 (kg)</label>
-                                    <input type="number" id="setting-target-weight" value="65" step="0.1" onchange="updateProfile()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white text-base focus:ring-2 focus:ring-blue-500 outline-none transition">
+                                    <input type="number" id="setting-target-weight" value="65" step="0.1" onchange="updateProfile()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white text-base focus:ring-2 focus:ring-blue-500 outline-none transition min-h-[44px]">
                                 </div>
                             </div>
 
@@ -988,7 +1031,7 @@
                                 <h3 class="text-sm font-bold text-slate-300 uppercase mb-4 tracking-widest">データ管理</h3>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div class="space-y-4">
-                                        <button onclick="document.getElementById('file-input-set').click()" class="w-full bg-blue-600 hover:bg-blue-500 py-4 rounded-xl font-bold transition shadow-lg flex flex-col gap-1 items-center justify-center text-white">
+                                        <button onclick="document.getElementById('file-input-set').click()" class="w-full bg-blue-600 hover:bg-blue-500 py-4 rounded-xl font-bold transition shadow-lg flex flex-col gap-1 items-center justify-center text-white min-h-[44px]">
                                             <span class="text-base"><i class="fas fa-file-import mr-2"></i>ZIP / JSON を手動読込</span>
                                             <span class="text-xs opacity-80 font-normal">通常は自動読込。変更時のみ使用</span>
                                         </button>
@@ -998,17 +1041,17 @@
                                         </p>
                                     </div>
                                     <div class="space-y-4">
-                                        <button onclick="togglePhonePreviewMode()" class="btn-phone-preview w-full bg-slate-700 hover:bg-slate-600 py-4 rounded-xl font-bold transition flex items-center justify-center gap-2 text-white shadow-lg mb-3">
-                                            <i class="fas fa-mobile-alt mr-2"></i>スマホ確認モード
+                                        <button onclick="startPhoneDemoMode()" class="btn-phone-preview w-full bg-slate-700 hover:bg-slate-600 py-4 rounded-xl font-bold transition flex items-center justify-center gap-2 text-white shadow-lg mb-3 min-h-[44px]">
+                                            <i class="fas fa-mobile-alt mr-2"></i>スマホモードで確認
                                         </button>
-                                        <button onclick="loadSampleData()" class="w-full bg-slate-700 hover:bg-slate-600 py-4 rounded-xl font-bold transition flex items-center justify-center gap-2 text-white">
-                                            <i class="fas fa-vial text-amber-400"></i> サンプルデータを表示
+                                        <button onclick="startDesktopDemoMode()" class="w-full bg-slate-700 hover:bg-slate-600 py-4 rounded-xl font-bold transition flex items-center justify-center gap-2 text-white min-h-[44px]">
+                                            <i class="fas fa-desktop mr-2"></i>デスクトップモードへ
                                         </button>
                                         <div class="grid grid-cols-2 gap-3 mt-3">
-                                            <button onclick="exportJSON()" class="bg-emerald-900/40 text-emerald-400 border border-emerald-500/30 py-3 rounded-xl font-bold transition hover:bg-emerald-800/60 text-sm">
+                                            <button onclick="exportJSON()" class="bg-emerald-900/40 text-emerald-400 border border-emerald-500/30 py-3 rounded-xl font-bold transition hover:bg-emerald-800/60 text-sm min-h-[44px]">
                                                 <i class="fas fa-download mr-1"></i> 軽量JSON出力
                                             </button>
-                                            <button onclick="confirmClear()" class="bg-red-900/40 text-red-400 border border-red-500/30 py-3 rounded-xl font-bold transition hover:bg-red-800/60 text-sm">
+                                            <button onclick="confirmClear()" class="bg-red-900/40 text-red-400 border border-red-500/30 py-3 rounded-xl font-bold transition hover:bg-red-800/60 text-sm min-h-[44px]">
                                                 <i class="fas fa-trash-alt mr-1"></i> 全消去リセット
                                             </button>
                                         </div>
@@ -1025,12 +1068,12 @@
             </div>
         </main>
 
-        <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900/95 backdrop-blur-2xl border-t border-slate-800 flex justify-around items-center p-2 pb-safe">
-            <button onclick="switchTab('dashboard')" class="flex flex-col items-center p-2 text-slate-400" data-mobile-tab="dashboard"><i class="fas fa-home text-xl mb-1"></i><span class="text-[10px]">Home</span></button>
-            <button onclick="switchTab('gps')" class="flex flex-col items-center p-2 text-slate-400" data-mobile-tab="gps"><i class="fas fa-map-marked-alt text-xl mb-1"></i><span class="text-[10px]">GPS</span></button>
-            <button onclick="switchTab('weight')" class="flex flex-col items-center p-2 text-slate-400" data-mobile-tab="weight"><i class="fas fa-weight text-xl mb-1"></i><span class="text-[10px]">Weight</span></button>
-            <button onclick="switchTab('activity')" class="flex flex-col items-center p-2 text-slate-400" data-mobile-tab="activity"><i class="fas fa-shoe-prints text-xl mb-1"></i><span class="text-[10px]">Activity</span></button>
-            <button onclick="switchTab('settings')" class="flex flex-col items-center p-2 text-slate-400" data-mobile-tab="settings"><i class="fas fa-cog text-xl mb-1"></i><span class="text-[10px]">Config</span></button>
+        <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900/95 backdrop-blur-2xl border-t border-slate-800 flex justify-around items-center p-2 pb-safe z-[9999]">
+            <button onclick="switchTab('dashboard')" class="flex flex-col items-center p-2 text-slate-400 min-h-[44px]" data-mobile-tab="dashboard"><i class="fas fa-home text-xl mb-1"></i><span class="text-[10px]">Home</span></button>
+            <button onclick="switchTab('gps')" class="flex flex-col items-center p-2 text-slate-400 min-h-[44px]" data-mobile-tab="gps"><i class="fas fa-map-marked-alt text-xl mb-1"></i><span class="text-[10px]">GPS</span></button>
+            <button onclick="switchTab('weight')" class="flex flex-col items-center p-2 text-slate-400 min-h-[44px]" data-mobile-tab="weight"><i class="fas fa-weight text-xl mb-1"></i><span class="text-[10px]">Weight</span></button>
+            <button onclick="switchTab('activity')" class="flex flex-col items-center p-2 text-slate-400 min-h-[44px]" data-mobile-tab="activity"><i class="fas fa-shoe-prints text-xl mb-1"></i><span class="text-[10px]">Activity</span></button>
+            <button onclick="switchTab('settings')" class="flex flex-col items-center p-2 text-slate-400 min-h-[44px]" data-mobile-tab="settings"><i class="fas fa-cog text-xl mb-1"></i><span class="text-[10px]">Config</span></button>
         </nav>
     </div>
 
@@ -1044,54 +1087,7 @@
     </div>
 
     <script>
-        // --- STREAMING_CHUNK:Phone Preview Mode Logic ---
-        function togglePhonePreviewMode() {
-            document.body.classList.toggle('phone-preview-mode');
-            const isMode = document.body.classList.contains('phone-preview-mode');
-            localStorage.setItem('phone-preview-mode', isMode ? '1' : '0');
-            updatePhonePreviewButtonState();
-            resizeAllChartsSafe();
-        }
-
-        function restorePhonePreviewMode() {
-            if (localStorage.getItem('phone-preview-mode') === '1') {
-                document.body.classList.add('phone-preview-mode');
-            }
-            updatePhonePreviewButtonState();
-        }
-
-        function updatePhonePreviewButtonState() {
-            const isMode = document.body.classList.contains('phone-preview-mode');
-            document.querySelectorAll('.btn-phone-preview').forEach(btn => {
-                btn.innerHTML = isMode ? '<i class="fas fa-mobile-alt mr-2 text-emerald-400"></i>スマホ確認モード ON' : '<i class="fas fa-mobile-alt mr-2"></i>スマホ確認モード';
-                if (isMode) {
-                    btn.classList.add('bg-emerald-900/40', 'border-emerald-500/50', 'text-emerald-300');
-                    btn.classList.remove('bg-slate-800', 'border-slate-700', 'text-slate-300');
-                } else {
-                    btn.classList.remove('bg-emerald-900/40', 'border-emerald-500/50', 'text-emerald-300');
-                    btn.classList.add('bg-slate-800', 'border-slate-700', 'text-slate-300');
-                }
-            });
-        }
-
-        function resizeAllChartsSafe() {
-            const run = () => {
-                if (typeof map !== 'undefined' && map && typeof map.invalidateSize === 'function') {
-                    map.invalidateSize();
-                }
-
-                if (typeof charts !== 'undefined' && charts) {
-                    Object.values(charts).forEach(c => {
-                        if (c && typeof c.resize === 'function') c.resize();
-                    });
-                }
-            };
-
-            setTimeout(run, 100);
-            setTimeout(run, 500);
-        }
-
-        // --- STREAMING_CHUNK:Global Variables Setup ---
+        // --- Global Variables Setup ---
         let healthData = {
             summary: { version: "gv1.48", isSample: false, updatedAt: null, heightCm: 170, targetWeight: 65 },
             weight: {}, steps: {}, sleep: {}, heartRate: {}, hrv: {},
@@ -1135,6 +1131,68 @@
             Cycling: '#f59e0b', Unknown: '#94a3b8'
         };
 
+        // --- Demo Modes & Window Sizing ---
+        function startDesktopDemoMode() {
+            document.body.classList.remove('phone-preview-mode');
+            localStorage.setItem('health-phone-preview', '0');
+            loadSampleData();
+            updatePhonePreviewButtonState();
+            setTimeout(resizeAllChartsSafe, 300);
+        }
+
+        function startPhoneDemoMode() {
+            document.body.classList.add('phone-preview-mode');
+            localStorage.setItem('health-phone-preview', '1');
+            loadSampleData();
+            updatePhonePreviewButtonState();
+            setTimeout(resizeAllChartsSafe, 300);
+        }
+
+        function togglePhonePreviewMode() {
+            document.body.classList.toggle('phone-preview-mode');
+            const isMode = document.body.classList.contains('phone-preview-mode');
+            localStorage.setItem('health-phone-preview', isMode ? '1' : '0');
+            updatePhonePreviewButtonState();
+            resizeAllChartsSafe();
+        }
+
+        function restorePhonePreviewMode() {
+            if (localStorage.getItem('health-phone-preview') === '1') {
+                document.body.classList.add('phone-preview-mode');
+            }
+            updatePhonePreviewButtonState();
+        }
+
+        function updatePhonePreviewButtonState() {
+            const isMode = document.body.classList.contains('phone-preview-mode');
+            document.querySelectorAll('.btn-phone-preview').forEach(btn => {
+                btn.innerHTML = isMode ? '<i class="fas fa-mobile-alt mr-2 text-emerald-400"></i>スマホモード ON' : '<i class="fas fa-mobile-alt mr-2"></i>スマホモードで確認';
+                if (isMode) {
+                    btn.classList.add('bg-emerald-900/40', 'border-emerald-500/50', 'text-emerald-300');
+                    btn.classList.remove('bg-slate-700', 'hover:bg-slate-600', 'text-white');
+                } else {
+                    btn.classList.remove('bg-emerald-900/40', 'border-emerald-500/50', 'text-emerald-300');
+                    btn.classList.add('bg-slate-700', 'hover:bg-slate-600', 'text-white');
+                }
+            });
+        }
+
+        function resizeAllChartsSafe() {
+            const run = () => {
+                if (typeof map !== 'undefined' && map && typeof map.invalidateSize === 'function') {
+                    map.invalidateSize();
+                }
+                if (typeof charts !== 'undefined' && charts) {
+                    Object.values(charts).forEach(c => {
+                        if (c && typeof c.resize === 'function') c.resize();
+                    });
+                }
+            };
+            setTimeout(run, 100);
+            setTimeout(run, 500);
+        }
+
+
         function getRoutePlaybackKey(route) {
             return route ? route.id : null;
         }
@@ -1156,6 +1214,10 @@
             return ROUTE_COLORS.Unknown;
         }
 
+        function isMobileLikeView() {
+            return window.innerWidth <= 768 || document.body.classList.contains('phone-preview-mode');
+        }
+
         function showStartupScreen(msg) {
             const panel = document.getElementById('startup-panel');
             if (panel) panel.classList.remove('hidden');
@@ -1170,8 +1232,14 @@
         }
 
         function goHomeStartup() {
-            showStartupScreen();
             switchTab('dashboard');
+            setTimeout(() => {
+                const startup = document.getElementById('startup-panel');
+                if (startup) {
+                    startup.classList.remove('hidden');
+                    startup.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 100);
         }
 
         function safeSetText(id, val) { const el = document.getElementById(id); if (el) el.innerText = val; }
@@ -2366,7 +2434,7 @@
             safeSetText('dash-dist-week', (healthData.gpsSummaries || []).filter(r => r.date <= targetDate && new Date(r.date) >= weekCut).reduce((a,b)=>a+(b.distance||0), 0).toFixed(1));
             safeSetText('dash-dist-month', (healthData.gpsSummaries || []).filter(r => r.date <= targetDate && new Date(r.date) >= monCut).reduce((a,b)=>a+(b.distance||0), 0).toFixed(1));
             
-            // Scores (連動)
+            // Scores
             const rows = calcDailyHealthScores();
             if (rows.length) {
                 let latestIdx = rows.findIndex(r => r.date === targetDate);
@@ -2557,20 +2625,50 @@
 
         function buildRangeControl(canvasId) {
             const canvas = document.getElementById(canvasId); if (!canvas || canvas.dataset.uiAdded === '1') return;
-            const wrap = document.createElement('div'); wrap.className = 'chart-range-bar';
-            wrap.innerHTML = `<span class="chart-range-label">表示期間:</span><button class="chart-range-btn ${chartRanges[canvasId]===7?'active':''}" data-days="7">1週間</button><button class="chart-range-btn ${chartRanges[canvasId]===14?'active':''}" data-days="14">2週間</button><button class="chart-range-btn ${chartRanges[canvasId]===30?'active':''}" data-days="30">1か月</button><button class="chart-range-btn ${chartRanges[canvasId]==='all'?'active':''}" data-days="all">全区間</button>`;
+            const wrap = document.createElement('div'); wrap.className = 'chart-range-wrapper';
+            
+            let btnHtml = `<div class="chart-range-bar desktop-range-buttons"><span class="chart-range-label">表示期間:</span>`;
+            [7, 14, 30, 'all'].forEach(val => {
+                const label = val === 7 ? '1週間' : val === 14 ? '2週間' : val === 30 ? '1か月' : '全区間';
+                const active = chartRanges[canvasId] === val ? 'active' : '';
+                btnHtml += `<button class="chart-range-btn ${active}" data-days="${val}">${label}</button>`;
+            });
+            btnHtml += `</div>`;
+
+            let selHtml = `<select class="mobile-range-select bg-slate-900 border border-slate-700 text-white rounded-xl px-4 py-2 w-full font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[44px]">`;
+            [7, 14, 30, 'all'].forEach(val => {
+                const label = val === 7 ? '1週間' : val === 14 ? '2週間' : val === 30 ? '1か月' : '全区間';
+                const sel = chartRanges[canvasId] === val ? 'selected' : '';
+                selHtml += `<option value="${val}" ${sel}>表示期間: ${label}</option>`;
+            });
+            selHtml += `</select>`;
+
+            wrap.innerHTML = btnHtml + selHtml;
             canvas.parentElement.insertBefore(wrap, canvas);
-            wrap.querySelectorAll('button').forEach(btn => {
+
+            wrap.querySelectorAll('.chart-range-btn').forEach(btn => {
                 btn.onclick = () => {
-                    wrap.querySelectorAll('button').forEach(b => b.classList.remove('active')); btn.classList.add('active');
-                    chartRanges[canvasId] = btn.dataset.days === 'all' ? 'all' : parseInt(btn.dataset.days);
+                    wrap.querySelectorAll('.chart-range-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active');
+                    const val = btn.dataset.days === 'all' ? 'all' : parseInt(btn.dataset.days);
+                    wrap.querySelector('.mobile-range-select').value = val;
+                    chartRanges[canvasId] = val;
                     updateAllCharts();
                 };
             });
+            
+            wrap.querySelector('.mobile-range-select').onchange = (e) => {
+                const val = e.target.value === 'all' ? 'all' : parseInt(e.target.value);
+                wrap.querySelectorAll('.chart-range-btn').forEach(b => {
+                    b.classList.toggle('active', b.dataset.days == val);
+                });
+                chartRanges[canvasId] = val;
+                updateAllCharts();
+            };
+
             canvas.dataset.uiAdded = '1';
         }
 
-        // --- STREAMING_CHUNK:GPS Handling Logic ---
+        // --- GPS Handling Logic ---
         function getLatestGpsDate() {
             if (!healthData.gpsSummaries || healthData.gpsSummaries.length === 0) return null;
             let latest = healthData.gpsSummaries[0].date;
@@ -2696,13 +2794,6 @@
                 Array.isArray(r.representativePoints) && r.representativePoints.length >= 2
             );
 
-            console.log('[GPS_PLAYBACK_CHECK]', {
-                routes: Array.isArray(filteredRoutes) ? filteredRoutes.length : 0,
-                playable: !!playableRoute,
-                playablePoints: playableRoute?.representativePoints?.length || 0,
-                currentPlaybackRouteKey
-            });
-
             if (!playableRoute) {
                 pbControl.classList.add('hidden');
                 currentPlaybackRouteKey = null;
@@ -2723,6 +2814,17 @@
 
                 currentPlaybackRouteKey = nextKey;
                 initGpsPlayback(playableRoute);
+                
+                if (isMobileLikeView() && playableRoute.representativePoints && playableRoute.representativePoints.length >= 2) {
+                    setTimeout(() => {
+                        if (typeof map !== 'undefined' && map) {
+                            map.fitBounds(playableRoute.representativePoints, {
+                                padding: [12, 12],
+                                maxZoom: 18
+                            });
+                        }
+                    }, 200);
+                }
             } else {
                 pbControl.classList.remove('hidden');
             }
@@ -2780,7 +2882,7 @@
                     dateHeader.className = "flex items-center justify-between mb-4 mt-6 first:mt-2 relative z-10 w-full pr-4";
                     dateHeader.innerHTML = `
                         <div class="bg-slate-800 text-slate-300 px-3 py-1.5 text-[11px] font-bold rounded-full border border-slate-700 shadow-md ml-3 tracking-widest">${r.date}</div>
-                        <button onclick="playDateAllRoutes('${r.date}')" class="text-[10px] bg-emerald-600/20 text-emerald-400 hover:bg-emerald-500 hover:text-white px-2.5 py-1.5 rounded-md border border-emerald-500/30 transition-all shadow-sm flex items-center gap-1.5">
+                        <button onclick="playDateAllRoutes('${r.date}')" class="text-[10px] bg-emerald-600/20 text-emerald-400 hover:bg-emerald-500 hover:text-white px-2.5 py-1.5 rounded-md border border-emerald-500/30 transition-all shadow-sm flex items-center gap-1.5 min-h-[36px]">
                             <i class="fas fa-play"></i> 1日再生
                         </button>
                     `;
@@ -2829,18 +2931,29 @@
             mapLayers.markers.forEach(m => map.removeLayer(m)); mapLayers.markers = [];
             
             let totalDist = 0, validCount = 0, totalTime = 0; const bounds = L.latLngBounds();
+            const isMobile = isMobileLikeView();
             data.forEach(r => {
                 const pts = r.representativePoints || [];
                 if (pts.length >= 2) {
                     totalDist += r.distance; totalTime += (r.durationMinutes || 0); validCount++;
                     const routeColor = getRouteColor(r);
-                    const line = L.polyline(pts, { color: routeColor, weight: 5, opacity: 0.9 }).addTo(map);
+                    const line = L.polyline(pts, { 
+                        color: routeColor, 
+                        weight: isMobile ? 8 : 5, 
+                        opacity: 0.95 
+                    }).addTo(map);
                     mapLayers.allRoutes.push(line); pts.forEach(p => bounds.extend(p));
                 }
             });
             safeSetText('map-stat-dist', totalDist.toFixed(1)); safeSetText('map-stat-routes', `${data.length} / ${validCount}`);
             safeSetText('map-stat-time', validCount > 0 ? `${Math.floor(totalTime/60)}h ${totalTime%60}m` : "--"); safeSetText('map-stat-avg', totalTime > 0 ? (totalDist / (totalTime / 60)).toFixed(1) : "0.0");
-            if (bounds.isValid()) { map.invalidateSize(); map.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 }); }
+            if (bounds.isValid()) { 
+                map.invalidateSize(); 
+                map.fitBounds(bounds, { 
+                    padding: isMobile ? [12, 12] : [40, 40], 
+                    maxZoom: isMobile ? 17 : 14 
+                }); 
+            }
         }
 
         function focusRoute(id) {
@@ -2859,16 +2972,24 @@
             if (gpsPlaybackData.marker) { map.removeLayer(gpsPlaybackData.marker); gpsPlaybackData.marker = null; }
 
             const pts = r.representativePoints || [];
+            const isMobile = isMobileLikeView();
             if (pts.length >= 2) {
                 const routeColor = getRouteColor(r);
-                mapLayers.focusLine = L.polyline(pts, { color: routeColor, weight: 7, opacity: 1.0 }).addTo(map);
+                mapLayers.focusLine = L.polyline(pts, { 
+                    color: routeColor, 
+                    weight: isMobile ? 10 : 7, 
+                    opacity: 1.0 
+                }).addTo(map);
                 
                 const sIcon = L.divIcon({ html: '<div class="w-4 h-4 bg-blue-500 rounded-full border-[3px] border-white shadow-lg"></div>', className: '' });
                 const eIcon = L.divIcon({ html: '<div class="w-4 h-4 bg-rose-500 rounded-full border-[3px] border-white shadow-lg"></div>', className: '' });
                 mapLayers.markers.push(L.marker(r.start, { icon: sIcon }).addTo(map));
                 mapLayers.markers.push(L.marker(r.end, { icon: eIcon }).addTo(map));
                 
-                map.fitBounds(pts, { padding: [60, 60], maxZoom: 16 });
+                map.fitBounds(pts, { 
+                    padding: isMobile ? [12, 12] : [60, 60], 
+                    maxZoom: isMobile ? 18 : 16 
+                });
                 initGpsPlayback(r);
             }
         }
@@ -2893,7 +3014,12 @@
             routes.forEach((r) => {
                 const pts = r.representativePoints;
                 const routeColor = getRouteColor(r);
-                const line = L.polyline(pts, { color: routeColor, weight: 4, opacity: 0.8 }).addTo(map);
+                const isMobileLine = isMobileLikeView();
+                const line = L.polyline(pts, {
+                    color: routeColor,
+                    weight: isMobileLine ? 8 : 4,
+                    opacity: 0.9
+                }).addTo(map);
                 mapLayers.markers.push(line);
                 pts.forEach(p => bounds.extend(p));
                 allPts = allPts.concat(pts);
@@ -2905,7 +3031,11 @@
                 mapLayers.markers.push(L.marker(allPts[0], { icon: sIcon }).addTo(map));
                 mapLayers.markers.push(L.marker(allPts[allPts.length - 1], { icon: eIcon }).addTo(map));
                 
-                map.fitBounds(bounds, { padding: [60, 60], maxZoom: 16 });
+                const isMobile = isMobileLikeView();
+                map.fitBounds(bounds, { 
+                    padding: isMobile ? [12, 12] : [60, 60], 
+                    maxZoom: isMobile ? 18 : 16 
+                });
                 
                 const dummyRoute = {
                     id: `daily-all-${dateStr}`,
@@ -2921,11 +3051,6 @@
         function resetGpsFocus() { document.querySelectorAll('[id^="route-card-"] .glass-card').forEach(c => c.classList.remove('border-l-emerald-500', 'bg-emerald-900/10')); filterGpsData(); }
 
         function initGpsPlayback(route) {
-            console.log('[GPS_PLAYBACK_INIT]', {
-                points: route?.representativePoints?.length || 0,
-                name: route?.name,
-                date: route?.date
-            });
             const pts = route.representativePoints; if(!pts || pts.length < 2) return;
             document.getElementById('gps-playback-control').classList.remove('hidden');
             gpsPlaybackData.points = []; const steps = 8;
@@ -2941,8 +3066,29 @@
             slider.max = gpsPlaybackData.points.length - 1; 
             slider.value = 0;
 
-            const playIconHtml = `<div class="w-5 h-5 bg-emerald-500 rounded-full border-[3px] border-white shadow-[0_0_12px_rgba(16,185,129,0.9)]"></div>`;
-            gpsPlaybackData.marker = L.marker(gpsPlaybackData.points[0], {icon: L.divIcon({ html: playIconHtml, className: '', iconSize: [20,20], iconAnchor: [10,10] }), zIndexOffset: 1000}).addTo(map);
+            const isMobile = isMobileLikeView();
+            const markerSize = isMobile ? 28 : 20;
+            const markerBorder = isMobile ? 4 : 3;
+
+            const playIconHtml = `
+              <div style="
+                width:${markerSize}px;
+                height:${markerSize}px;
+                background:#10b981;
+                border-radius:9999px;
+                border:${markerBorder}px solid white;
+                box-shadow:0 0 18px rgba(16,185,129,0.95);
+              "></div>
+            `;
+            gpsPlaybackData.marker = L.marker(gpsPlaybackData.points[0], {
+                icon: L.divIcon({ 
+                    html: playIconHtml, 
+                    className: '', 
+                    iconSize: [markerSize, markerSize], 
+                    iconAnchor: [markerSize / 2, markerSize / 2] 
+                }), 
+                zIndexOffset: 1000
+            }).addTo(map);
             
             gpsPlaybackData.startTimeStr = route.startTimeStr || route.date + " Start";
             gpsPlaybackData.endTimeStr = route.endTimeStr || "End";

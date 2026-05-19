@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Health Activity Manager gv1.48</title>
-    <!-- gv1.48 mode switch strict preserve fix -->
+    <!-- gv1.48 mode switch strict preserve fix + data source visible chip fix -->
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
     <meta name="apple-mobile-web-app-title" content="HealthManager">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -272,6 +272,22 @@
 
 
         }
+    
+        /* Data source chip must always be visible. ACTIVE is app status; this chip is data status. */
+        #data-source-chip {
+            display: inline-flex !important;
+            align-items: center !important;
+        }
+        @media (max-width: 640px) {
+            #data-source-chip {
+                font-size: 9px !important;
+                padding: 4px 7px !important;
+                letter-spacing: .02em !important;
+            }
+            #data-source-chip .fa-database {
+                margin-right: 3px !important;
+            }
+        }
     </style>
 </head>
 <body class="text-slate-200 text-sm">
@@ -316,8 +332,8 @@
                 </div>
                 <div class="flex items-center gap-3">
                     <div id="sample-badge" class="hidden px-2 py-0.5 bg-amber-500/20 text-amber-400 text-[10px] rounded border border-amber-500/30 font-bold uppercase">Sample Data</div>
-                    <div id="data-source-chip" class="hidden px-2.5 py-1 rounded-full border border-slate-700 bg-slate-900/70 text-[10px] font-black tracking-widest uppercase text-slate-300 shadow-lg whitespace-nowrap">
-                        <i class="fas fa-database mr-1 text-slate-500"></i><span id="data-source-chip-text">DATA: --</span>
+                    <div id="data-source-chip" class="inline-flex items-center px-2.5 py-1 rounded-full border border-slate-700 bg-slate-900/80 text-[10px] font-black tracking-widest uppercase text-slate-300 shadow-lg whitespace-nowrap" title="データソース: 未読込">
+                        <i class="fas fa-database mr-1 text-slate-500"></i><span id="data-source-chip-text">DATA: 未読込</span>
                     </div>
                     <div id="status-indicator" class="text-xs text-slate-400 flex items-center uppercase tracking-tighter font-bold">
                         <span class="w-2 h-2 rounded-full bg-slate-600 mr-2"></span> Standby
@@ -2176,7 +2192,7 @@
 
             const summary = healthData?.summary || {};
             const kind = summary.sourceKind || (summary.isSample ? 'sample' : 'unknown');
-            const label = summary.sourceLabel || (kind === 'cloud' ? 'クラウド' : kind === 'local' ? 'ローカル' : kind === 'sample' ? 'サンプル' : '--');
+            const label = summary.sourceLabel || (kind === 'cloud' ? 'クラウド' : kind === 'local' ? 'ローカル' : kind === 'sample' ? 'サンプル' : '未読込');
             const files = summary.sourceFiles || summary.dataSource || '';
 
             chip.classList.remove('hidden', 'border-emerald-500/40', 'bg-emerald-500/10', 'text-emerald-300', 'border-cyan-500/40', 'bg-cyan-500/10', 'text-cyan-300', 'border-amber-500/40', 'bg-amber-500/10', 'text-amber-300', 'border-slate-700', 'bg-slate-900/70', 'text-slate-300');
@@ -2192,10 +2208,10 @@
                 text.innerHTML = `DATA: ${label}`;
             } else {
                 chip.classList.add('border-slate-700', 'bg-slate-900/70', 'text-slate-300');
-                text.innerHTML = 'DATA: --';
+                text.innerHTML = 'DATA: 未読込';
             }
 
-            if (files) chip.title = `参照データ: ${files}`;
+            chip.title = files ? `参照データ: ${files}` : `データソース: ${label}`;
         }
 
         function finalizeDataLoad() {
@@ -3689,6 +3705,7 @@
 
         window.onload = () => {
             loadSettings(); initMap(); switchTab('dashboard');
+            updateDataSourceChip();
             
             buildRangeControl('chart-health-score-trend');
             buildRangeControl('chart-weight-dash'); 

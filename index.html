@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Health Activity Manager gv1.48</title>
-    <!-- gv1.48 mode switch strict preserve fix + data source visible chip fix -->
+    <title>Health Activity Manager gv1.49</title>
+    <!-- gv1.49 local update opens file picker + data source visible chip fix -->
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
     <meta name="apple-mobile-web-app-title" content="HealthManager">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -16,7 +16,7 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
-        /* gv1.48 final mobile GPS CSS fix + import/drop hotfix by ChatGPT */
+        /* gv1.49 local update file-picker fix + GPS/import/drop hotfix by ChatGPT */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
         
         :root {
@@ -298,7 +298,7 @@
                 <h1 onclick="goHomeStartup()" class="text-xl font-bold text-blue-500 flex items-center tracking-tight cursor-pointer hover:text-blue-400 transition" title="スタート画面へ戻る">
                     <i class="fas fa-heartbeat mr-2 text-2xl"></i>HealthManager
                 </h1>
-                <p class="text-[10px] text-slate-500 font-mono mt-1 uppercase tracking-widest">gv1.48 OS PRO</p>
+                <p class="text-[10px] text-slate-500 font-mono mt-1 uppercase tracking-widest">gv1.49 OS PRO</p>
             </div>
             <nav class="flex-1 px-4 space-y-1 overflow-y-auto custom-scrollbar">
                 <button onclick="switchTab('dashboard')" class="nav-btn w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl transition" data-tab="dashboard">
@@ -356,7 +356,7 @@
                             </p>
                         </div>
                         <div class="flex flex-col sm:flex-row gap-3 justify-center flex-wrap">
-                            <button onclick="openDataImportPicker()" class="bg-emerald-700 hover:bg-emerald-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg transition-all w-full sm:w-auto">
+                            <button onclick="refreshFromLocalData()" class="bg-emerald-700 hover:bg-emerald-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg transition-all w-full sm:w-auto">
                                 <i class="fas fa-folder-open mr-2"></i>ローカルデータで更新
                             </button>
                             <button onclick="startDesktopDemoMode()" class="bg-slate-800 border border-slate-700 text-slate-300 px-6 py-3 rounded-xl font-bold hover:bg-slate-700 transition-all w-full sm:w-auto">
@@ -1057,7 +1057,7 @@
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div class="space-y-4">
                                         <div class="text-xs text-slate-400 leading-relaxed bg-slate-800 p-4 rounded-xl border border-slate-700">
-                                            <i class="fas fa-info-circle mr-1 text-blue-400"></i> 起動時はクラウドの data/health-manager-data.json を自動読込します。更新する場合は、ダッシュボード上部の「ローカルデータで更新」からZIP / JSONを選択してください。
+                                            <i class="fas fa-info-circle mr-1 text-blue-400"></i> 起動時はクラウドの data/health-manager-data.json を自動読込します。「ローカルデータで更新」はクラウド再読込ではなく、ローカルPCのZIP / JSON選択を開きます。
                                         </div>
                                         <button onclick="goHomeStartup()" class="w-full bg-slate-700 hover:bg-slate-600 py-4 rounded-xl font-bold transition shadow-lg flex items-center justify-center gap-2 text-white min-h-[44px]">
                                             <i class="fas fa-home mr-1"></i> 読み込み画面を開く
@@ -1112,7 +1112,7 @@
     <script>
         // --- Global Variables Setup ---
         let healthData = {
-            summary: { version: "gv1.48", isSample: false, updatedAt: null, heightCm: 170, targetWeight: 65 },
+            summary: { version: "gv1.49", isSample: false, updatedAt: null, heightCm: 170, targetWeight: 65 },
             weight: {}, steps: {}, sleep: {}, heartRate: {}, hrv: {},
             gpsSummaries: []
         };
@@ -1534,7 +1534,7 @@
             const targetData = isLightweight ? data.healthData : data;
             
             const defSummary = { 
-                version: "gv1.48", 
+                version: "gv1.49", 
                 heightCm: data.profile?.heightCm || data.summary?.heightCm || 170, 
                 targetWeight: data.profile?.targetWeightKg || data.summary?.targetWeight || 65, 
                 isSample: false, 
@@ -2059,6 +2059,7 @@
 
         async function importUserFiles(files) {
             const fileList = Array.from(files || []).filter(Boolean);
+            console.info(`[LOCAL_IMPORT] selected files=${fileList.map(f => f.name || 'unknown').join(', ')}`);
             if (fileList.length === 0) return;
 
             showLoader(true);
@@ -2151,9 +2152,30 @@
             }
         }
 
+        function refreshFromLocalData() {
+            // gv1.49: update means local file selection, not cloud refetch.
+            // Browsers cannot read arbitrary local PC files without user selection,
+            // so this intentionally opens the local ZIP/JSON picker.
+            const chip = document.getElementById('data-source-chip');
+            const chipText = document.getElementById('data-source-chip-text');
+            if (chip && chipText) {
+                chip.classList.remove('hidden', 'border-cyan-500/40', 'bg-cyan-500/10', 'text-cyan-300', 'border-amber-500/40', 'bg-amber-500/10', 'text-amber-300', 'border-slate-700', 'bg-slate-900/70', 'text-slate-300');
+                chip.classList.add('border-emerald-500/40', 'bg-emerald-500/10', 'text-emerald-300');
+                chipText.innerHTML = 'DATA: ローカル選択待ち';
+                chip.title = 'ローカルPCのZIP / JSONを選択してください';
+            }
+            openDataImportPicker();
+        }
+
         function openDataImportPicker() {
             const input = document.getElementById('file-input-main');
-            if (input) input.click();
+            if (!input) {
+                console.error('[LOCAL_IMPORT] file-input-main was not found');
+                alert('ローカル読込用のファイル選択UIが見つかりません。');
+                return;
+            }
+            input.value = '';
+            input.click();
         }
 
         async function handleFileSelect(e) {
@@ -3667,7 +3689,7 @@
         function exportJSON() { 
             const dataToExport = {
                 schemaVersion: "1.0",
-                appVersion: "gv1.48",
+                appVersion: "gv1.49",
                 generatedAt: new Date().toISOString(),
                 sourceSummary: {
                     weightDays: Object.keys(healthData.weight || {}).length,

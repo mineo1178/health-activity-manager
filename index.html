@@ -316,6 +316,9 @@
                 </div>
                 <div class="flex items-center gap-3">
                     <div id="sample-badge" class="hidden px-2 py-0.5 bg-amber-500/20 text-amber-400 text-[10px] rounded border border-amber-500/30 font-bold uppercase">Sample Data</div>
+                    <div id="data-source-chip" class="hidden px-2.5 py-1 rounded-full border border-slate-700 bg-slate-900/70 text-[10px] font-black tracking-widest uppercase text-slate-300 shadow-lg whitespace-nowrap">
+                        <i class="fas fa-database mr-1 text-slate-500"></i><span id="data-source-chip-text">DATA: --</span>
+                    </div>
                     <div id="status-indicator" class="text-xs text-slate-400 flex items-center uppercase tracking-tighter font-bold">
                         <span class="w-2 h-2 rounded-full bg-slate-600 mr-2"></span> Standby
                     </div>
@@ -333,12 +336,12 @@
                         <div>
                             <h2 class="text-2xl md:text-3xl font-black mb-3 tracking-tight uppercase text-white">Health OS Active</h2>
                             <p id="startup-message" class="text-slate-400 text-sm max-w-md mx-auto leading-relaxed">
-                                data/health-manager-data.json を再読込します。<br>新しいZIP / JSONを取り込む場合は、画面へドラッグ＆ドロップしてください。
+                                起動時はクラウドの軽量JSONを自動読込します。<br>更新する場合はローカルPCのZIP / JSONを選択してください。
                             </p>
                         </div>
                         <div class="flex flex-col sm:flex-row gap-3 justify-center flex-wrap">
-                            <button onclick="tryAutoLoadDataFiles()" class="bg-emerald-700 hover:bg-emerald-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg transition-all w-full sm:w-auto">
-                                <i class="fas fa-sync-alt mr-2"></i>データを読み込む／更新する
+                            <button onclick="openDataImportPicker()" class="bg-emerald-700 hover:bg-emerald-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg transition-all w-full sm:w-auto">
+                                <i class="fas fa-folder-open mr-2"></i>ローカルデータで更新
                             </button>
                             <button onclick="startDesktopDemoMode()" class="bg-slate-800 border border-slate-700 text-slate-300 px-6 py-3 rounded-xl font-bold hover:bg-slate-700 transition-all w-full sm:w-auto">
                                 <i class="fas fa-desktop mr-2"></i>デスクトップモード
@@ -347,7 +350,7 @@
                                 <i class="fas fa-mobile-alt mr-2"></i>スマホモード
                             </button>
                         </div>
-                        <p class="text-xs text-slate-500 leading-relaxed">Apple Health ZIP と Google Location JSON は、画面へのドラッグ＆ドロップで取り込めます。</p>
+                        <p class="text-xs text-slate-500 leading-relaxed">Apple Health ZIP と Google Location JSON は、ボタン選択またはドラッグ＆ドロップで取り込めます。</p>
                         <input type="file" id="file-input-main" class="hidden" multiple accept=".zip,.json,application/zip,application/json" onchange="handleFileSelect(event)">
                     </section>
 
@@ -1038,7 +1041,7 @@
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div class="space-y-4">
                                         <div class="text-xs text-slate-400 leading-relaxed bg-slate-800 p-4 rounded-xl border border-slate-700">
-                                            <i class="fas fa-info-circle mr-1 text-blue-400"></i> ダッシュボード上部の「データを読み込む／更新する」は、data/health-manager-data.json の自動再読込です。新しいZIP / JSONは画面へドラッグ＆ドロップしてください。
+                                            <i class="fas fa-info-circle mr-1 text-blue-400"></i> 起動時はクラウドの data/health-manager-data.json を自動読込します。更新する場合は、ダッシュボード上部の「ローカルデータで更新」からZIP / JSONを選択してください。
                                         </div>
                                         <button onclick="goHomeStartup()" class="w-full bg-slate-700 hover:bg-slate-600 py-4 rounded-xl font-bold transition shadow-lg flex items-center justify-center gap-2 text-white min-h-[44px]">
                                             <i class="fas fa-home mr-1"></i> 読み込み画面を開く
@@ -1921,6 +1924,9 @@
 
             dedupeAutoGps();
             healthData.summary.dataSource = [health ? 'Apple Health ZIP' : null, location ? 'Location History JSON' : null].filter(Boolean).join(' + ') + ' (生データ)';
+            healthData.summary.sourceKind = 'cloud';
+            healthData.summary.sourceLabel = 'クラウド';
+            healthData.summary.sourceFiles = [health?.name, location?.name].filter(Boolean).join(', ') || 'data/*';
             healthData.summary.privacyMode = 'full-gps';
             
             if (Object.keys(healthData.weight).length === 0 && Object.keys(healthData.steps).length === 0 && healthData.gpsSummaries.length === 0) {
@@ -1985,6 +1991,13 @@
                     health ? 'Apple Health ZIP' : null,
                     location ? `Location History JSON(${rawGpsCount} routes)` : null
                 ].filter(Boolean).join(' + ') || 'Auto Load';
+                healthData.summary.sourceKind = 'cloud';
+                healthData.summary.sourceLabel = 'クラウド';
+                healthData.summary.sourceFiles = [
+                    lightweight?.name,
+                    health?.name,
+                    location?.name
+                ].filter(Boolean).join(', ') || 'data/health-manager-data.json';
                 healthData.summary.updatedAt = new Date().toISOString();
                 healthData.summary.isSample = false;
 
@@ -2093,6 +2106,9 @@
                     zipFiles.length ? `Apple Health ZIP x${zipFiles.length}` : null,
                     timelineJsons.length ? `Location History JSON x${timelineJsons.length}` : null
                 ].filter(Boolean).join(' + ') || '手動インポート';
+                healthData.summary.sourceKind = 'local';
+                healthData.summary.sourceLabel = 'ローカル';
+                healthData.summary.sourceFiles = fileList.map(f => f.name || 'unknown').join(', ');
                 healthData.summary.updatedAt = new Date().toISOString();
                 healthData.summary.isSample = false;
                 healthData.summary.privacyMode = timelineJsons.length ? 'full-gps' : (healthData.summary.privacyMode || 'full-gps');
@@ -2153,9 +2169,39 @@
             });
         }
 
+        function updateDataSourceChip() {
+            const chip = document.getElementById('data-source-chip');
+            const text = document.getElementById('data-source-chip-text');
+            if (!chip || !text) return;
+
+            const summary = healthData?.summary || {};
+            const kind = summary.sourceKind || (summary.isSample ? 'sample' : 'unknown');
+            const label = summary.sourceLabel || (kind === 'cloud' ? 'クラウド' : kind === 'local' ? 'ローカル' : kind === 'sample' ? 'サンプル' : '--');
+            const files = summary.sourceFiles || summary.dataSource || '';
+
+            chip.classList.remove('hidden', 'border-emerald-500/40', 'bg-emerald-500/10', 'text-emerald-300', 'border-cyan-500/40', 'bg-cyan-500/10', 'text-cyan-300', 'border-amber-500/40', 'bg-amber-500/10', 'text-amber-300', 'border-slate-700', 'bg-slate-900/70', 'text-slate-300');
+
+            if (kind === 'local') {
+                chip.classList.add('border-emerald-500/40', 'bg-emerald-500/10', 'text-emerald-300');
+                text.innerHTML = `DATA: ${label}`;
+            } else if (kind === 'cloud') {
+                chip.classList.add('border-cyan-500/40', 'bg-cyan-500/10', 'text-cyan-300');
+                text.innerHTML = `DATA: ${label}`;
+            } else if (kind === 'sample') {
+                chip.classList.add('border-amber-500/40', 'bg-amber-500/10', 'text-amber-300');
+                text.innerHTML = `DATA: ${label}`;
+            } else {
+                chip.classList.add('border-slate-700', 'bg-slate-900/70', 'text-slate-300');
+                text.innerHTML = 'DATA: --';
+            }
+
+            if (files) chip.title = `参照データ: ${files}`;
+        }
+
         function finalizeDataLoad() {
             hideStartupScreen();
             const sampleBadge = document.getElementById('sample-badge'); if (sampleBadge) sampleBadge.classList.toggle('hidden', !healthData.summary.isSample);
+            updateDataSourceChip();
             const ind = document.getElementById('status-indicator'); if (ind) ind.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 mr-2 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span> Active`;
             
             const importLog = { weightDays: Object.keys(healthData.weight).length, stepDays: Object.keys(healthData.steps).length, sleepDays: Object.keys(healthData.sleep).length, heartDays: Object.keys(healthData.heartRate).length, hrvDays: Object.keys(healthData.hrv).length, gpsRoutes: (healthData.gpsSummaries || []).length };
@@ -2166,11 +2212,13 @@
                 const metaHtml = `
                     <div class="col-span-full mb-2 p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg text-xs text-blue-300">
                         <div class="font-bold mb-1"><i class="fas fa-database mr-1"></i>データソース情報</div>
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-2 opacity-80">
+                        <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 mt-2 opacity-80">
+                            <div>種別: ${healthData.summary.sourceLabel || (healthData.summary.sourceKind === 'cloud' ? 'クラウド' : healthData.summary.sourceKind === 'local' ? 'ローカル' : '未判定')}</div>
                             <div>ソース: ${healthData.summary.dataSource || 'ローカル/手動'}</div>
                             <div>生成日時: ${healthData.summary.updatedAt ? new Date(healthData.summary.updatedAt).toLocaleString('ja-JP') : '--'}</div>
                             <div>GPSモード: ${healthData.summary.privacyMode || 'full-gps'}</div>
                         </div>
+                        <div class="mt-2 truncate opacity-70" title="${healthData.summary.sourceFiles || ''}">参照: ${healthData.summary.sourceFiles || '--'}</div>
                     </div>
                 `;
 

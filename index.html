@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Health Activity Manager gv1.48</title>
+    <!-- gv1.48 mode switch strict preserve fix -->
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
     <meta name="apple-mobile-web-app-title" content="HealthManager">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -15,7 +16,7 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
-        /* gv1.48 final mobile GPS CSS fix by ChatGPT */
+        /* gv1.48 final mobile GPS CSS fix + import/drop hotfix by ChatGPT */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
         
         :root {
@@ -105,15 +106,15 @@
             body { height: 100dvh; }
             
             main .flex-1.overflow-y-auto {
-                padding-bottom: calc(var(--mobile-nav-height) + 96px + env(safe-area-inset-bottom)) !important;
-                scroll-padding-bottom: calc(var(--mobile-nav-height) + 96px + env(safe-area-inset-bottom)) !important;
+                padding-bottom: calc(var(--mobile-nav-height) + 16px + env(safe-area-inset-bottom)) !important;
+                scroll-padding-bottom: calc(var(--mobile-nav-height) + 16px + env(safe-area-inset-bottom)) !important;
             }
             
             .tab-content:not(#tab-gps) {
-                padding-bottom: calc(var(--mobile-nav-height) + 140px + env(safe-area-inset-bottom)) !important;
+                padding-bottom: calc(var(--mobile-nav-height) + 24px + env(safe-area-inset-bottom)) !important;
             }
             .tab-content:not(#tab-gps)::after {
-                content: ""; display: block; height: calc(var(--mobile-nav-height) + 72px + env(safe-area-inset-bottom)); flex: 0 0 auto;
+                content: ""; display: block; height: calc(16px + env(safe-area-inset-bottom)); flex: 0 0 auto;
             }
             
             .chart-container { height: 320px !important; min-height: 320px !important; }
@@ -161,7 +162,7 @@
             #gps-type-counts { padding: 4px 8px !important; font-size: 10px !important; gap: 4px !important; }
 
             .gps-route-panel { flex: 0 0 auto !important; height: auto !important; overflow: visible !important; width: 100% !important; }
-            #gps-route-list { min-height: 0 !important; overflow: visible !important; padding: 12px 14px calc(var(--mobile-nav-height) + 40px + env(safe-area-inset-bottom)) !important; margin-top: 0 !important; }
+            #gps-route-list { min-height: 0 !important; overflow: visible !important; padding: 12px 14px calc(var(--mobile-nav-height) + 24px + env(safe-area-inset-bottom)) !important; margin-top: 0 !important; }
             #gps-route-list .glass-card, #gps-route-list [id^="route-card-"] { position: relative !important; z-index: 1 !important; transform: none !important; }
 
             /* Stats Card Mobile Flattening */
@@ -180,6 +181,13 @@
             #gps-play-start, #gps-play-end { font-size: 10px !important; }
             #gps-play-current { font-size: 11px !important; padding: 2px 6px !important; }
             #gps-play-icon { font-size: 14px !important; }
+
+            /* Mobile route cards: show the same route details as desktop without horizontal clipping */
+            #gps-route-list .gps-route-card-main { padding: 12px !important; }
+            #gps-route-list .gps-route-card-title { white-space: normal !important; overflow: visible !important; text-overflow: clip !important; }
+            #gps-route-list .gps-route-metrics { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 6px !important; }
+            #gps-route-list .gps-route-metric { border-left: 0 !important; padding-left: 0 !important; min-width: 0 !important; }
+            #gps-route-list .gps-route-metric span { overflow-wrap: anywhere !important; }
         }
 
         /* ==========================================================
@@ -201,9 +209,9 @@
         body.phone-preview-mode aside { display: none !important; }
         body.phone-preview-mode nav.fixed.bottom-0, body.phone-preview-mode nav.md\:hidden { display: flex !important; position: absolute; z-index: 9999 !important; }
         
-        body.phone-preview-mode main .flex-1.overflow-y-auto { padding-bottom: 180px !important; scroll-padding-bottom: 180px !important; }
-        body.phone-preview-mode .tab-content:not(#tab-gps) { padding-bottom: 220px !important; }
-        body.phone-preview-mode .tab-content:not(#tab-gps)::after { content: ""; display: block; height: 150px; flex: 0 0 auto; }
+        body.phone-preview-mode main .flex-1.overflow-y-auto { padding-bottom: 96px !important; scroll-padding-bottom: 96px !important; }
+        body.phone-preview-mode .tab-content:not(#tab-gps) { padding-bottom: 104px !important; }
+        body.phone-preview-mode .tab-content:not(#tab-gps)::after { content: ""; display: block; height: 24px; flex: 0 0 auto; }
         
         body.phone-preview-mode .md\:flex-row { flex-direction: column !important; }
         body.phone-preview-mode .md\:items-start { align-items: stretch !important; }
@@ -244,7 +252,7 @@
         body.phone-preview-mode #gps-type-counts { padding: 4px 8px !important; font-size: 10px !important; gap: 4px !important; }
         
         body.phone-preview-mode .gps-route-panel { flex: 0 0 auto !important; height: auto !important; overflow: visible !important; width: 100% !important; }
-        body.phone-preview-mode #gps-route-list { min-height: 0 !important; overflow: visible !important; padding: 12px 14px 180px !important; margin-top: 0 !important; }
+        body.phone-preview-mode #gps-route-list { min-height: 0 !important; overflow: visible !important; padding: 12px 14px 96px !important; margin-top: 0 !important; }
         body.phone-preview-mode #gps-route-list .glass-card, body.phone-preview-mode #gps-route-list [id^="route-card-"] { position: relative !important; z-index: 1 !important; transform: none !important; }
 
         body.phone-preview-mode .map-stats-card { position: absolute !important; left: 8px !important; right: 8px !important; bottom: 8px !important; top: auto !important; transform: none !important; max-width: none !important; z-index: 420 !important; pointer-events: none !important; }
@@ -325,15 +333,12 @@
                         <div>
                             <h2 class="text-2xl md:text-3xl font-black mb-3 tracking-tight uppercase text-white">Health OS Active</h2>
                             <p id="startup-message" class="text-slate-400 text-sm max-w-md mx-auto leading-relaxed">
-                                data/health-manager-data.json を最優先で読み込みます。<br>見つからない場合は生データを自動読込します。
+                                data/health-manager-data.json を再読込します。<br>新しいZIP / JSONを取り込む場合は、画面へドラッグ＆ドロップしてください。
                             </p>
                         </div>
                         <div class="flex flex-col sm:flex-row gap-3 justify-center flex-wrap">
-                            <button onclick="tryAutoLoadDataFiles()" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-xl font-bold shadow-lg transition-all w-full sm:w-auto">
-                                自動読込を再試行
-                            </button>
-                            <button onclick="document.getElementById('file-input-main').click()" class="bg-emerald-700 hover:bg-emerald-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg transition-all w-full sm:w-auto">
-                                ZIP / JSON を手動読込
+                            <button onclick="tryAutoLoadDataFiles()" class="bg-emerald-700 hover:bg-emerald-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg transition-all w-full sm:w-auto">
+                                <i class="fas fa-sync-alt mr-2"></i>データを読み込む／更新する
                             </button>
                             <button onclick="startDesktopDemoMode()" class="bg-slate-800 border border-slate-700 text-slate-300 px-6 py-3 rounded-xl font-bold hover:bg-slate-700 transition-all w-full sm:w-auto">
                                 <i class="fas fa-desktop mr-2"></i>デスクトップモード
@@ -342,7 +347,8 @@
                                 <i class="fas fa-mobile-alt mr-2"></i>スマホモード
                             </button>
                         </div>
-                        <input type="file" id="file-input-main" class="hidden" onchange="handleFileSelect(event)">
+                        <p class="text-xs text-slate-500 leading-relaxed">Apple Health ZIP と Google Location JSON は、画面へのドラッグ＆ドロップで取り込めます。</p>
+                        <input type="file" id="file-input-main" class="hidden" multiple accept=".zip,.json,application/zip,application/json" onchange="handleFileSelect(event)">
                     </section>
 
                     <section id="daily-summary-section" class="glass-card p-5 md:p-6 space-y-5 border-t-4 border-emerald-500">
@@ -1031,14 +1037,12 @@
                                 <h3 class="text-sm font-bold text-slate-300 uppercase mb-4 tracking-widest">データ管理</h3>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div class="space-y-4">
-                                        <button onclick="document.getElementById('file-input-set').click()" class="w-full bg-blue-600 hover:bg-blue-500 py-4 rounded-xl font-bold transition shadow-lg flex flex-col gap-1 items-center justify-center text-white min-h-[44px]">
-                                            <span class="text-base"><i class="fas fa-file-import mr-2"></i>ZIP / JSON を手動読込</span>
-                                            <span class="text-xs opacity-80 font-normal">通常は自動読込。変更時のみ使用</span>
+                                        <div class="text-xs text-slate-400 leading-relaxed bg-slate-800 p-4 rounded-xl border border-slate-700">
+                                            <i class="fas fa-info-circle mr-1 text-blue-400"></i> ダッシュボード上部の「データを読み込む／更新する」は、data/health-manager-data.json の自動再読込です。新しいZIP / JSONは画面へドラッグ＆ドロップしてください。
+                                        </div>
+                                        <button onclick="goHomeStartup()" class="w-full bg-slate-700 hover:bg-slate-600 py-4 rounded-xl font-bold transition shadow-lg flex items-center justify-center gap-2 text-white min-h-[44px]">
+                                            <i class="fas fa-home mr-1"></i> 読み込み画面を開く
                                         </button>
-                                        <input type="file" id="file-input-set" class="hidden" onchange="handleFileSelect(event)">
-                                        <p class="text-xs text-slate-400 leading-relaxed bg-slate-800 p-4 rounded-xl border border-slate-700">
-                                            <i class="fas fa-info-circle mr-1 text-blue-400"></i> ZIP解析はPC推奨です。モバイルではブラウザが停止する可能性があります。
-                                        </p>
                                     </div>
                                     <div class="space-y-4">
                                         <button onclick="startPhoneDemoMode()" class="btn-phone-preview w-full bg-slate-700 hover:bg-slate-600 py-4 rounded-xl font-bold transition flex items-center justify-center gap-2 text-white shadow-lg mb-3 min-h-[44px]">
@@ -1132,28 +1136,102 @@
         };
 
         // --- Demo Modes & Window Sizing ---
+        // gv1.48 strict mode-switch GPS preservation fix by ChatGPT
+        function hasLoadedHealthOrGpsData() {
+            try {
+                return !!(
+                    Object.keys(healthData.weight || {}).length ||
+                    Object.keys(healthData.steps || {}).length ||
+                    Object.keys(healthData.sleep || {}).length ||
+                    Object.keys(healthData.heartRate || {}).length ||
+                    Object.keys(healthData.hrv || {}).length ||
+                    (Array.isArray(healthData.gpsSummaries) && healthData.gpsSummaries.length)
+                );
+            } catch (err) {
+                console.warn('[MODE_SWITCH] hasLoadedHealthOrGpsData failed', err);
+                return false;
+            }
+        }
+
+        function shouldLoadSampleForModeStart() {
+            const startup = document.getElementById('startup-panel');
+            const startupVisible = !!(startup && !startup.classList.contains('hidden'));
+            return startupVisible && !hasLoadedHealthOrGpsData();
+        }
+
+        function getGpsRoutesForCurrentFilterSafe() {
+            try {
+                const routes = Array.isArray(healthData.gpsSummaries) ? healthData.gpsSummaries : [];
+                if (!routes.length) return [];
+                const mode = gpsFilterState.mode || '1d';
+                if (mode === 'all') return routes;
+                if (typeof getGpsDateRangeByMode !== 'function' || typeof filterGpsRoutesByDateRange !== 'function') return routes;
+                const range = getGpsDateRangeByMode(mode);
+                return filterGpsRoutesByDateRange(routes, range.start, range.end);
+            } catch (err) {
+                console.warn('[MODE_SWITCH] getGpsRoutesForCurrentFilterSafe failed', err);
+                return [];
+            }
+        }
+
+        function resetGpsBaseDateToLatestIfCurrentFilterEmpty(reason = 'mode-switch') {
+            try {
+                const routes = Array.isArray(healthData.gpsSummaries) ? healthData.gpsSummaries : [];
+                if (!routes.length || gpsFilterState.mode === 'all') return false;
+                const currentlyVisible = getGpsRoutesForCurrentFilterSafe();
+                if (currentlyVisible.length > 0) return false;
+                const latest = (typeof getLatestGpsDate === 'function') ? getLatestGpsDate() : null;
+                if (!latest) return false;
+                gpsFilterState.baseDate = latest;
+                const input = document.getElementById('gps-filter-base-date');
+                if (input) input.value = latest;
+                console.info(`[MODE_SWITCH] ${reason}: GPS filter was empty; reset baseDate to latest=${latest}`);
+                return true;
+            } catch (err) {
+                console.warn('[MODE_SWITCH] resetGpsBaseDateToLatestIfCurrentFilterEmpty failed', err);
+                return false;
+            }
+        }
+
+        function refreshLayoutAfterModeSwitch() {
+            // Important: display-mode switching must be visual only. Never call loadSampleData() here,
+            // because it overwrites real GPS data and leaves stale GPS filter dates such as 0/0 routes.
+            updatePhonePreviewButtonState();
+            const run = (reason) => {
+                resizeAllChartsSafe();
+                if (typeof map !== 'undefined' && map && typeof map.invalidateSize === 'function') {
+                    map.invalidateSize();
+                }
+                const gpsTab = document.getElementById('tab-gps');
+                if (gpsTab && gpsTab.classList.contains('active') && typeof filterGpsData === 'function') {
+                    resetGpsBaseDateToLatestIfCurrentFilterEmpty(reason);
+                    filterGpsData();
+                }
+            };
+            setTimeout(() => run('mode-switch-350ms'), 350);
+            setTimeout(() => run('mode-switch-900ms'), 900);
+        }
+
         function startDesktopDemoMode() {
             document.body.classList.remove('phone-preview-mode');
             localStorage.setItem('health-phone-preview', '0');
-            loadSampleData();
-            updatePhonePreviewButtonState();
-            setTimeout(resizeAllChartsSafe, 300);
+            console.info('[MODE_SWITCH] desktop mode: visual mode only; preserving current healthData');
+            refreshLayoutAfterModeSwitch();
         }
 
         function startPhoneDemoMode() {
             document.body.classList.add('phone-preview-mode');
             localStorage.setItem('health-phone-preview', '1');
-            loadSampleData();
-            updatePhonePreviewButtonState();
-            setTimeout(resizeAllChartsSafe, 300);
+            console.info('[MODE_SWITCH] phone mode: visual mode only; preserving current healthData');
+            refreshLayoutAfterModeSwitch();
         }
 
         function togglePhonePreviewMode() {
             document.body.classList.toggle('phone-preview-mode');
             const isMode = document.body.classList.contains('phone-preview-mode');
             localStorage.setItem('health-phone-preview', isMode ? '1' : '0');
-            updatePhonePreviewButtonState();
-            resizeAllChartsSafe();
+            console.info(`[MODE_SWITCH] toggle phone preview=${isMode}: visual mode only; preserving current healthData`);
+            refreshLayoutAfterModeSwitch();
         }
 
         function restorePhonePreviewMode() {
@@ -1322,6 +1400,7 @@
                         map.invalidateSize();
                     }
                     if (typeof filterGpsData === 'function') {
+                        resetGpsBaseDateToLatestIfCurrentFilterEmpty('switchTab-gps');
                         filterGpsData();
                     }
                 }, 300);
@@ -1372,9 +1451,30 @@
             L.control.zoom({ position: 'bottomright' }).addTo(map);
         }
 
-        const AUTO_LIGHT_JSON_FILE = 'health-manager-data.json';
-        const AUTO_HEALTH_FILE = '書き出したデータ.zip';
-        const AUTO_LOCATION_FILE = 'location-history.json';
+        // Auto-load candidates. The app cannot list local folders, so it probes common committed file names.
+        const AUTO_LIGHT_JSON_FILE = ['health-manager-data.json', 'health-manager-data (1).json', 'health-manager-data(1).json'];
+        const AUTO_HEALTH_FILE = ['書き出したデータ.zip', '書き出したデータ (1).zip', '書き出したデータ(1).zip', '書き出したデータ.zip', '書き出したデータ (1).zip', 'apple_health_export.zip', 'export.zip'];
+        const AUTO_LOCATION_FILE = [
+            'location-history.json',
+            'location-history .json',
+            'location-history  .json',
+            'location-history (1).json',
+            'location-history(1).json',
+            'location-history (2).json',
+            'location-history(2).json',
+            'location-history (3).json',
+            'location-history(3).json',
+            'location-history (4).json',
+            'location-history(4).json',
+            'location-history (5).json',
+            'location-history(5).json',
+            'Records.json',
+            'Records (1).json',
+            'Records(1).json',
+            'Semantic Location History.json',
+            'Semantic Location History (1).json',
+            'Semantic Location History(1).json'
+        ];
 
         function uniqueArray(list) { return Array.from(new Set(list.filter(Boolean))); }
 
@@ -1392,16 +1492,19 @@
         }
 
         async function fetchFirstAvailable(fileName, label, asJson = false) {
-            const urls = buildCandidateUrls(fileName);
+            const fileNames = Array.isArray(fileName) ? fileName : [fileName];
+            const urls = uniqueArray(fileNames.flatMap(name => buildCandidateUrls(name)));
             for (const url of urls) {
                 try {
                     const res = await fetch(url, { cache: 'no-store' });
                     if (res.ok) {
+                        console.info(`[AUTO_LOAD] ${label}: ${url}`);
                         if (asJson) return { url, data: await res.json() };
                         return { url, blob: await res.blob() };
                     }
                 } catch (e) {}
             }
+            console.info(`[AUTO_LOAD] ${label}: not found`, fileNames);
             return null;
         }
 
@@ -1441,10 +1544,30 @@
         }
 
         function parseGeoPoint(value) {
-            if (!value || typeof value !== 'string') return null;
-            const m = value.match(/geo:\s*(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/);
+            if (!value) return null;
+            if (Array.isArray(value) && value.length >= 2) {
+                const lat = parseFloat(value[0]);
+                const lng = parseFloat(value[1]);
+                return Number.isFinite(lat) && Number.isFinite(lng) ? [lat, lng] : null;
+            }
+            if (typeof value === 'object') {
+                if (value.latLng) return parseGeoPoint(value.latLng);
+                if (value.point) return parseGeoPoint(value.point);
+                const latRaw = value.latitudeE7 ?? value.latitude ?? value.lat;
+                const lngRaw = value.longitudeE7 ?? value.longitude ?? value.lng ?? value.lon ?? value.long;
+                if (latRaw == null || lngRaw == null) return null;
+                const latNum = Number(latRaw);
+                const lngNum = Number(lngRaw);
+                const lat = Math.abs(latNum) > 1000 ? latNum / 1e7 : latNum;
+                const lng = Math.abs(lngNum) > 1000 ? lngNum / 1e7 : lngNum;
+                return Number.isFinite(lat) && Number.isFinite(lng) ? [lat, lng] : null;
+            }
+            if (typeof value !== 'string') return null;
+            const cleaned = value.trim();
+            const m = cleaned.match(/(?:geo:)?\s*(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/i);
             if (!m) return null;
-            const lat = parseFloat(m[1]), lng = parseFloat(m[2]);
+            const lat = parseFloat(m[1]);
+            const lng = parseFloat(m[2]);
             if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
             return [lat, lng];
         }
@@ -1474,65 +1597,207 @@
             return 'Unknown';
         }
 
-        function parseLocationHistoryJson(json) {
-            const rows = Array.isArray(json) ? json : (json.timelineObjects || json.semanticSegments || []);
-            const routes = [];
-            rows.forEach((row, idx) => {
-                if (row.activity) {
-                    const act = row.activity;
-                    const start = parseGeoPoint(act.start); const end = parseGeoPoint(act.end);
-                    if (!start || !end) return;
-                    const startDate = new Date(row.startTime || Date.now()); const endDate = new Date(row.endTime || row.startTime || Date.now());
-                    const durationMinutes = Math.max(0, Math.round((endDate - startDate) / 60000));
-                    const distanceKm = parseFloat(((parseFloat(act.distanceMeters || 0)) / 1000).toFixed(2));
-                    const rawType = act.topCandidate?.type || 'activity';
-                    const type = classifyGoogleActivity(rawType, distanceKm, durationMinutes);
-                    const subType = type === 'Travel' ? classifyGoogleTravelSubType(rawType, distanceKm, durationMinutes) : 'Unknown';
-                    const startTimeStr = startDate.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' });
-                    const endTimeStr = endDate.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' });
 
-                    routes.push({
-                        id: 'lh-act-' + idx + '-' + Math.random().toString(36).slice(2),
-                        date: startDate.toISOString().substring(0, 10), name: `${rawType} / Location History`,
-                        type, subType, rawType, distance: distanceKm, durationMinutes, avgSpeed: durationMinutes > 0 ? parseFloat((distanceKm / (durationMinutes / 60)).toFixed(1)) : 0,
-                        start, end, representativePoints: [start, [(start[0] + end[0]) / 2, (start[1] + end[1]) / 2], end],
-                        startTimeStr, endTimeStr
-                    });
-                }
-                if (Array.isArray(row.timelinePath) && row.timelinePath.length >= 2) {
-                    const points = row.timelinePath.map(p => parseGeoPoint(p.point)).filter(Boolean);
-                    if (points.length < 2) return;
-                    const startDate = new Date(row.startTime || Date.now()); const endDate = new Date(row.endTime || row.startTime || Date.now());
-                    const durationMinutes = Math.max(0, Math.round((endDate - startDate) / 60000));
-                    const distanceKm = parseFloat(calculateDistance(points).toFixed(2));
-                    const rawType = 'timeline path';
-                    const type = classifyGoogleActivity(rawType, distanceKm, durationMinutes);
-                    const subType = type === 'Travel' ? classifyGoogleTravelSubType(rawType, distanceKm, durationMinutes) : 'Unknown';
-                    const startTimeStr = startDate.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' });
-                    const endTimeStr = endDate.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' });
-
-                    routes.push({
-                        id: 'lh-path-' + idx + '-' + Math.random().toString(36).slice(2),
-                        date: startDate.toISOString().substring(0, 10), name: 'Timeline Path',
-                        type, subType, rawType, distance: distanceKm, durationMinutes, avgSpeed: durationMinutes > 0 ? parseFloat((distanceKm / (durationMinutes / 60)).toFixed(1)) : 0,
-                        start: points[0], end: points[points.length - 1], representativePoints: downsample(points, 80),
-                        startTimeStr, endTimeStr
-                    });
-                }
+        function parseLegacyLocationHistoryLocations(locations) {
+            const byDate = {};
+            (locations || []).forEach((p) => {
+                const latRaw = p.latitudeE7 ?? p.latitude ?? p.lat;
+                const lngRaw = p.longitudeE7 ?? p.longitude ?? p.lng;
+                const lat = Math.abs(latRaw) > 1000 ? latRaw / 1e7 : parseFloat(latRaw);
+                const lng = Math.abs(lngRaw) > 1000 ? lngRaw / 1e7 : parseFloat(lngRaw);
+                const ts = p.timestampMs ? parseInt(p.timestampMs, 10) : (p.timestamp ? new Date(p.timestamp).getTime() : null);
+                if (!Number.isFinite(lat) || !Number.isFinite(lng) || !ts) return;
+                const date = new Date(ts).toISOString().substring(0, 10);
+                if (!byDate[date]) byDate[date] = [];
+                byDate[date].push({ ts, point: [lat, lng] });
             });
-            return routes;
+
+            return Object.entries(byDate).map(([date, pts]) => {
+                pts.sort((a, b) => a.ts - b.ts);
+                const points = downsample(pts.map(p => p.point), 100);
+                if (points.length < 2) return null;
+                const distanceKm = parseFloat(calculateDistance(points).toFixed(2));
+                const startDate = new Date(pts[0].ts);
+                const endDate = new Date(pts[pts.length - 1].ts);
+                const durationMinutes = Math.max(0, Math.round((endDate - startDate) / 60000));
+                return {
+                    id: 'lh-locations-' + date + '-' + Math.random().toString(36).slice(2),
+                    date,
+                    name: 'Google Location History',
+                    type: 'Travel',
+                    subType: 'Unknown',
+                    rawType: 'locations',
+                    distance: distanceKm,
+                    durationMinutes,
+                    avgSpeed: durationMinutes > 0 ? parseFloat((distanceKm / (durationMinutes / 60)).toFixed(1)) : 0,
+                    start: points[0],
+                    end: points[points.length - 1],
+                    representativePoints: points,
+                    startTimeStr: startDate.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' }),
+                    endTimeStr: endDate.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })
+                };
+            }).filter(Boolean);
+        }
+
+        function localDateKeyFromDate(date) {
+            if (!(date instanceof Date) || isNaN(date.getTime())) return new Date().toISOString().substring(0, 10);
+            const y = date.getFullYear();
+            const m = String(date.getMonth() + 1).padStart(2, '0');
+            const d = String(date.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        }
+
+        function parseGoogleLatLngObject(obj) {
+            return parseGeoPoint(obj);
+        }
+
+        function normalizeGoogleTimelineRows(json) {
+            if (!json) return [];
+
+            if (Array.isArray(json)) return json;
+
+            if (Array.isArray(json.timelineObjects)) {
+                return json.timelineObjects.map(obj => {
+                    if (obj.activitySegment) {
+                        const s = obj.activitySegment;
+                        return {
+                            startTime: s.duration?.startTimestamp || s.startTime || s.startTimestamp,
+                            endTime: s.duration?.endTimestamp || s.endTime || s.endTimestamp,
+                            activity: {
+                                start: s.startLocation?.latLng || s.startLocation,
+                                end: s.endLocation?.latLng || s.endLocation,
+                                distanceMeters: s.distance || s.distanceMeters || 0,
+                                topCandidate: { type: s.activityType || 'activitySegment' }
+                            },
+                            timelinePath: Array.isArray(s.simplifiedRawPath?.points)
+                                ? s.simplifiedRawPath.points.map(p => ({ point: p.latLng || p }))
+                                : undefined
+                        };
+                    }
+                    if (obj.placeVisit) {
+                        const v = obj.placeVisit;
+                        return {
+                            startTime: v.duration?.startTimestamp || v.startTime || v.startTimestamp,
+                            endTime: v.duration?.endTimestamp || v.endTime || v.endTimestamp,
+                            visit: {
+                                topCandidate: {
+                                    placeLocation: v.location?.latLng || v.location,
+                                    semanticType: v.location?.name || 'Place Visit'
+                                }
+                            }
+                        };
+                    }
+                    return obj;
+                });
+            }
+
+            if (Array.isArray(json.semanticSegments)) return json.semanticSegments;
+            if (Array.isArray(json.locations)) return json.locations;
+            return [];
+        }
+
+        function getGoogleTimelinePathPoints(row) {
+            const timelinePath = row.timelinePath || row.timelinePaths || row.path || row.simplifiedRawPath?.points || row.rawPath?.points;
+            if (!Array.isArray(timelinePath)) return [];
+            return timelinePath.map(p => parseGoogleLatLngObject(p.point || p.latLng || p)).filter(Boolean);
+        }
+
+        function parseLocationHistoryJson(json) {
+            try {
+                if (json && Array.isArray(json.locations)) {
+                    const legacy = parseLegacyLocationHistoryLocations(json.locations);
+                    console.info(`[GPS_IMPORT] legacy locations routes=${legacy.length}`);
+                    return legacy;
+                }
+
+                const rows = normalizeGoogleTimelineRows(json);
+                const routes = [];
+                let activityCount = 0;
+                let pathCount = 0;
+                let visitCount = 0;
+
+                rows.forEach((row, idx) => {
+                    if (!row || typeof row !== 'object') return;
+
+                    const rawStart = row.startTime || row.startTimestamp || row.duration?.startTimestamp || row.start || null;
+                    const rawEnd = row.endTime || row.endTimestamp || row.duration?.endTimestamp || row.end || rawStart;
+                    const startDate = rawStart ? new Date(rawStart) : new Date();
+                    const endDate = rawEnd ? new Date(rawEnd) : startDate;
+                    const durationMinutes = Math.max(0, Math.round((endDate - startDate) / 60000));
+                    const startTimeStr = startDate.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' });
+                    const endTimeStr = endDate.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' });
+                    const dateKey = localDateKeyFromDate(startDate);
+
+                    const pathPoints = getGoogleTimelinePathPoints(row);
+                    if (pathPoints.length >= 2) pathCount++;
+                    if (row.activity) activityCount++;
+                    if (row.visit) visitCount++;
+
+                    if (row.activity || pathPoints.length >= 2) {
+                        const act = row.activity || {};
+                        const start = parseGoogleLatLngObject(act.start || act.startLocation) || pathPoints[0];
+                        const end = parseGoogleLatLngObject(act.end || act.endLocation) || pathPoints[pathPoints.length - 1];
+
+                        let points = pathPoints.length >= 2 ? pathPoints.slice() : [];
+                        if (points.length < 2 && start && end) {
+                            points = [start, end];
+                        } else {
+                            if (start && points.length && (points[0][0] !== start[0] || points[0][1] !== start[1])) points.unshift(start);
+                            if (end && points.length && (points[points.length - 1][0] !== end[0] || points[points.length - 1][1] !== end[1])) points.push(end);
+                        }
+
+                        if (points.length >= 2) {
+                            const providedDistanceKm = parseFloat(act.distanceMeters || act.distance || 0) / 1000;
+                            const calculatedDistanceKm = calculateDistance(points);
+                            const distanceKm = parseFloat(((providedDistanceKm > 0 && pathPoints.length < 2) ? providedDistanceKm : calculatedDistanceKm).toFixed(2));
+                            const rawType = act.topCandidate?.type || act.activityType || row.activityType || (pathPoints.length >= 2 ? 'timeline path' : 'activity');
+                            const type = classifyGoogleActivity(rawType, distanceKm, durationMinutes);
+                            const subType = type === 'Travel' ? classifyGoogleTravelSubType(rawType, distanceKm, durationMinutes) : 'Unknown';
+                            const safePoints = downsample(points, 160);
+
+                            routes.push({
+                                id: 'lh-' + idx + '-' + Math.random().toString(36).slice(2),
+                                date: dateKey,
+                                name: `${rawType} / Google Timeline`,
+                                type,
+                                subType,
+                                rawType,
+                                distance: distanceKm,
+                                durationMinutes,
+                                avgSpeed: durationMinutes > 0 ? parseFloat((distanceKm / (durationMinutes / 60)).toFixed(1)) : 0,
+                                start: safePoints[0],
+                                end: safePoints[safePoints.length - 1],
+                                representativePoints: safePoints,
+                                pointCount: points.length,
+                                startTimeStr,
+                                endTimeStr,
+                                source: 'google-timeline'
+                            });
+                        }
+                    }
+                });
+
+                console.info(`[GPS_IMPORT] timeline rows=${rows.length}, activities=${activityCount}, visits=${visitCount}, paths=${pathCount}, routes=${routes.length}`);
+                return routes;
+            } catch (err) {
+                console.error('[GPS_IMPORT] parseLocationHistoryJson failed:', err);
+                return [];
+            }
         }
 
         async function parseAppleHealthZipBlob(blob) {
             updateLoader(15, 'Apple Health ZIP 解析中...');
             const zip = await JSZip.loadAsync(blob);
-            const exportFile = Object.values(zip.files).find(f => f.name.endsWith('export.xml'));
+            const files = Object.values(zip.files || {});
+            const exportFile = files.find(f => !f.dir && f.name && f.name.toLowerCase().endsWith('export.xml'));
             if (exportFile) {
                 updateLoader(30, 'export.xml 解析中...');
                 const bytes = await exportFile.async("uint8array");
                 parseHealthXmlFromBytes(bytes);
+            } else {
+                console.warn('export.xml がZIP内に見つかりませんでした。GPXがあればGPSだけ読み込みます。');
             }
-            const gpxFiles = Object.values(zip.files).filter(f => f.name.endsWith('.gpx'));
+            const gpxFiles = files.filter(f => !f.dir && f.name && f.name.toLowerCase().endsWith('.gpx'));
             for (let i = 0; i < gpxFiles.length; i++) {
                 const content = await gpxFiles[i].async("string");
                 const route = parseGpxDetailed(content, gpxFiles[i].name);
@@ -1650,11 +1915,12 @@
             if (health) await parseAppleHealthZipBlob(health.blob);
             if (location) {
                 updateLoader(85, 'location-history解析中...'); 
-                healthData.gpsSummaries.push(...parseLocationHistoryJson(location.data)); 
+                const importedRoutes = parseLocationHistoryJson(location.data);
+                healthData.gpsSummaries.push(...importedRoutes);
             }
 
             dedupeAutoGps();
-            healthData.summary.dataSource = 'Apple Health ZIP + Location History JSON (生データ)';
+            healthData.summary.dataSource = [health ? 'Apple Health ZIP' : null, location ? 'Location History JSON' : null].filter(Boolean).join(' + ') + ' (生データ)';
             healthData.summary.privacyMode = 'full-gps';
             
             if (Object.keys(healthData.weight).length === 0 && Object.keys(healthData.steps).length === 0 && healthData.gpsSummaries.length === 0) {
@@ -1673,23 +1939,64 @@
             try {
                 updateLoader(5, '軽量JSONを確認中...');
                 const lightweight = await fetchFirstAvailable(AUTO_LIGHT_JSON_FILE, 'Lightweight JSON', true);
+                const location = await fetchFirstAvailable(AUTO_LOCATION_FILE, 'Google Location History JSON', true);
+                const health = !lightweight ? await fetchFirstAvailable(AUTO_HEALTH_FILE, 'Apple Health ZIP', false) : null;
+                let loadedSomething = false;
+                let rawGpsCount = 0;
                 
                 if (lightweight) {
-                    updateLoader(30, '軽量JSONを読み込み中...');
+                    updateLoader(25, '軽量JSONを読み込み中...');
                     await loadLightweightJSON(lightweight.data);
-                    updateLoader(100, '軽量JSON読込完了');
-                    finalizeDataLoad();
-                    switchTab('dashboard');
-                    return;
+                    loadedSomething = true;
+                } else {
+                    healthData = normalizeHealthData({}, null);
                 }
 
-                updateLoader(35, '軽量JSONなし。生データを確認中...');
-                await loadRawDataFilesFallback();
+                if (health) {
+                    updateLoader(45, 'Apple Health ZIP解析中...');
+                    await parseAppleHealthZipBlob(health.blob);
+                    loadedSomething = true;
+                }
+
+                if (location) {
+                    updateLoader(75, 'location-history解析中...');
+                    const importedRoutes = parseLocationHistoryJson(location.data);
+                    rawGpsCount = importedRoutes.length;
+                    if (rawGpsCount > 0) {
+                        if (!Array.isArray(healthData.gpsSummaries)) healthData.gpsSummaries = [];
+                        healthData.gpsSummaries.push(...importedRoutes);
+                        dedupeAutoGps();
+                        healthData.summary.privacyMode = 'full-gps';
+                        const latestGps = getLatestGpsDate();
+                        if (latestGps) gpsFilterState.baseDate = latestGps;
+                        loadedSomething = true;
+                        console.info(`[AUTO_LOAD] parsed GPS routes=${rawGpsCount}, total GPS routes=${healthData.gpsSummaries.length}, latest=${latestGps || '--'}`);
+                    }
+                }
+
+                if (!loadedSomething) {
+                    const err = new Error("No data files found");
+                    err.name = "DataNotFoundError";
+                    throw err;
+                }
+
+                healthData.summary.dataSource = [
+                    lightweight ? '軽量JSON' : null,
+                    health ? 'Apple Health ZIP' : null,
+                    location ? `Location History JSON(${rawGpsCount} routes)` : null
+                ].filter(Boolean).join(' + ') || 'Auto Load';
+                healthData.summary.updatedAt = new Date().toISOString();
+                healthData.summary.isSample = false;
+
+                updateLoader(100, 'データ読込完了');
+                finalizeDataLoad();
+                switchTab('dashboard');
+                if (rawGpsCount > 0) console.info(`[AUTO_LOAD] GPS routes imported: ${rawGpsCount}`);
 
             } catch (err) {
                 if (err.name === "DataNotFoundError" || err.message === "No data files found") {
-                    console.info("自動読み込み対象のデータファイルが見つかりません。手動で読み込むか、サンプルデータをご利用ください。");
-                    showStartupScreen('自動読込ファイルが見つかりませんでした。<br>ZIP / JSON を手動読込するか、サンプルデータを使用してください。');
+                    console.info("自動読み込み対象のファイルが見つかりません。data/health-manager-data.json または data/location-history*.json を配置してください。");
+                    showStartupScreen('自動読込ファイルが見つかりませんでした。<br>data/health-manager-data.json または data/location-history*.json を配置してください。');
                 } else {
                     console.error("自動読込エラー:", err);
                     showStartupScreen('データ読込エラーが発生しました。Consoleを確認してください。');
@@ -1707,21 +2014,143 @@
             healthData.summary.isSample = false;
         }
 
-        async function handleFileSelect(e) {
-            const file = e.target.files[0]; if (!file) return;
-            showLoader(true); updateLoader(10, 'Loading...');
+        function isLightweightHealthJson(data) {
+            return !!(data && typeof data === 'object' && data.schemaVersion === "1.0" && data.healthData);
+        }
+
+        function isGoogleTimelineJson(data) {
+            if (Array.isArray(data)) {
+                return data.some(x => x && (x.activity || x.visit || x.timelinePath || x.timelinePaths || x.path || x.simplifiedRawPath));
+            }
+            if (data && typeof data === 'object') {
+                return Array.isArray(data.locations) || Array.isArray(data.timelineObjects) || Array.isArray(data.semanticSegments);
+            }
+            return false;
+        }
+
+        async function importUserFiles(files) {
+            const fileList = Array.from(files || []).filter(Boolean);
+            if (fileList.length === 0) return;
+
+            showLoader(true);
+            updateLoader(5, 'ファイル取込準備中...');
             try {
-                if (file.name.endsWith('.json')) {
-                    const text = await file.text();
-                    await loadLightweightJSON(JSON.parse(text));
-                    updateLoader(100, 'JSON読込完了'); finalizeDataLoad(); switchTab('dashboard');
-                } else if (file.name.endsWith('.zip')) {
-                    healthData = normalizeHealthData({}, '手動ZIP');
-                    await parseAppleHealthZipBlob(file);
-                    healthData.summary.dataSource = '手動インポート ZIP';
-                    updateLoader(100, 'ZIP読込完了'); finalizeDataLoad(); switchTab('dashboard');
+                const zipFiles = [];
+                const timelineJsons = [];
+                let lightweightPayload = null;
+                const unsupported = [];
+
+                for (let i = 0; i < fileList.length; i++) {
+                    const file = fileList[i];
+                    const name = (file.name || '').toLowerCase();
+                    updateLoader(8 + (i / Math.max(1, fileList.length)) * 18, `ファイル判定中... ${file.name || ''}`);
+
+                    if (name.endsWith('.zip')) {
+                        zipFiles.push(file);
+                        continue;
+                    }
+
+                    if (name.endsWith('.json')) {
+                        const text = await file.text();
+                        const data = JSON.parse(text);
+                        if (isLightweightHealthJson(data)) {
+                            lightweightPayload = data;
+                        } else if (isGoogleTimelineJson(data)) {
+                            timelineJsons.push(data);
+                        } else {
+                            unsupported.push(file.name || 'unknown.json');
+                        }
+                        continue;
+                    }
+
+                    unsupported.push(file.name || 'unknown');
                 }
-            } catch (err) { console.error(err); alert("ファイル解析エラー。"); } finally { e.target.value = ""; showLoader(false); }
+
+                if (lightweightPayload) {
+                    updateLoader(30, '軽量JSONを読み込み中...');
+                    await loadLightweightJSON(lightweightPayload);
+                } else {
+                    healthData = normalizeHealthData({}, '手動インポート');
+                }
+
+                for (let i = 0; i < zipFiles.length; i++) {
+                    updateLoader(35 + (i / Math.max(1, zipFiles.length)) * 25, `Apple Health ZIP解析中... ${zipFiles[i].name}`);
+                    await parseAppleHealthZipBlob(zipFiles[i]);
+                }
+
+                timelineJsons.forEach((data, i) => {
+                    updateLoader(70 + (i / Math.max(1, timelineJsons.length)) * 15, 'Location History解析中...');
+                    const parsedRoutes = parseLocationHistoryJson(data);
+                    console.info(`[MANUAL_IMPORT] parsed GPS routes=${parsedRoutes.length}`);
+                    healthData.gpsSummaries.push(...parsedRoutes);
+                });
+
+                dedupeAutoGps();
+                const latestGps = getLatestGpsDate();
+                if (latestGps) gpsFilterState.baseDate = latestGps;
+                healthData.summary.dataSource = [
+                    lightweightPayload ? '軽量JSON' : null,
+                    zipFiles.length ? `Apple Health ZIP x${zipFiles.length}` : null,
+                    timelineJsons.length ? `Location History JSON x${timelineJsons.length}` : null
+                ].filter(Boolean).join(' + ') || '手動インポート';
+                healthData.summary.updatedAt = new Date().toISOString();
+                healthData.summary.isSample = false;
+                healthData.summary.privacyMode = timelineJsons.length ? 'full-gps' : (healthData.summary.privacyMode || 'full-gps');
+
+                const totalRecords = Object.keys(healthData.weight || {}).length +
+                    Object.keys(healthData.steps || {}).length +
+                    Object.keys(healthData.sleep || {}).length +
+                    Object.keys(healthData.heartRate || {}).length +
+                    Object.keys(healthData.hrv || {}).length +
+                    (healthData.gpsSummaries || []).length;
+
+                if (totalRecords === 0) {
+                    throw new Error('有効な健康データまたはGPSデータを抽出できませんでした。' + (unsupported.length ? ` 未対応: ${unsupported.join(', ')}` : ''));
+                }
+
+                updateLoader(100, '手動取込完了');
+                finalizeDataLoad();
+                switchTab('dashboard');
+            } catch (err) {
+                console.error(err);
+                alert(`ファイル解析エラー: ${err.message || err}`);
+            } finally {
+                showLoader(false);
+            }
+        }
+
+        function openDataImportPicker() {
+            const input = document.getElementById('file-input-main');
+            if (input) input.click();
+        }
+
+        async function handleFileSelect(e) {
+            await importUserFiles(e.target.files || []);
+            if (e && e.target) e.target.value = "";
+        }
+
+        function setupDragAndDropImport() {
+            if (window.__healthDropImportReady) return;
+            window.__healthDropImportReady = true;
+            ['dragenter', 'dragover'].forEach(type => {
+                document.addEventListener(type, (e) => {
+                    e.preventDefault();
+                    if (e.dataTransfer) e.dataTransfer.dropEffect = 'copy';
+                    const panel = document.getElementById('startup-panel');
+                    if (panel) panel.classList.add('border-emerald-400');
+                });
+            });
+            ['dragleave', 'drop'].forEach(type => {
+                document.addEventListener(type, (e) => {
+                    const panel = document.getElementById('startup-panel');
+                    if (panel) panel.classList.remove('border-emerald-400');
+                });
+            });
+            document.addEventListener('drop', async (e) => {
+                e.preventDefault();
+                const files = e.dataTransfer ? Array.from(e.dataTransfer.files || []) : [];
+                if (files.length) await importUserFiles(files);
+            });
         }
 
         function finalizeDataLoad() {
@@ -1766,9 +2195,9 @@
             updateAlerts(); 
             updateActivitySummary(); 
             
-            if (!gpsFilterState.baseDate) {
-                gpsFilterState.baseDate = getLatestGpsDate() || new Date().toISOString().substring(0, 10);
-            }
+            const latestGpsForView = getLatestGpsDate();
+            gpsFilterState.baseDate = latestGpsForView || new Date().toISOString().substring(0, 10);
+            console.info(`[GPS_VIEW] baseDate=${gpsFilterState.baseDate}, gpsRoutes=${(healthData.gpsSummaries || []).length}`);
             document.getElementById('gps-period-filter').value = '1d';
             updateGpsFilterInputs();
             
@@ -2832,10 +3261,18 @@
 
         function filterGpsData() {
             const mode = gpsFilterState.mode;
-            const range = getGpsDateRangeByMode(mode);
+            let range = getGpsDateRangeByMode(mode);
             
             let filtered = healthData.gpsSummaries || [];
             filtered = filterGpsRoutesByDateRange(filtered, range.start, range.end);
+            
+            if (mode !== 'all' && (healthData.gpsSummaries || []).length > 0 && filtered.length === 0) {
+                const reset = resetGpsBaseDateToLatestIfCurrentFilterEmpty('filterGpsData-empty');
+                if (reset) {
+                    range = getGpsDateRangeByMode(mode);
+                    filtered = filterGpsRoutesByDateRange(healthData.gpsSummaries || [], range.start, range.end);
+                }
+            }
             
             const labelEl = document.getElementById('gps-active-period-label');
             if (mode === 'all') {
@@ -2906,16 +3343,18 @@
                     <div class="absolute left-[11px] top-1/2 -translate-y-1/2 w-8 h-8 rounded-full border-2 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform z-10" style="border-color: ${routeColor}; color: ${routeColor}; background: rgba(15, 23, 42, 0.9);">
                         <i class="fas ${icons[tKey]} text-xs"></i>
                     </div>
-                    <div class="glass-card p-3.5 group-hover:border-emerald-500/60 transition-all shadow-md group-hover:bg-slate-800/80 border-l-[3px] border-l-transparent">
-                        <div class="flex justify-between items-center mb-1.5">
+                    <div class="glass-card gps-route-card-main p-3.5 group-hover:border-emerald-500/60 transition-all shadow-md group-hover:bg-slate-800/80 border-l-[3px] border-l-transparent">
+                        <div class="flex justify-between items-center gap-2 mb-1.5">
                             <span class="text-[11px] font-bold text-slate-400 tracking-wider">${sTime} - ${eTime}</span>
-                            ${hasPoints ? '<span class="text-[9px] font-bold text-emerald-300 bg-emerald-600/20 px-2 py-0.5 rounded border border-emerald-500/30 tracking-wider">MAP再生</span>' : '<span class="text-[9px] font-bold text-slate-500 bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700">座標なし</span>'}
+                            ${hasPoints ? '<span class="text-[9px] font-bold text-emerald-300 bg-emerald-600/20 px-2 py-0.5 rounded border border-emerald-500/30 tracking-wider whitespace-nowrap">MAP再生</span>' : '<span class="text-[9px] font-bold text-slate-500 bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700 whitespace-nowrap">座標なし</span>'}
                         </div>
-                        <div class="text-[13px] font-bold text-slate-100 mb-2 truncate leading-tight">${r.name}</div>
-                        <div class="flex items-center gap-3 text-[11px] font-medium font-mono text-slate-400 bg-slate-950/40 p-2 rounded-lg border border-slate-800/50">
-                            <div class="flex items-center gap-1.5" style="color: ${routeColor};"><i class="fas ${icons[tKey]} opacity-70"></i> ${displayType}</div>
-                            <div class="flex items-center gap-1.5 border-l border-slate-700 pl-3"><i class="fas fa-route opacity-50"></i> ${r.distance}km</div>
-                            <div class="flex items-center gap-1.5 border-l border-slate-700 pl-3"><i class="fas fa-clock opacity-50"></i> ${r.durationMinutes || '--'}m</div>
+                        <div class="gps-route-card-title text-[13px] font-bold text-slate-100 mb-2 leading-tight">${r.name}</div>
+                        <div class="gps-route-metrics grid grid-cols-2 md:grid-cols-3 gap-2 text-[11px] font-medium font-mono text-slate-400 bg-slate-950/40 p-2 rounded-lg border border-slate-800/50">
+                            <div class="gps-route-metric flex items-center gap-1.5" style="color: ${routeColor};"><i class="fas ${icons[tKey]} opacity-70"></i><span>${displayType}</span></div>
+                            <div class="gps-route-metric flex items-center gap-1.5"><i class="fas fa-route opacity-50"></i><span>${r.distance}km</span></div>
+                            <div class="gps-route-metric flex items-center gap-1.5"><i class="fas fa-clock opacity-50"></i><span>${r.durationMinutes || '--'}m</span></div>
+                            <div class="gps-route-metric flex items-center gap-1.5"><i class="fas fa-tachometer-alt opacity-50"></i><span>${r.avgSpeed || '0.0'}km/h</span></div>
+                            <div class="gps-route-metric flex items-center gap-1.5 md:col-span-2"><i class="fas fa-map-marker-alt opacity-50"></i><span>${hasPoints ? `${r.representativePoints.length} points` : '座標なし'}</span></div>
                         </div>
                     </div>
                 `;
@@ -2925,6 +3364,7 @@
         }
 
         function drawBatchOnMap(data) {
+            console.info(`[MAP] drawBatchOnMap routes=${data ? data.length : 0}`);
             if (!map) return;
             mapLayers.allRoutes.forEach(l => map.removeLayer(l)); mapLayers.allRoutes = [];
             if (mapLayers.focusLine) { map.removeLayer(mapLayers.focusLine); mapLayers.focusLine = null; }
@@ -3211,6 +3651,7 @@
             buildRangeControl('chart-steps-full');
 
             restorePhonePreviewMode();
+            setupDragAndDropImport();
             
             setTimeout(tryAutoLoadDataFiles, 300);
         };

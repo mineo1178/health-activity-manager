@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Health Activity Manager gv1.49</title>
-    <!-- gv1.49 local update opens file picker + data source visible chip fix -->
+    <title>Health Activity Manager gv1.60</title>
+    <!-- gv1.60 warning count naming + OUTSIDE_FOOD_AT_HOME foodNames fix. Existing UI preserved. -->
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
     <meta name="apple-mobile-web-app-title" content="HealthManager">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -84,7 +84,7 @@
         }
 
         /* Playback Range */
-        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
+        input[type=range]{ appearance:none; -webkit-appearance:none; width:100%; background:transparent;}
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: #10b981; cursor: pointer; margin-top: -6px; box-shadow: 0 0 10px rgba(16,185,129,0.5); }
         input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: #334155; border-radius: 2px; }
         
@@ -288,6 +288,43 @@
                 margin-right: 3px !important;
             }
         }
+
+
+        /* gv1.56 Manual Log UI - existing UI extension only */
+        .quick-log-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+        @media (min-width: 640px) { .quick-log-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+        @media (min-width: 1024px) { .quick-log-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+        .quick-log-btn {
+            min-height: 54px; padding: 10px 12px; border-radius: 14px;
+            background: rgba(15,23,42,.65); border: 1px solid rgba(148,163,184,.18);
+            color: #e2e8f0; font-weight: 900; text-align: left; transition: all .15s ease;
+        }
+        .quick-log-btn:hover, .quick-log-btn.active {
+            background: rgba(16,185,129,.16); border-color: rgba(52,211,153,.45); color: #fff;
+            box-shadow: 0 0 18px rgba(16,185,129,.12);
+        }
+        .quick-log-btn .food-name { display:block; font-size:14px; color:#fff; font-weight:900; margin-bottom:4px; }
+        .quick-log-btn .sub { display:block; margin-top:3px; font-size:10px; color:#cbd5e1; font-weight:700; line-height:1.25; }
+        .quick-log-btn .comment { display:block; margin-top:4px; font-size:10px; color:#94a3b8; font-weight:700; line-height:1.25; }
+        .quick-log-btn.group-recommended { background: rgba(16,185,129,.12); border-color: rgba(52,211,153,.28); }
+        .quick-log-btn.group-good { background: rgba(59,130,246,.12); border-color: rgba(96,165,250,.28); }
+        .quick-log-btn.group-ok { background: rgba(234,179,8,.12); border-color: rgba(250,204,21,.28); }
+        .quick-log-btn.group-caution { background: rgba(239,68,68,.12); border-color: rgba(248,113,113,.30); }
+        .quick-log-pill { padding: 7px 10px; border-radius: 999px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.10); font-size: 11px; font-weight: 900; color: #cbd5e1; }
+        .timeline-row { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:9px 10px; border-radius:12px; background:rgba(15,23,42,.55); border:1px solid rgba(148,163,184,.12); }
+        .manual-modal-backdrop { position: fixed; inset: 0; z-index: 1100; background: rgba(2,6,23,.78); backdrop-filter: blur(10px); display: none; align-items: flex-end; justify-content: center; padding: 14px; }
+        .manual-modal-backdrop.active { display: flex; }
+        .manual-modal-card { width: 100%; max-width: 560px; max-height: 86vh; overflow-y: auto; background: rgba(15,23,42,.98); border: 1px solid rgba(45,212,191,.28); border-radius: 24px; box-shadow: 0 30px 80px rgba(0,0,0,.55); padding: 18px; }
+        .manual-choice-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; }
+        .manual-choice-btn { border: 1px solid rgba(148,163,184,.18); background: rgba(30,41,59,.74); border-radius: 14px; padding: 12px 10px; color: #e2e8f0; font-weight: 900; font-size: 13px; min-height: 46px; text-align: center; }
+        .manual-choice-btn.active { background: rgba(20,184,166,.22); border-color: rgba(45,212,191,.75); color: #fff; box-shadow: 0 0 0 1px rgba(45,212,191,.25) inset; }
+        .manual-detail-label { font-size: 10px; color: #94a3b8; font-weight: 900; text-transform: uppercase; letter-spacing: .08em; margin: 12px 0 8px; }
+        @media (max-width: 768px) { .manual-modal-backdrop { align-items: flex-end; padding: 8px; padding-bottom: calc(8px + env(safe-area-inset-bottom)); } .manual-modal-card { border-radius: 22px 22px 18px 18px; max-height: 82vh; } }
+
+        .timeline-time { min-width:44px; color:#2dd4bf; font-weight:900; font-size:12px; }
+        .timeline-title { color:#fff; font-weight:900; font-size:13px; }
+        .timeline-sub { color:#94a3b8; font-weight:700; font-size:10px; }
+
     </style>
 </head>
 <body class="text-slate-200 text-sm">
@@ -298,7 +335,7 @@
                 <h1 onclick="goHomeStartup()" class="text-xl font-bold text-blue-500 flex items-center tracking-tight cursor-pointer hover:text-blue-400 transition" title="スタート画面へ戻る">
                     <i class="fas fa-heartbeat mr-2 text-2xl"></i>HealthManager
                 </h1>
-                <p class="text-[10px] text-slate-500 font-mono mt-1 uppercase tracking-widest">gv1.49 OS PRO</p>
+                <p class="text-[10px] text-slate-500 font-mono mt-1 uppercase tracking-widest">gv1.60 OS PRO</p>
             </div>
             <nav class="flex-1 px-4 space-y-1 overflow-y-auto custom-scrollbar">
                 <button onclick="switchTab('dashboard')" class="nav-btn w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl transition" data-tab="dashboard">
@@ -315,6 +352,9 @@
                 </button>
                 <button onclick="switchTab('gps')" class="nav-btn w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl transition" data-tab="gps">
                     <i class="fas fa-map-marked-alt w-6"></i> GPS活動ログ
+                </button>
+                <button onclick="switchTab('manual')" class="nav-btn w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl transition" data-tab="manual">
+                    <i class="fas fa-utensils w-6"></i> 食事ログ
                 </button>
                 <button onclick="switchTab('settings')" class="nav-btn w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl transition" data-tab="settings">
                     <i class="fas fa-cog w-6"></i> 設定・出力
@@ -420,6 +460,23 @@
                             <h4 class="text-sm font-bold text-slate-300 mb-3 flex items-center gap-2"><i class="fas fa-comment-medical text-emerald-400"></i> 今日のコメント</h4>
                             <div id="daily-comment-text" class="text-sm text-slate-200 leading-relaxed font-medium">データを読み込むと表示されます。</div>
                         </div>
+                    </section>
+
+                    <section id="manual-dashboard-card" class="glass-card p-5 md:p-6 space-y-4 border-t-4 border-teal-500">
+                        <div class="flex items-center justify-between gap-3">
+                            <div>
+                                <h3 class="text-xl md:text-2xl font-black text-white flex items-center gap-2"><i class="fas fa-utensils text-teal-300"></i> 食事・イベント簡易評価</h3>
+                                <p class="text-sm text-slate-400 mt-1">ワンタップログから、体重変動の理由を残します。</p>
+                            </div>
+                            <button onclick="switchTab('manual')" class="bg-teal-700 hover:bg-teal-600 text-white px-4 py-2 rounded-xl font-black text-sm shadow-lg"><i class="fas fa-plus mr-1"></i>入力</button>
+                        </div>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <div class="report-metric-box"><div class="text-[10px] text-slate-400 font-bold uppercase mb-1">タンパク質</div><div id="manual-protein-score" class="text-xl font-black text-white">--</div></div>
+                            <div class="report-metric-box"><div class="text-[10px] text-slate-400 font-bold uppercase mb-1">食事評価</div><div id="manual-food-rating" class="text-xl font-black text-amber-300">--</div></div>
+                            <div class="report-metric-box"><div class="text-[10px] text-slate-400 font-bold uppercase mb-1">飲酒</div><div id="manual-alcohol-summary" class="text-xl font-black text-white">--</div></div>
+                            <div class="report-metric-box"><div class="text-[10px] text-slate-400 font-bold uppercase mb-1">イベント</div><div id="manual-event-summary" class="text-sm font-black text-white mt-1">--</div></div>
+                        </div>
+                        <div id="manual-diet-advice" class="text-sm text-slate-200 leading-relaxed bg-slate-800/40 border border-slate-700/50 rounded-xl p-4">食事ログを入力すると表示されます。</div>
                     </section>
 
                     <div id="dashboard-health-score-card" class="dashboard-score-card">
@@ -1026,6 +1083,70 @@
                     </div>
                 </section>
 
+                <!-- Manual Food/Event Log Tab - gv1.51 -->
+                <section id="tab-manual" class="tab-content p-4 md:p-6 space-y-6 pb-24">
+                    <div class="glass-card p-5 md:p-6 space-y-5 border-t-4 border-teal-500">
+                        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                            <div>
+                                <h2 class="text-2xl font-black text-white flex items-center gap-2"><i class="fas fa-utensils text-teal-300"></i> 食事ログ</h2>
+                                <p class="text-sm text-slate-400 mt-1">カロリー管理ではなく、体重が増減した理由をAIが分析するためのワンタップ記録です。</p>
+                            </div>
+                            <div class="flex flex-col sm:flex-row sm:items-center gap-2">
+                                <div class="flex items-center gap-2">
+                                    <button onclick="moveManualDate(-1)" class="bg-slate-800 hover:bg-slate-700 text-white px-3 py-2 rounded-lg font-bold"><i class="fas fa-chevron-left"></i></button>
+                                    <input type="date" id="manual-log-date" onchange="renderManualLogUI()" class="bg-slate-900 border border-slate-700 text-white px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-teal-500 cursor-pointer shadow min-h-[44px]">
+                                    <button onclick="moveManualDate(1)" class="bg-slate-800 hover:bg-slate-700 text-white px-3 py-2 rounded-lg font-bold"><i class="fas fa-chevron-right"></i></button>
+                                </div>
+                                <input type="datetime-local" id="manual-log-datetime" class="bg-slate-900 border border-slate-700 text-white px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-teal-500 cursor-pointer shadow min-h-[44px]" title="後から登録する場合は日時を変更">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+                            <div class="report-metric-box"><div class="text-[10px] text-slate-400 font-bold uppercase mb-1">タンパク質</div><div id="manual-today-protein" class="text-2xl font-black text-white">--</div></div>
+                            <div class="report-metric-box"><div class="text-[10px] text-slate-400 font-bold uppercase mb-1">ナッツ</div><div id="manual-today-nuts" class="text-2xl font-black text-amber-300">--</div></div>
+                            <div class="report-metric-box"><div class="text-[10px] text-slate-400 font-bold uppercase mb-1">飲酒</div><div id="manual-today-alcohol" class="text-2xl font-black text-orange-300">--</div></div>
+                            <div class="report-metric-box"><div class="text-[10px] text-slate-400 font-bold uppercase mb-1">外食</div><div id="manual-today-eatingout" class="text-2xl font-black text-cyan-300">--</div></div>
+                            <div class="report-metric-box"><div class="text-[10px] text-slate-400 font-bold uppercase mb-1">登録件数</div><div id="manual-today-count" class="text-2xl font-black text-emerald-300">--</div></div>
+                        </div>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                            <div class="glass-card p-4 bg-slate-950/35 border border-teal-500/15">
+                                <h3 class="text-sm font-black text-slate-300 uppercase tracking-widest mb-3"><i class="fas fa-clock text-teal-300 mr-2"></i>今日の食事タイムライン</h3>
+                                <div id="manual-food-timeline" class="space-y-2 max-h-72 overflow-y-auto custom-scrollbar pr-1"></div>
+                            </div>
+                            <div class="glass-card p-4 bg-slate-950/35 border border-emerald-500/15">
+                                <h3 class="text-sm font-black text-slate-300 uppercase tracking-widest mb-3"><i class="fas fa-chart-simple text-emerald-300 mr-2"></i>今日の評価</h3>
+                                <div class="grid grid-cols-3 gap-3">
+                                    <div><div class="text-[10px] text-slate-400 font-bold uppercase mb-1">タンパク質スコア</div><div id="manual-tab-protein-score" class="text-xl font-black text-white">--</div></div>
+                                    <div><div class="text-[10px] text-slate-400 font-bold uppercase mb-1">食事評価</div><div id="manual-tab-food-rating" class="text-xl font-black text-amber-300">--</div></div>
+                                    <div><div class="text-[10px] text-slate-400 font-bold uppercase mb-1">ダイエット評価</div><div id="manual-tab-diet-rating" class="text-xl font-black text-emerald-300">--</div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                        <div class="glass-card p-5 space-y-5">
+                            <h3 class="text-sm font-black text-slate-300 uppercase tracking-widest"><i class="fas fa-drumstick-bite text-emerald-400 mr-2"></i>食品をワンタップ登録</h3>
+                            <div id="protein-food-buttons" class="space-y-5"></div>
+                            <div id="meal-food-buttons" class="hidden"></div>
+                        </div>
+
+                        <div class="glass-card p-5 space-y-5">
+                            <h3 class="text-sm font-black text-slate-300 uppercase tracking-widest"><i class="fas fa-wine-glass-alt text-orange-400 mr-2"></i>飲酒ログ</h3>
+                            <div id="alcohol-buttons" class="space-y-3"></div>
+                            <div class="pt-4 border-t border-slate-700/50">
+                                <h3 class="text-sm font-black text-slate-300 uppercase tracking-widest mb-3"><i class="fas fa-calendar-check text-cyan-400 mr-2"></i>イベントログ</h3>
+                                <div id="event-buttons" class="space-y-4"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-5 md:p-6 space-y-4 border border-emerald-500/20 bg-emerald-500/5">
+                        <h3 class="text-lg font-black text-white"><i class="fas fa-robot text-emerald-300 mr-2"></i>AIパーソナルトレーナー コメント</h3>
+                        <div id="manual-tab-advice" class="text-sm text-slate-100 leading-relaxed font-medium">ログを入力すると表示されます。</div>
+                        <div id="manual-log-history" class="flex flex-wrap gap-2"></div>
+                    </div>
+                </section>
+
                 <!-- Settings Tab -->
                 <section id="tab-settings" class="tab-content p-6 pb-24">
                     <div class="max-w-3xl mx-auto space-y-8">
@@ -1035,11 +1156,19 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <div>
                                     <label class="block text-xs font-bold text-slate-400 uppercase mb-2">身長 (cm)</label>
-                                    <input type="number" id="setting-height" value="170" step="0.1" onchange="updateProfile()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white text-base focus:ring-2 focus:ring-blue-500 outline-none transition min-h-[44px]">
+                                    <input type="number" id="setting-height" value="150" step="0.1" onchange="updateProfile()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white text-base focus:ring-2 focus:ring-blue-500 outline-none transition min-h-[44px]">
                                 </div>
                                 <div>
                                     <label class="block text-xs font-bold text-slate-400 uppercase mb-2">目標体重 (kg)</label>
-                                    <input type="number" id="setting-target-weight" value="65" step="0.1" onchange="updateProfile()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white text-base focus:ring-2 focus:ring-blue-500 outline-none transition min-h-[44px]">
+                                    <input type="number" id="setting-target-weight" value="50" step="0.1" onchange="updateProfile()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white text-base focus:ring-2 focus:ring-blue-500 outline-none transition min-h-[44px]">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-400 uppercase mb-2">常用サプリ・メモ</label>
+                                    <input type="text" id="setting-supplements" placeholder="例: FANCL 40代男性" onchange="updateProfile()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white text-base focus:ring-2 focus:ring-blue-500 outline-none transition min-h-[44px]">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-400 uppercase mb-2">生活方針メモ</label>
+                                    <input type="text" id="setting-lifestyle-note" placeholder="例: 禁酒中。出張時のみ飲酒" onchange="updateProfile()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white text-base focus:ring-2 focus:ring-blue-500 outline-none transition min-h-[44px]">
                                 </div>
                             </div>
 
@@ -1096,8 +1225,33 @@
             <button onclick="switchTab('gps')" class="flex flex-col items-center p-2 text-slate-400 min-h-[44px]" data-mobile-tab="gps"><i class="fas fa-map-marked-alt text-xl mb-1"></i><span class="text-[10px]">GPS</span></button>
             <button onclick="switchTab('weight')" class="flex flex-col items-center p-2 text-slate-400 min-h-[44px]" data-mobile-tab="weight"><i class="fas fa-weight text-xl mb-1"></i><span class="text-[10px]">Weight</span></button>
             <button onclick="switchTab('activity')" class="flex flex-col items-center p-2 text-slate-400 min-h-[44px]" data-mobile-tab="activity"><i class="fas fa-shoe-prints text-xl mb-1"></i><span class="text-[10px]">Activity</span></button>
+            <button onclick="switchTab('manual')" class="flex flex-col items-center p-2 text-slate-400 min-h-[44px]" data-mobile-tab="manual"><i class="fas fa-utensils text-xl mb-1"></i><span class="text-[10px]">Food</span></button>
             <button onclick="switchTab('settings')" class="flex flex-col items-center p-2 text-slate-400 min-h-[44px]" data-mobile-tab="settings"><i class="fas fa-cog text-xl mb-1"></i><span class="text-[10px]">Config</span></button>
         </nav>
+    </div>
+
+
+
+    <div id="manual-detail-modal" class="manual-modal-backdrop" onclick="if(event.target.id==='manual-detail-modal') closeFoodDetailModal()">
+        <div class="manual-modal-card custom-scrollbar">
+            <div class="flex items-start justify-between gap-3 mb-3">
+                <div>
+                    <div class="text-[10px] text-teal-300 font-black uppercase tracking-widest">詳細選択</div>
+                    <h3 id="manual-detail-title" class="text-xl font-black text-white mt-1">食品名</h3>
+                    <p id="manual-detail-comment" class="text-xs text-slate-400 mt-1 leading-relaxed">体重変動の原因分析に必要な粒度だけ選択します。</p>
+                </div>
+                <button onclick="closeFoodDetailModal()" class="w-10 h-10 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="mb-3">
+                <div class="manual-detail-label">登録日時</div>
+                <input type="datetime-local" id="manual-detail-datetime" class="w-full bg-slate-950 border border-slate-700 text-white px-3 py-2 rounded-xl text-sm focus:outline-none focus:border-teal-500 min-h-[44px]">
+            </div>
+            <div id="manual-detail-options" class="space-y-3"></div>
+            <div class="grid grid-cols-2 gap-3 mt-5">
+                <button onclick="closeFoodDetailModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-3 rounded-xl font-black min-h-[46px]">キャンセル</button>
+                <button onclick="confirmFoodDetailModal()" class="bg-teal-600 hover:bg-teal-500 text-white px-4 py-3 rounded-xl font-black shadow-lg min-h-[46px]"><i class="fas fa-plus mr-1"></i>登録</button>
+            </div>
+        </div>
     </div>
 
     <div id="loader-overlay" class="hidden fixed inset-0 z-[1000] bg-slate-950/95 backdrop-blur-md flex flex-col items-center justify-center p-10 text-center">
@@ -1112,9 +1266,9 @@
     <script>
         // --- Global Variables Setup ---
         let healthData = {
-            summary: { version: "gv1.49", isSample: false, updatedAt: null, heightCm: 170, targetWeight: 65 },
+            summary: { version: "gv1.60", isSample: false, updatedAt: null, heightCm: 150, targetWeight: 50 },
             weight: {}, steps: {}, sleep: {}, heartRate: {}, hrv: {},
-            gpsSummaries: []
+            gpsSummaries: [], manualLogs: {}, foodLogs: {}, eventLogs: {}, alcoholLogs: {}
         };
 
         let map = null;
@@ -1429,18 +1583,31 @@
         function loadSettings() {
             const h = localStorage.getItem("health-height-cm");
             const tw = localStorage.getItem("health-target-weight");
-            if (h) { healthData.summary.heightCm = parseFloat(h); document.getElementById('setting-height').value = h; }
-            if (tw) { healthData.summary.targetWeight = parseFloat(tw); document.getElementById('setting-target-weight').value = tw; }
+            const sup = localStorage.getItem("health-supplements-note");
+            const life = localStorage.getItem("health-lifestyle-note");
+            // gv1.56: 過去版の誤デフォルト値(170cm/65kg)がlocalStorageに残っている場合は正しい初期値へ移行。
+            const migratedH = (!h || Number(h) === 170) ? '150' : h;
+            const migratedTw = (!tw || Number(tw) === 65) ? '50' : tw;
+            healthData.summary.heightCm = parseFloat(migratedH); document.getElementById('setting-height').value = migratedH;
+            healthData.summary.targetWeight = parseFloat(migratedTw); document.getElementById('setting-target-weight').value = migratedTw;
+            if (sup && document.getElementById('setting-supplements')) document.getElementById('setting-supplements').value = sup;
+            if (life && document.getElementById('setting-lifestyle-note')) document.getElementById('setting-lifestyle-note').value = life;
+            healthData.summary.supplementsNote = sup || healthData.summary.supplementsNote || '';
+            healthData.summary.lifestyleNote = life || healthData.summary.lifestyleNote || '';
         }
 
         function saveSettings() {
             localStorage.setItem("health-height-cm", healthData.summary.heightCm);
             localStorage.setItem("health-target-weight", healthData.summary.targetWeight);
+            localStorage.setItem("health-supplements-note", healthData.summary.supplementsNote || '');
+            localStorage.setItem("health-lifestyle-note", healthData.summary.lifestyleNote || '');
         }
 
         function updateProfile() {
-            healthData.summary.heightCm = parseFloat(document.getElementById('setting-height').value) || 170;
-            healthData.summary.targetWeight = parseFloat(document.getElementById('setting-target-weight').value) || 65;
+            healthData.summary.heightCm = parseFloat(document.getElementById('setting-height').value) || 150;
+            healthData.summary.targetWeight = parseFloat(document.getElementById('setting-target-weight').value) || 50;
+            healthData.summary.supplementsNote = document.getElementById('setting-supplements')?.value || '';
+            healthData.summary.lifestyleNote = document.getElementById('setting-lifestyle-note')?.value || '';
             saveSettings();
             if (healthData.summary.updatedAt) finalizeDataLoad();
         }
@@ -1529,35 +1696,49 @@
 
         function normalizeHealthData(data, sourceLabel) {
             if (!data) data = {};
-            
-            const isLightweight = data.schemaVersion === "1.0" && data.healthData;
+
+            // gv1.57: 軽量JSONは schemaVersion 1.0 固定ではない。1.3 等でも healthData があれば軽量JSONとして扱う。
+            const isLightweight = !!(data && typeof data === 'object' && data.healthData && typeof data.healthData === 'object');
             const targetData = isLightweight ? data.healthData : data;
-            
-            const defSummary = { 
-                version: "gv1.49", 
-                heightCm: data.profile?.heightCm || data.summary?.heightCm || 170, 
-                targetWeight: data.profile?.targetWeightKg || data.summary?.targetWeight || 65, 
-                isSample: false, 
-                updatedAt: data.generatedAt || null,
-                dataSource: sourceLabel || 'Unknown',
-                privacyMode: data.privacyMode || 'full-gps'
+            const current = (typeof healthData === 'object' && healthData) ? healthData : {};
+
+            const lockedHeight = 150;
+            const lockedTarget = 50;
+            const previousSourceSummary = data.sourceSummary || targetData.sourceSummary || targetData.summary?.previousSourceSummary || current.summary?.previousSourceSummary || null;
+
+            const defSummary = {
+                version: "gv1.60",
+                heightCm: lockedHeight,
+                targetWeight: lockedTarget,
+                targetWeightKg: lockedTarget,
+                isSample: false,
+                updatedAt: data.generatedAt || targetData.summary?.updatedAt || current.summary?.updatedAt || null,
+                dataSource: sourceLabel || current.summary?.dataSource || 'Unknown',
+                privacyMode: data.privacyMode || targetData.summary?.privacyMode || current.summary?.privacyMode || 'full-gps',
+                previousSourceSummary
             };
-            
+
+            // 既存データ保持: 取り込みJSONに該当セクションが無い場合、現在保持しているhealthDataを空で上書きしない。
             let normalized = {
-                summary: { ...defSummary, ...(targetData.summary || {}) },
-                weight: targetData.weight || {},
-                steps: targetData.steps || {},
-                sleep: targetData.sleep || {},
-                heartRate: targetData.heartRate || {},
-                hrv: targetData.hrv || {},
-                gpsSummaries: targetData.gpsSummaries || targetData.gpsSummary || []
+                summary: { ...(current.summary || {}), ...defSummary, ...(targetData.summary || {}), heightCm: lockedHeight, targetWeight: lockedTarget, targetWeightKg: lockedTarget, previousSourceSummary },
+                weight: targetData.weight || current.weight || {},
+                steps: targetData.steps || current.steps || {},
+                sleep: targetData.sleep || current.sleep || {},
+                heartRate: targetData.heartRate || current.heartRate || {},
+                hrv: targetData.hrv || current.hrv || {},
+                gpsSummaries: targetData.gpsSummaries || targetData.gpsSummary || current.gpsSummaries || [],
+                manualLogs: targetData.manualLogs || current.manualLogs || {},
+                foodLogs: targetData.foodLogs || current.foodLogs || {},
+                eventLogs: targetData.eventLogs || current.eventLogs || {},
+                alcoholLogs: targetData.alcoholLogs || current.alcoholLogs || {}
             };
-            
+
+            normalized.gpsSummaries = Array.isArray(normalized.gpsSummaries) ? normalized.gpsSummaries : [];
             normalized.gpsSummaries.forEach(r => { if (!r.representativePoints && r.points) r.representativePoints = r.points; delete r.points; });
-            
+
             const hIn = document.getElementById('setting-height'); const wIn = document.getElementById('setting-target-weight');
-            if (hIn && normalized.summary.heightCm) hIn.value = normalized.summary.heightCm;
-            if (wIn && normalized.summary.targetWeight) wIn.value = normalized.summary.targetWeight;
+            if (hIn) hIn.value = lockedHeight;
+            if (wIn) wIn.value = lockedTarget;
             saveSettings();
             return normalized;
         }
@@ -2044,7 +2225,8 @@
         }
 
         function isLightweightHealthJson(data) {
-            return !!(data && typeof data === 'object' && data.schemaVersion === "1.0" && data.healthData);
+            // gv1.57: schemaVersion 1.0/1.1/1.3 などをすべて許容。healthData があれば軽量JSON。
+            return !!(data && typeof data === 'object' && data.healthData && typeof data.healthData === 'object');
         }
 
         function isGoogleTimelineJson(data) {
@@ -2100,7 +2282,7 @@
                     updateLoader(30, '軽量JSONを読み込み中...');
                     await loadLightweightJSON(lightweightPayload);
                 } else {
-                    healthData = normalizeHealthData({}, '手動インポート');
+                    healthData = normalizeHealthData(healthData, '手動インポート');
                 }
 
                 for (let i = 0; i < zipFiles.length; i++) {
@@ -2240,6 +2422,9 @@
             hideStartupScreen();
             const sampleBadge = document.getElementById('sample-badge'); if (sampleBadge) sampleBadge.classList.toggle('hidden', !healthData.summary.isSample);
             updateDataSourceChip();
+            loadManualLogsFromStorage();
+            renderManualLogUI();
+            updateManualDashboardSummary();
             const ind = document.getElementById('status-indicator'); if (ind) ind.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 mr-2 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span> Active`;
             
             const importLog = { weightDays: Object.keys(healthData.weight).length, stepDays: Object.keys(healthData.steps).length, sleepDays: Object.keys(healthData.sleep).length, heartDays: Object.keys(healthData.heartRate).length, hrvDays: Object.keys(healthData.hrv).length, gpsRoutes: (healthData.gpsSummaries || []).length };
@@ -2315,6 +2500,32 @@
             d.setDate(d.getDate() + days);
             const newDate = d.toISOString().substring(0, 10);
             setDashboardDate(newDate);
+        }
+
+        function averageByDateKeys(dataMap, keys) {
+            const vals = (keys || []).map(k => Number(dataMap?.[k])).filter(v => Number.isFinite(v));
+            return vals.length ? vals.reduce((a,b)=>a+b,0) / vals.length : null;
+        }
+
+        function buildWeightComparisonComment(dateKey) {
+            const weights = healthData.weight || {};
+            const curr = Number(weights[dateKey]);
+            if (!Number.isFinite(curr)) return '';
+            const keys = Object.keys(weights).filter(k => k < dateKey).sort();
+            const prevKey = keys[keys.length - 1];
+            const prev = prevKey ? Number(weights[prevKey]) : null;
+            const avg7 = averageByDateKeys(weights, keys.slice(-7));
+            const avg30 = averageByDateKeys(weights, keys.slice(-30));
+            const target = Number(healthData.summary?.targetWeight || healthData.summary?.targetWeightKg || 50);
+            const parts = [];
+            if (Number.isFinite(prev)) parts.push(`前日比${signed(curr - prev)}kg`);
+            if (Number.isFinite(avg7)) parts.push(`7日平均比${signed(curr - avg7)}kg`);
+            if (Number.isFinite(avg30)) parts.push(`30日平均比${signed(curr - avg30)}kg`);
+            if (Number.isFinite(target)) parts.push(`目標まで${signed(curr - target)}kg`);
+            let trend = '横ばい傾向';
+            if (Number.isFinite(avg7) && curr < avg7 - 0.2) trend = '改善傾向';
+            if (Number.isFinite(avg7) && curr > avg7 + 0.2) trend = '悪化・増加傾向';
+            return `体重は${parts.join('、')}で${trend}です。`;
         }
 
         function renderDailyHealthSummary(dateKey) {
@@ -2484,6 +2695,8 @@
             } else {
                 if (goodPoints.length > 0) commentHtml += `<div class="mb-1.5 text-emerald-400"><i class="fas fa-check-circle mr-1"></i> ${goodPoints[0]}</div>`;
                 if (badPoints.length > 0) commentHtml += `<div class="mb-1.5 text-red-400"><i class="fas fa-exclamation-triangle mr-1"></i> ${badPoints[0]}</div>`;
+                const weightTrendComment = buildWeightComparisonComment(dateKey);
+                if (weightTrendComment) commentHtml += `<div class="mt-2 text-cyan-100 font-bold"><i class="fas fa-weight mr-1 text-cyan-300"></i> ${weightTrendComment}</div>`;
                 if (advice.length > 0) commentHtml += `<div class="mt-3 pt-2 border-t border-slate-700/50 text-amber-200 font-bold"><i class="fas fa-lightbulb text-amber-400 mr-1"></i> ${advice[0]}</div>`;
             }
             document.getElementById('daily-comment-text').innerHTML = commentHtml;
@@ -2733,7 +2946,7 @@
             safeSetText('wr-metric-diff-prev-w', safeDiff(currW, prevW, 1) + 'kg');
             safeSetText('wr-metric-diff-30-w', safeDiff(currW, avg30W, 1) + 'kg');
 
-            const tw = healthData.summary.targetWeight || 65;
+            const tw = healthData.summary.targetWeight || 50;
             const diffT = currW != null ? currW - tw : null;
             safeSetText('wr-metric-diff-t-w', diffT != null ? (diffT >= 0 ? '+' : '') + diffT.toFixed(1) + 'kg' : '--');
 
@@ -2905,7 +3118,7 @@
 
         function updateDashboard(targetDate) {
             if (!targetDate) targetDate = getLatestDateAcrossData() || new Date().toISOString().substring(0, 10);
-            const h = (healthData.summary.heightCm || 170) / 100; const tw = healthData.summary.targetWeight || 65;
+            const h = (healthData.summary.heightCm || 150) / 100; const tw = healthData.summary.targetWeight || 50;
             
             const wKeys = Object.keys(healthData.weight).filter(k => k <= targetDate).sort();
             const sKeys = Object.keys(healthData.steps).filter(k => k <= targetDate).sort();
@@ -2976,9 +3189,12 @@
                     safeSetText('score-vs-week', weekAvg ? signed(latest.score - weekAvg) : '--'); 
                     safeSetText('score-vs-month', monthAvg ? signed(latest.score - monthAvg) : '--');
                     const commentEl = document.getElementById('overall-health-comment');
-                    if (latest.score < 55) commentEl.innerText = '疲労が強く出ています。睡眠を優先してください。'; 
-                    else if (latest.score < 75) commentEl.innerText = 'やや疲労傾向。移動負荷と睡眠を確認しましょう。'; 
-                    else commentEl.innerText = '概ね良好です。現在のリズムを維持しましょう。';
+                    const trendComment = buildWeightComparisonComment(latest.date || targetDate);
+                    let baseComment = '';
+                    if (latest.score < 55) baseComment = '疲労が強く出ています。睡眠を優先してください。'; 
+                    else if (latest.score < 75) baseComment = 'やや疲労傾向。移動負荷と睡眠を確認しましょう。'; 
+                    else baseComment = '概ね良好です。現在のリズムを維持しましょう。';
+                    commentEl.innerText = trendComment ? `${trendComment} ${baseComment}` : baseComment;
                 } else {
                     safeSetText('overall-health-score', '--');
                     safeSetText('score-vs-yesterday', '--'); safeSetText('score-vs-week', '--'); safeSetText('score-vs-month', '--');
@@ -3060,7 +3276,7 @@
             const labels = targetKeys.map(k => k.substring(5)); const actualData = targetKeys.map(k => healthData.weight[k]);
             const extendedKeys = keys.slice(Math.max(0, keys.length - range - 6)); const extendedData = extendedKeys.map(k => healthData.weight[k]);
             const maDataExtended = movingAverage(extendedData, 7); const movingAverageData = maDataExtended.slice(maDataExtended.length - targetKeys.length);
-            const targetWeight = healthData.summary.targetWeight || 65;
+            const targetWeight = healthData.summary.targetWeight || 50;
             const pointColors = targetKeys.map(k => k === dashboardSelectedDate ? '#3b82f6' : 'rgba(59,130,246,0.5)'); const pointRadii = targetKeys.map(k => k === dashboardSelectedDate ? 5 : 3);
             const options = getDefaultChartOptions(); applySmartYAxis(options, actualData, [targetWeight]);
             charts[canvasId] = new Chart(el, { type: 'line', data: { labels: labels, datasets: [ { label: '体重', data: actualData, type: 'line', borderColor: '#3b82f6', backgroundColor: '#3b82f6', tension: 0.3, pointRadius: pointRadii, pointBackgroundColor: pointColors, fill: false }, { label: '7日平均', data: movingAverageData, type: 'line', borderColor: 'rgba(148, 163, 184, 0.6)', borderWidth: 3, pointRadius: 0, fill: false }, buildHorizontalLineDataset('目標', targetWeight, labels, { borderColor: 'rgba(16, 185, 129, 0.6)' }) ] }, options: options });
@@ -3662,6 +3878,360 @@
             } else { icon.className = 'fas fa-play text-lg pl-1'; clearInterval(gpsPlaybackData.timer); }
         }
 
+
+        // --- Manual Food/Event Logs gv1.53 ---
+        const FOOD_MASTER = [
+            // 体重変動要因の分析価値が高いものだけを記録対象にする。水・お茶・コーヒー・常用サプリは日々のログから除外。
+            { id:'salad_chicken', name:'サラダチキン', protein:25, kcal:120, group:'highProtein', comment:'ダイエット最強クラス' },
+            { id:'natto', name:'納豆', protein:7, kcal:90, group:'highProtein', comment:'発酵食品＋高タンパク' },
+            { id:'greek_yogurt', name:'ギリシャヨーグルト', protein:12, kcal:100, group:'highProtein', comment:'間食に最適' },
+            { id:'tofu_bar', name:'豆腐バー', protein:12, kcal:120, group:'highProtein', comment:'腹持ち良好' },
+            { id:'hiyayakko', name:'冷奴', protein:8, kcal:100, group:'highProtein', comment:'夜に使いやすい' },
+            { id:'boiled_egg', name:'ゆで卵', protein:6, kcal:80, group:'highProtein', comment:'手軽な補給' },
+            { id:'protein_drink', name:'高タンパク飲料', protein:20, kcal:120, group:'highProtein', comment:'移動中でも補給しやすい' },
+            { id:'fish_protein_bar', name:'魚肉たんぱく食品', protein:8, kcal:90, group:'highProtein', comment:'低脂質で良い' },
+
+            { id:'salad', name:'サラダ', protein:2, kcal:80, group:'homeCooking', comment:'野菜不足対策' },
+            { id:'nimono', name:'煮物', protein:5, kcal:160, group:'homeCooking', comment:'家庭料理として良い' },
+            { id:'grilled_fish', name:'焼き魚', protein:22, kcal:220, group:'homeCooking', comment:'高タンパクで良い' },
+            { id:'sashimi', name:'刺身', protein:20, kcal:180, group:'homeCooking', comment:'低糖質・高タンパク' },
+            { id:'pork_miso_soup', name:'豚汁', protein:12, kcal:180, group:'homeCooking', comment:'具沢山なら高評価' },
+            { id:'miso_soup', name:'味噌汁', protein:4, kcal:60, group:'homeCooking', comment:'塩分はあるが食事の安定要素' },
+            { id:'okara', name:'おから', protein:6, kcal:120, group:'homeCooking', comment:'食物繊維も期待' },
+            { id:'hijiki', name:'ひじき', protein:3, kcal:90, group:'homeCooking', comment:'副菜として良い' },
+
+            { id:'rice', name:'ご飯', protein:4, kcal:250, group:'staple', comment:'量の把握が重要' },
+            { id:'onigiri', name:'おにぎり', protein:4, kcal:180, group:'staple', comment:'移動時の主食' },
+            { id:'bread', name:'パン', protein:5, kcal:250, group:'staple', comment:'脂質が多い種類に注意' },
+            { id:'soba', name:'そば', protein:12, kcal:350, group:'staple', comment:'ラーメンより軽め' },
+            { id:'udon', name:'うどん', protein:8, kcal:330, group:'staple', comment:'糖質寄り。量を見たい' },
+            { id:'pasta', name:'パスタ', protein:14, kcal:650, group:'staple', comment:'量とソースで変動しやすい' },
+
+            { id:'ramen', name:'ラーメン', protein:18, kcal:750, group:'outsideFood', comment:'塩分・脂質で翌日体重増に注意' },
+            { id:'curry', name:'カレー', protein:18, kcal:800, group:'outsideFood', comment:'糖質・脂質が増えやすい' },
+            { id:'gyudon', name:'牛丼', protein:22, kcal:700, group:'outsideFood', comment:'外食・塩分要因' },
+            { id:'yakiniku', name:'焼肉', protein:35, kcal:900, group:'outsideFood', comment:'タンパク質はあるが脂質に注意' },
+            { id:'yakitori', name:'焼鳥', protein:25, kcal:330, group:'outsideFood', comment:'塩なら比較的良好。タレと本数に注意' },
+            { id:'sushi', name:'寿司', protein:20, kcal:550, group:'outsideFood', comment:'食べ過ぎに注意' },
+            { id:'pizza', name:'ピザ', protein:20, kcal:900, group:'outsideFood', comment:'脂質・塩分が強い' },
+            { id:'hamburger', name:'ハンバーガー', protein:20, kcal:700, group:'outsideFood', comment:'外食要因として記録' },
+            { id:'karaage', name:'唐揚げ', protein:18, kcal:420, group:'outsideFood', comment:'個数で評価が大きく変わる' },
+            { id:'french_fries', name:'フライドポテト', protein:5, kcal:450, group:'outsideFood', comment:'多めは要注意' },
+            { id:'gyoza', name:'餃子', protein:14, kcal:380, group:'outsideFood', comment:'外食時の追加要因' },
+
+            { id:'nuts', name:'ナッツ', protein:6, kcal:180, group:'snack', comment:'30gなら良好。100g以上は体重増加要因', nuts:30 },
+            { id:'icecream', name:'アイス', protein:4, kcal:250, group:'snack', comment:'甘いものログとして記録' },
+            { id:'chocolate', name:'チョコ', protein:3, kcal:300, group:'snack', comment:'量が増えやすい嗜好品' },
+            { id:'snacks', name:'菓子', protein:3, kcal:350, group:'snack', comment:'間食要因として記録' },
+            { id:'fruit', name:'フルーツ', protein:1, kcal:120, group:'snack', comment:'甘味だが比較的良好' }
+        ];
+        const PROTEIN_FOOD_MASTER = FOOD_MASTER;
+        const MEAL_MASTER = [];
+        const FOOD_GROUPS = {
+            highProtein: { label:'🟢 高タンパク食品', cls:'group-recommended', score:5 },
+            homeCooking: { label:'🟢 家庭料理・健康寄り', cls:'group-recommended', score:5 },
+            staple: { label:'🟡 主食', cls:'group-ok', score:3 },
+            outsideFood: { label:'🔴 外食・高カロリー注意', cls:'group-caution', score:1 },
+            snack: { label:'🟡 間食・甘いもの', cls:'group-ok', score:2 }
+        };
+        const FOOD_DETAIL_OPTIONS = {
+            greek_yogurt: [
+                { key:'sweetness', label:'種類', choices:['無糖','加糖'], default:'無糖' },
+                { key:'proteinChoice', label:'タンパク質', choices:['10g','12g','15g','20g'], default:'12g' }
+            ],
+            salad_chicken: [
+                { key:'size', label:'量', choices:['通常','小さめ','大きめ'], default:'通常' },
+                { key:'proteinChoice', label:'タンパク質', choices:['15g','20g','25g','30g'], default:'25g' }
+            ],
+            protein_drink: [{ key:'proteinChoice', label:'タンパク質', choices:['15g','20g','25g'], default:'20g' }],
+            tofu_bar: [{ key:'proteinChoice', label:'タンパク質', choices:['10g','12g','15g'], default:'12g' }],
+            natto: [{ key:'packs', label:'量', choices:['1パック','2パック'], default:'1パック' }],
+            hiyayakko: [{ key:'portion', label:'量', choices:['半丁','1丁'], default:'半丁' }],
+            boiled_egg: [{ key:'pieces', label:'個数', choices:['1個','2個'], default:'1個' }],
+            nuts: [{ key:'amount', label:'量', choices:['30g','60g','100g','150g','250g以上'], default:'30g' }],
+            yakitori: [
+                { key:'sauce', label:'味', choices:['塩','タレ'], default:'塩' },
+                { key:'sticks', label:'本数', choices:['1本','2本','3本','5本以上'], default:'3本' }
+            ],
+            yakiniku: [{ key:'amount', label:'量', choices:['少量','普通','多め'], default:'普通' }],
+            sushi: [{ key:'amount', label:'量', choices:['少量','普通','多め'], default:'普通' }],
+            ramen: [
+                { key:'size', label:'量', choices:['普通','大盛'], default:'普通' },
+                { key:'soup', label:'スープ', choices:['飲まない','飲む'], default:'飲まない' }
+            ],
+            karaage: [{ key:'pieces', label:'個数', choices:['1〜2個','3〜4個','5個以上'], default:'3〜4個' }],
+            french_fries: [{ key:'amount', label:'量', choices:['少量','普通','多め'], default:'普通' }],
+            onigiri: [{ key:'pieces', label:'個数', choices:['1個','2個','3個以上'], default:'1個' }]
+        };
+        const ALCOHOL_TYPES = ['ビール','焼酎'];
+        const EVENT_MASTER = {
+            mealPlace: ['自宅','コンビニ','外食','居酒屋','出張先','旅行先'],
+            businessTrip: ['なし','日帰り','宿泊'],
+            travel: ['なし','国内','海外'],
+            eatingOut: ['なし','1回','2回以上'],
+            hunger: ['😀 空腹なし','🙂 少し空腹','😣 空腹','🔥 限界'],
+            strength: ['なし','5分','10分','20分','30分以上']
+        };
+        const EVENT_LABELS = { mealPlace:'食事場所', businessTrip:'出張', travel:'旅行', eatingOut:'外食', hunger:'空腹度', strength:'筋トレ' };
+        let manualDetailState = null;
+
+        function latestDateKey(obj) { const keys = Object.keys(obj || {}).sort(); return keys.length ? keys[keys.length - 1] : null; }
+        function ensureManualStores() {
+            healthData.manualLogs = healthData.manualLogs || {};
+            healthData.foodLogs = healthData.foodLogs || {};
+            healthData.eventLogs = healthData.eventLogs || {};
+            healthData.alcoholLogs = healthData.alcoholLogs || {};
+        }
+        function toLocalDateTimeValue(d = new Date()) {
+            const pad = n => String(n).padStart(2,'0');
+            return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+        }
+        function getManualLogDateTime() {
+            const el = document.getElementById('manual-log-datetime');
+            if (el && el.value) return new Date(el.value);
+            return new Date();
+        }
+        function dateKeyFromDate(d) { return getJstParts(d).localDate; }
+        function getManualDate() {
+            const el = document.getElementById('manual-log-date');
+            if (el && el.value) return el.value;
+            return dashboardSelectedDate || latestDateKey(healthData.weight) || new Date().toISOString().substring(0,10);
+        }
+        function moveManualDate(delta) {
+            const el = document.getElementById('manual-log-date'); if (!el) return;
+            const d = new Date((el.value || getManualDate()) + 'T00:00:00'); d.setDate(d.getDate() + delta);
+            el.value = d.toISOString().substring(0,10); renderManualLogUI(); updateManualDashboardSummary();
+        }
+        function loadManualLogsFromStorage() {
+            ensureManualStores();
+            try {
+                const raw = localStorage.getItem('health-manual-logs-v1');
+                if (!raw) return;
+                const saved = JSON.parse(raw);
+                healthData.manualLogs = { ...(healthData.manualLogs || {}), ...(saved.manualLogs || {}) };
+                healthData.foodLogs = { ...(healthData.foodLogs || {}), ...(saved.foodLogs || {}) };
+                healthData.eventLogs = { ...(healthData.eventLogs || {}), ...(saved.eventLogs || {}) };
+                healthData.alcoholLogs = { ...(healthData.alcoholLogs || {}), ...(saved.alcoholLogs || {}) };
+            } catch(e) { console.warn('manual log restore failed', e); }
+        }
+        function saveManualLogsToStorage() {
+            ensureManualStores();
+            localStorage.setItem('health-manual-logs-v1', JSON.stringify({ manualLogs: healthData.manualLogs, foodLogs: healthData.foodLogs, eventLogs: healthData.eventLogs, alcoholLogs: healthData.alcoholLogs }));
+        }
+        function stars(n) { return '★★★★★☆☆☆☆☆'.substring(5 - Math.max(1, Math.min(5, n)), 10 - Math.max(1, Math.min(5, n))); }
+        function handleFoodSelect(id) {
+            if (FOOD_DETAIL_OPTIONS[id]) return openFoodDetailModal(id);
+            return addFoodLog(id);
+        }
+        function openFoodDetailModal(id) {
+            const item = FOOD_MASTER.find(x => x.id === id); if (!item) return;
+            const options = FOOD_DETAIL_OPTIONS[id] || [];
+            manualDetailState = { foodId:id, selections:{} };
+            options.forEach(opt => manualDetailState.selections[opt.key] = opt.default || opt.choices[0]);
+            const title = document.getElementById('manual-detail-title'); if (title) title.textContent = item.name;
+            const comment = document.getElementById('manual-detail-comment'); if (comment) comment.textContent = item.comment || '体重変動の原因分析に必要な粒度だけ選択します。';
+            const dt = document.getElementById('manual-detail-datetime'); if (dt) dt.value = toLocalDateTimeValue(getManualLogDateTime());
+            renderFoodDetailOptions();
+            const modal = document.getElementById('manual-detail-modal'); if (modal) modal.classList.add('active');
+        }
+        function closeFoodDetailModal() {
+            manualDetailState = null;
+            const modal = document.getElementById('manual-detail-modal'); if (modal) modal.classList.remove('active');
+        }
+        function setFoodDetailChoice(key, value) {
+            if (!manualDetailState) return;
+            manualDetailState.selections[key] = value;
+            renderFoodDetailOptions();
+        }
+        function renderFoodDetailOptions() {
+            const box = document.getElementById('manual-detail-options'); if (!box || !manualDetailState) return;
+            const opts = FOOD_DETAIL_OPTIONS[manualDetailState.foodId] || [];
+            box.innerHTML = opts.map(opt => `<div><div class="manual-detail-label">${opt.label}</div><div class="manual-choice-grid">${opt.choices.map(choice => `<button onclick="setFoodDetailChoice('${opt.key}','${choice}')" class="manual-choice-btn ${manualDetailState.selections[opt.key]===choice?'active':''}">${choice}</button>`).join('')}</div></div>`).join('');
+        }
+        function confirmFoodDetailModal() {
+            if (!manualDetailState) return;
+            const dtEl = document.getElementById('manual-detail-datetime');
+            const dt = dtEl && dtEl.value ? new Date(dtEl.value) : getManualLogDateTime();
+            addFoodLog(manualDetailState.foodId, { selections: { ...manualDetailState.selections }, datetime: dt });
+            closeFoodDetailModal();
+        }
+        function parseNumberFromChoice(v, fallback=0) {
+            const m = String(v || '').match(/[0-9]+/);
+            return m ? Number(m[0]) : fallback;
+        }
+        function buildFoodLogFromSelection(item, selections = {}) {
+            const log = { ...item, detail: { ...selections }, displayName: item.name, evaluation: '普通', severity: 0 };
+            const proteinChoice = selections.proteinChoice ? parseNumberFromChoice(selections.proteinChoice, item.protein) : null;
+            if (proteinChoice !== null) log.protein = proteinChoice;
+            if (item.id === 'greek_yogurt') {
+                log.displayName = `ギリシャヨーグルト（${selections.sweetness || '無糖'}・P${log.protein}g）`;
+                log.kcal = selections.sweetness === '加糖' ? 130 : 100;
+                log.evaluation = selections.sweetness === '加糖' && log.protein <= 10 ? '普通〜良好' : '良好';
+            } else if (item.id === 'salad_chicken') {
+                log.displayName = `サラダチキン（${selections.size || '通常'}・P${log.protein}g）`;
+                log.kcal = log.protein >= 30 ? 150 : log.protein <= 15 ? 90 : 120;
+                log.evaluation = '良好';
+            } else if (item.id === 'protein_drink' || item.id === 'tofu_bar') {
+                log.displayName = `${item.name}（P${log.protein}g）`; log.evaluation = '良好';
+            } else if (item.id === 'natto') {
+                const n = selections.packs === '2パック' ? 2 : 1; log.protein = 7*n; log.kcal = 90*n; log.displayName = `納豆（${selections.packs || '1パック'}）`; log.evaluation = '良好';
+            } else if (item.id === 'hiyayakko') {
+                const full = selections.portion === '1丁'; log.protein = full ? 16 : 8; log.kcal = full ? 200 : 100; log.displayName = `冷奴（${selections.portion || '半丁'}）`; log.evaluation = '良好';
+            } else if (item.id === 'boiled_egg') {
+                const n = selections.pieces === '2個' ? 2 : 1; log.protein = 6*n; log.kcal = 80*n; log.displayName = `ゆで卵（${selections.pieces || '1個'}）`; log.evaluation = '良好';
+            } else if (item.id === 'nuts') {
+                const amount = selections.amount || '30g'; const grams = amount.includes('250') ? 250 : parseNumberFromChoice(amount,30); log.nuts = grams; log.protein = Math.round(grams * 0.2); log.kcal = Math.round(grams * 6); log.displayName = `ナッツ（${amount}）`;
+                log.evaluation = grams >= 250 ? '要注意' : grams >= 100 ? '注意' : '良好'; log.severity = grams >= 250 ? 3 : grams >= 100 ? 2 : 0; log.group = 'snack';
+            } else if (item.id === 'yakitori') {
+                const sticks = selections.sticks || '3本'; const n = sticks.includes('5') ? 5 : parseNumberFromChoice(sticks,3); const sauce = selections.sauce || '塩'; log.protein = Math.round(n*8); log.kcal = Math.round(n*(sauce==='タレ'?120:100)); log.displayName = `焼鳥（${sauce}・${sticks}）`; log.evaluation = sauce==='タレ' && n >= 5 ? '注意' : '普通〜良好'; log.severity = sauce==='タレ' && n >= 5 ? 1 : 0;
+            } else if (item.id === 'yakiniku' || item.id === 'sushi') {
+                const amount = selections.amount || '普通'; const mult = amount === '少量' ? .7 : amount === '多め' ? 1.4 : 1; log.protein = Math.round(item.protein*mult); log.kcal = Math.round(item.kcal*mult); log.displayName = `${item.name}（${amount}）`; log.evaluation = amount === '多め' ? '注意' : '普通'; log.severity = amount === '多め' ? 1 : 0;
+            } else if (item.id === 'ramen') {
+                const size = selections.size || '普通'; const soup = selections.soup || '飲まない'; log.kcal = item.kcal + (size==='大盛'?180:0) + (soup==='飲む'?120:0); log.displayName = `ラーメン（${size}・スープ${soup}）`; log.evaluation = soup === '飲む' ? '要注意' : '注意'; log.severity = soup === '飲む' ? 3 : 2;
+            } else if (item.id === 'karaage') {
+                const pieces = selections.pieces || '3〜4個'; const n = pieces.includes('5') ? 5 : pieces.includes('1') ? 2 : 4; log.protein = Math.round(n*5); log.kcal = Math.round(n*100); log.displayName = `唐揚げ（${pieces}）`; log.evaluation = pieces.includes('5') ? '注意' : pieces.includes('1') ? '普通' : '普通'; log.severity = pieces.includes('5') ? 1 : 0;
+            } else if (item.id === 'french_fries') {
+                const amount = selections.amount || '普通'; const mult = amount === '少量' ? .6 : amount === '多め' ? 1.5 : 1; log.kcal = Math.round(item.kcal*mult); log.displayName = `フライドポテト（${amount}）`; log.evaluation = amount === '多め' ? '要注意' : amount === '少量' ? '普通' : '注意'; log.severity = amount === '多め' ? 3 : amount === '普通' ? 1 : 0;
+            } else if (item.id === 'onigiri') {
+                const pieces = selections.pieces || '1個'; const n = pieces.includes('3') ? 3 : parseNumberFromChoice(pieces,1); log.protein = 4*n; log.kcal = 180*n; log.displayName = `おにぎり（${pieces}）`; log.evaluation = n >= 3 ? '注意' : '普通'; log.severity = n >= 3 ? 1 : 0;
+            }
+            return log;
+        }
+        function addFoodLog(id, detailOptions = {}) {
+            ensureManualStores();
+            const item = FOOD_MASTER.find(x => x.id === id);
+            if (!item) return;
+            const dt = detailOptions.datetime || getManualLogDateTime();
+            const date = dateKeyFromDate(dt);
+            const arr = healthData.foodLogs[date] || [];
+            const log = buildFoodLogFromSelection(item, detailOptions.selections || {});
+            arr.push(enrichLogTime({ ...log, logId:'food_' + Date.now() + '_' + Math.random().toString(36).slice(2,6), type:'food', category:log.group, mealPlace:getMealPlaceForDate(date) || '自宅' }, dt));
+            healthData.foodLogs[date] = arr;
+            // 食事ログは foodLogs に一本化。manualLogs へ同じ食事を複製しない（二重集計防止）。
+            const dateEl = document.getElementById('manual-log-date'); if (dateEl) dateEl.value = date;
+            const dtEl = document.getElementById('manual-log-datetime'); if (dtEl) dtEl.value = toLocalDateTimeValue(new Date());
+            saveManualLogsToStorage(); renderManualLogUI(); updateManualDashboardSummary();
+        }
+        function toggleProteinFood(id) { handleFoodSelect(id); }
+        function addMealLog(label) {
+            const found = FOOD_MASTER.find(x => x.name === String(label).replace(/^(朝食|昼食|夕食):/,''));
+            if (found) return handleFoodSelect(found.id);
+            ensureManualStores();
+            const dt = getManualLogDateTime(); const date = dateKeyFromDate(dt); const arr = healthData.foodLogs[date] || [];
+            arr.push(enrichLogTime({ id:'meal_other', logId:'meal_' + Date.now(), name:String(label).replace(/^(朝食|昼食|夕食):/,''), displayName:String(label).replace(/^(朝食|昼食|夕食):/,''), protein:0, kcal:0, group:'staple', category:'staple', comment:'一般食事ログ', type:'food', mealPlace:getMealPlaceForDate(date) || '自宅' }, dt));
+            healthData.foodLogs[date] = arr; saveManualLogsToStorage(); renderManualLogUI(); updateManualDashboardSummary();
+        }
+        function deleteFoodLog(date, logId) {
+            ensureManualStores();
+            const arr = healthData.foodLogs[date] || [];
+            healthData.foodLogs[date] = arr.filter(x => (x.logId || x.time + '_' + x.name) !== logId);
+            saveManualLogsToStorage(); renderManualLogUI(); updateManualDashboardSummary();
+        }
+        function setAlcohol(type, cups) {
+            ensureManualStores();
+            const dt = getManualLogDateTime(); const date = dateKeyFromDate(dt);
+            healthData.alcoholLogs[date] = healthData.alcoholLogs[date] || {};
+            healthData.alcoholLogs[date][type] = cups; healthData.alcoholLogs[date][type + '_time'] = dt.toISOString();
+            healthData.manualLogs[date] = healthData.manualLogs[date] || [];
+            healthData.manualLogs[date].push(enrichLogTime({ logId:'alcohol_' + Date.now(), type:'alcohol', alcoholType:type, cups:cups }, dt));
+            const dateEl = document.getElementById('manual-log-date'); if (dateEl) dateEl.value = date;
+            saveManualLogsToStorage(); renderManualLogUI(); updateManualDashboardSummary();
+        }
+        function setEventLog(key, value) {
+            ensureManualStores();
+            const dt = getManualLogDateTime(); const date = dateKeyFromDate(dt);
+            healthData.eventLogs[date] = healthData.eventLogs[date] || {};
+            healthData.eventLogs[date][key] = value; healthData.eventLogs[date][key + '_time'] = dt.toISOString();
+            healthData.manualLogs[date] = healthData.manualLogs[date] || [];
+            healthData.manualLogs[date].push(enrichLogTime({ logId:'event_' + Date.now(), type:'event', eventKey:key, value:value }, dt));
+            const dateEl = document.getElementById('manual-log-date'); if (dateEl) dateEl.value = date;
+            saveManualLogsToStorage(); renderManualLogUI(); updateManualDashboardSummary();
+        }
+        function getManualTimeline(date) {
+            const foods = (healthData.foodLogs[date] || []).map(x => ({ kind:'food', ...x }));
+            const alcohol = healthData.alcoholLogs[date] || {};
+            const alcoholLogs = Object.keys(alcohol).filter(k => !k.endsWith('_time') && Number(alcohol[k]) > 0).map(k => ({ kind:'alcohol', name:`${k}（${Number(alcohol[k])>=4?'4杯以上':Number(alcohol[k])+'杯'}）`, time:alcohol[k + '_time'] || date + 'T21:00:00', protein:0, kcal:0, group:'outsideFood' }));
+            return foods.concat(alcoholLogs).sort((a,b) => new Date(b.time || 0) - new Date(a.time || 0));
+        }
+        function ratingLabel(n) {
+            if (n >= 5) return '良好';
+            if (n >= 4) return 'やや良好';
+            if (n >= 3) return '普通';
+            if (n >= 2) return '注意';
+            return '要注意';
+        }
+        function calcManualDailyScore(date) {
+            ensureManualStores(); const foods = healthData.foodLogs[date] || []; const events = healthData.eventLogs[date] || {}; const alcohol = healthData.alcoholLogs[date] || {};
+            const protein = foods.reduce((s,x)=>s+(Number(x.protein)||0),0);
+            const kcal = foods.reduce((s,x)=>s+(Number(x.kcal)||0),0);
+            const nuts = foods.reduce((s,x)=>s+(Number(x.nuts)||0),0);
+            const alcoholCups = Object.entries(alcohol).filter(([k])=>!k.endsWith('_time')).reduce((s,[,x])=>s+(Number(x)||0),0);
+            const eatingOutCount = (events.mealPlace === '居酒屋' || events.mealPlace === '外食' || events.eatingOut || 'なし').includes('2回') ? 2 : ((events.mealPlace === '居酒屋' || events.mealPlace === '外食' || (events.eatingOut || 'なし').includes('1回')) ? 1 : 0);
+            const highProteinCount = foods.filter(x => x.group === 'highProtein').length;
+            const homeCookingCount = foods.filter(x => x.group === 'homeCooking').length;
+            const outsideCount = foods.filter(x => x.group === 'outsideFood').length;
+            const snackCount = foods.filter(x => x.group === 'snack').length;
+            const highProteinRate = foods.length ? Math.round((highProteinCount / foods.length) * 100) : 0;
+            const outsideRate = foods.length ? Math.round((outsideCount / foods.length) * 100) : 0;
+            const severity = foods.reduce((s,x)=>s+(Number(x.severity)||0),0);
+            const proteinScore = Math.min(100, Math.round((protein / 60) * 100));
+            let rating = 3;
+            if (protein >= 40) rating += 1; if (protein >= 60) rating += 1; if (highProteinCount >= 2) rating += 1; if (homeCookingCount >= 1) rating += 1;
+            if (outsideCount >= 1) rating -= 1; if (outsideCount >= 2) rating -= 1; if (snackCount >= 2) rating -= 1; if (severity >= 3) rating -= 2; else if (severity >= 1) rating -= 1;
+            if (nuts >= 100) rating -= 2; else if (nuts >= 60) rating -= 1;
+            if (alcoholCups > 0) rating -= 1; if (alcoholCups >= 3) rating -= 1; if (eatingOutCount >= 2) rating -= 1; if ((events.strength || '') !== 'なし' && events.strength) rating += 1;
+            rating = Math.max(1, Math.min(5, rating));
+            const advice = [];
+            if (protein < 40) advice.push('タンパク質不足です。サラダチキン、ギリシャヨーグルト、納豆を追加すると改善しやすいです。');
+            if (nuts >= 100) advice.push('ナッツ量が多いです。100g以上は体重増加要因として強く疑います。');
+            else if (nuts >= 60) advice.push('ナッツは60gです。体重停滞時は30g以下に抑えると分析しやすいです。');
+            if (alcoholCups > 0) advice.push('飲酒ログあり。翌日の体重増加は水分・塩分・食事量の影響も見てください。');
+            if (eatingOutCount > 0) advice.push(`${events.mealPlace || '外食'}ログあり。体重増加要因として塩分・食事量を確認してください。`);
+            if (outsideRate >= 40) advice.push('外食・高カロリー注意カテゴリの比率が高めです。翌日の体重変動と合わせて見てください。');
+            if (!advice.length) advice.push('入力内容は良好です。高歩数と高タンパクを維持できています。');
+            return { protein, kcal, nuts, alcoholCups, eatingOutCount, highProteinCount, homeCookingCount, outsideCount, snackCount, highProteinRate, outsideRate, count: foods.length, proteinScore, rating, dietRating: rating, advice: advice.join(' ') };
+        }
+        function renderFoodGroup(groupKey, items) {
+            const meta = FOOD_GROUPS[groupKey];
+            const cardHtml = items.map(item => `<button onclick="handleFoodSelect('${item.id}')" class="quick-log-btn ${meta.cls}"><span class="food-name">${item.name}</span><span class="sub">タンパク質 ${item.protein}g<br>${item.kcal}kcal</span><span class="comment">${item.comment}${FOOD_DETAIL_OPTIONS[item.id] ? '<br><span class="text-teal-200">詳細選択あり</span>' : ''}</span></button>`).join('');
+            return `<div><h4 class="text-xs font-black text-slate-300 uppercase tracking-widest mb-2">${meta.label}</h4><div class="quick-log-grid">${cardHtml}</div></div>`;
+        }
+        function renderManualLogUI() {
+            ensureManualStores(); const date = getManualDate(); const dateEl = document.getElementById('manual-log-date'); if (dateEl && !dateEl.value) dateEl.value = date;
+            const dtEl = document.getElementById('manual-log-datetime'); if (dtEl && !dtEl.value) dtEl.value = toLocalDateTimeValue(new Date());
+            const foods = healthData.foodLogs[date] || []; const alcohol = healthData.alcoholLogs[date] || {}; const events = healthData.eventLogs[date] || {};
+            const proteinBox = document.getElementById('protein-food-buttons');
+            if (proteinBox) proteinBox.innerHTML = Object.keys(FOOD_GROUPS).map(g => renderFoodGroup(g, FOOD_MASTER.filter(x => x.group === g))).join('');
+            const mealBox = document.getElementById('meal-food-buttons'); if (mealBox) mealBox.innerHTML = '';
+            const alcBox = document.getElementById('alcohol-buttons');
+            if (alcBox) alcBox.innerHTML = ALCOHOL_TYPES.map(type => `<div><div class="text-xs text-slate-400 font-black mb-2">${type}</div><div class="flex flex-wrap gap-2">${[0,1,2,3,4].map(n => `<button onclick="setAlcohol('${type}',${n})" class="quick-log-pill ${(Number(alcohol[type]||0)===n)?'bg-orange-500/20 border-orange-400/50 text-white':''}">${n===4?'4杯以上':n+'杯'}</button>`).join('')}</div></div>`).join('');
+            const evBox = document.getElementById('event-buttons');
+            if (evBox) evBox.innerHTML = Object.keys(EVENT_MASTER).map(key => `<div><div class="text-xs text-slate-400 font-black mb-2">${EVENT_LABELS[key]}</div><div class="flex flex-wrap gap-2">${EVENT_MASTER[key].map(v => `<button onclick="setEventLog('${key}','${v}')" class="quick-log-pill ${(events[key]===v || (!events[key] && (v==='なし' || v==='自宅')))?'bg-cyan-500/20 border-cyan-400/50 text-white':''}">${v}</button>`).join('')}</div></div>`).join('');
+            const score = calcManualDailyScore(date);
+            const setText = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+            setText('manual-today-protein', `${score.protein}g`); setText('manual-today-nuts', `${score.nuts}g`); setText('manual-today-alcohol', `${score.alcoholCups}杯`); setText('manual-today-eatingout', `${score.eatingOutCount}回`); setText('manual-today-count', `${score.count}件`);
+            setText('manual-tab-protein-score', `${score.proteinScore}点`); setText('manual-tab-food-rating', ratingLabel(score.rating)); setText('manual-tab-diet-rating', ratingLabel(score.dietRating)); setText('manual-tab-advice', score.advice);
+            const timeline = document.getElementById('manual-food-timeline');
+            if (timeline) {
+                const logs = getManualTimeline(date);
+                timeline.innerHTML = logs.length ? logs.map(x => {
+                    const d = x.time ? new Date(x.time) : new Date(); const hhmm = d.toLocaleTimeString('ja-JP', { hour:'2-digit', minute:'2-digit' }); const key = x.logId || x.time + '_' + x.name;
+                    const title = x.displayName || x.name;
+                    const evalText = x.evaluation ? ` / ${x.evaluation}` : '';
+                    return `<div class="timeline-row"><div class="flex items-center gap-3 min-w-0"><div class="timeline-time">${hhmm}</div><div class="min-w-0"><div class="timeline-title truncate">${title}</div><div class="timeline-sub">P${Number(x.protein)||0}g / ${Number(x.kcal)||0}kcal / ${FOOD_GROUPS[x.group]?.label || ''}${evalText}</div></div></div>${x.kind==='food'?`<button onclick="deleteFoodLog('${date}','${key}')" class="text-slate-500 hover:text-red-300 px-2" title="削除"><i class="fas fa-times"></i></button>`:''}</div>`;
+                }).join('') : '<div class="text-xs text-slate-500">今日の食事ログは未入力です。</div>';
+            }
+            const hist = document.getElementById('manual-log-history');
+            if (hist) hist.innerHTML = foods.slice().sort((a,b)=>new Date(b.time||0)-new Date(a.time||0)).slice(0,12).map(x => `<span class="quick-log-pill">${x.displayName || x.name}${x.protein?` P${x.protein}g`:''}</span>`).join('') || '<span class="text-xs text-slate-500">今日の食事ログは未入力です。</span>';
+        }
+        function updateManualDashboardSummary() {
+            ensureManualStores(); const date = dashboardSelectedDate || getManualDate(); const score = calcManualDailyScore(date); const ev = healthData.eventLogs[date] || {};
+            const alcohol = healthData.alcoholLogs[date] || {}; const alcoholCups = Object.entries(alcohol).filter(([k])=>!k.endsWith('_time')).reduce((s,[,x])=>s+(Number(x)||0),0);
+            const setText = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+            setText('manual-protein-score', `${score.proteinScore}点`); setText('manual-food-rating', ratingLabel(score.rating)); setText('manual-alcohol-summary', alcoholCups ? `${alcoholCups}杯` : 'なし');
+            setText('manual-event-summary', [`場所:${ev.mealPlace||'自宅'}`, `出張:${ev.businessTrip||'なし'}`, `外食:${ev.eatingOut||'なし'}`, `筋トレ:${ev.strength||'なし'}`].join(' / ')); setText('manual-diet-advice', score.advice);
+        }
+
         function loadSampleData() {
             showLoader(true); updateLoader(30, 'デモデータを生成中...');
             try {
@@ -3686,47 +4256,952 @@
             } catch (e) { alert(e.message); } finally { showLoader(false); }
         }
 
-        function exportJSON() { 
-            const dataToExport = {
-                schemaVersion: "1.0",
-                appVersion: "gv1.49",
+        // --- JSON quality / JST / analysis helpers gv1.56 95-point patch ---
+        function getJstParts(timeValue) {
+            const d = timeValue ? new Date(timeValue) : new Date();
+            const safeDate = Number.isFinite(d.getTime()) ? d : new Date();
+            const jstMs = safeDate.getTime() + 9 * 60 * 60 * 1000;
+            const jst = new Date(jstMs);
+            const pad = n => String(n).padStart(2, '0');
+            const localDate = `${jst.getUTCFullYear()}-${pad(jst.getUTCMonth()+1)}-${pad(jst.getUTCDate())}`;
+            const localTime = `${pad(jst.getUTCHours())}:${pad(jst.getUTCMinutes())}`;
+            const localDateTime = `${localDate}T${localTime}:${pad(jst.getUTCSeconds())}+09:00`;
+            return { timestampUtc: safeDate.toISOString(), localDate, localTime, localDateTime, timezone: 'Asia/Tokyo' };
+        }
+        function jstDateKeyFromTime(timeValue) { return getJstParts(timeValue).localDate; }
+        function enrichLogTime(log, timeValue) {
+            const parts = getJstParts(timeValue || log.timestampUtc || log.time || new Date());
+            return { ...log, ...parts, time: parts.timestampUtc, isTest: log.isTest === true, source: log.source || 'user' };
+        }
+
+        function ensureAnalysisFoodMasterPatch() {
+            // 旧ログや詳細モーダルで生成されるコードを正式マスタに追加する。UI表示は既存のまま。
+            if (Array.isArray(FOOD_MASTER) && !FOOD_MASTER.some(x => x.id === 'greek_yogurt_sweetened')) {
+                FOOD_MASTER.push({
+                    id: 'greek_yogurt_sweetened',
+                    name: 'ギリシャヨーグルト加糖',
+                    protein: 10,
+                    kcal: 130,
+                    group: 'highProtein',
+                    comment: '加糖は普通評価。無糖より減量優先度は下がる'
+                });
+            }
+        }
+
+        const ALLOWED_FOOD_CATEGORIES_GV156 = new Set(['highProtein','homeCooking','staple','outsideFood','snack']);
+        const DEPRECATED_CATEGORY_MAP_GV156 = {
+            outside:'outsideFood',
+            recommended:'highProtein',
+            healthy:'homeCooking',
+            normal:'staple',
+            risk:'outsideFood',
+            other:'snack'
+        };
+        const MEAL_PLACE_CODE_MAP_GV156 = {
+            '自宅':'home',
+            'コンビニ':'convenienceStore',
+            '外食':'restaurant',
+            '居酒屋':'izakaya',
+            '出張先':'businessTrip',
+            '旅行先':'travel',
+            'テイクアウト':'takeout',
+            'フードコート':'foodCourt',
+            'サービスエリア':'serviceArea',
+            home:'home',
+            convenienceStore:'convenienceStore',
+            restaurant:'restaurant',
+            izakaya:'izakaya',
+            businessTrip:'businessTrip',
+            travel:'travel',
+            takeout:'takeout',
+            foodCourt:'foodCourt',
+            serviceArea:'serviceArea'
+        };
+        const OUTSIDE_MEAL_PLACE_CODES_GV156 = new Set(['restaurant','izakaya','businessTrip','travel','takeout','foodCourt','serviceArea']);
+        const ALCOHOL_EXPORT_CODE_GV156 = { 'ビール':'beer', '焼酎':'shochu', beer:'beer', shochu:'shochu' };
+        const ALLOWED_ALCOHOL_CODES_GV156 = new Set(['beer','shochu']);
+
+        function normalizeDietEvaluation(item) {
+            const id = item.id || item.foodCode;
+            const category = item.category || item.group || 'unknown';
+            const grams = Number(item.nuts || item.amountGrams || 0);
+            const display = item.displayName || item.name || '';
+            let evaluation = item.evaluation || '普通';
+            let severity = Number(item.severity || 0);
+
+            if (category === 'highProtein' || ['sashimi','grilled_fish'].includes(id)) {
+                evaluation = '良好';
+                severity = Math.min(severity, 0);
+            }
+            if (category === 'homeCooking' && !['sashimi','grilled_fish'].includes(id)) evaluation = '普通';
+            if (category === 'staple') evaluation = severity ? '注意' : '普通';
+
+            if (['chocolate','snacks','icecream','pizza','curry','gyudon','hamburger','gyoza'].includes(id)) {
+                evaluation = '注意';
+                severity = Math.max(severity, 1);
+            }
+            if (id === 'karaage') {
+                if (display.includes('5個以上')) { evaluation = '注意'; severity = Math.max(severity, 2); }
+                else { evaluation = '注意'; severity = Math.max(severity, 1); }
+            }
+            if (id === 'french_fries') {
+                if (display.includes('多め')) { evaluation = '要注意'; severity = Math.max(severity, 3); }
+                else { evaluation = '注意'; severity = Math.max(severity, 1); }
+            }
+            if (id === 'ramen') {
+                if (display.includes('大盛') || display.includes('スープ飲む')) { evaluation = '要注意'; severity = Math.max(severity, 3); }
+                else { evaluation = '注意'; severity = Math.max(severity, 2); }
+            }
+            if (id === 'nuts') {
+                if (grams >= 250) { evaluation = '重大リスク'; severity = Math.max(severity, 4); }
+                else if (grams >= 100) { evaluation = '要注意'; severity = Math.max(severity, 3); }
+                else if (grams >= 60) { evaluation = '注意'; severity = Math.max(severity, 2); }
+                else { evaluation = '普通'; severity = Math.max(severity, 0); }
+            }
+            if (id === 'greek_yogurt_sweetened') {
+                evaluation = '普通';
+                severity = Math.max(severity, 0);
+            }
+            return { evaluation, severity };
+        }
+
+        function normalizeFoodLogForAnalysis(log, options = {}) {
+            if (!log) return null;
+            const includeTest = options.includeTest === true;
+            if (!includeTest && log.isTest === true) return null;
+
+            ensureAnalysisFoodMasterPatch();
+
+            let item = { ...log };
+            item.id = item.id || item.foodCode || item.item || 'unknown_food';
+            item.foodCode = item.id;
+            item.displayName = item.displayName || item.name || item.foodName || item.id;
+
+            if (DEPRECATED_CATEGORY_MAP_GV156[item.group]) item.group = DEPRECATED_CATEGORY_MAP_GV156[item.group];
+            if (DEPRECATED_CATEGORY_MAP_GV156[item.category]) item.category = DEPRECATED_CATEGORY_MAP_GV156[item.category];
+
+            // 旧データの「ギリシャヨーグルト加糖」は正式コードへ補正する。
+            const itemName = String(item.name || item.displayName || '');
+            if (item.id === 'greek_yogurt' && itemName.includes('加糖')) {
+                item.id = 'greek_yogurt_sweetened';
+                item.foodCode = 'greek_yogurt_sweetened';
+                item.category = 'highProtein';
+                item.group = 'highProtein';
+                item.evaluation = '普通';
+            }
+            if (item.id === 'greek_yogurt_sweetened') {
+                item.category = 'highProtein';
+                item.group = 'highProtein';
+                item.evaluation = '普通';
+            }
+
+            if (item.id === 'nuts' || itemName.includes('ナッツ')) {
+                item.id = 'nuts';
+                item.foodCode = 'nuts';
+                item.group = 'snack';
+                item.category = 'snack';
+                item.riskType = 'high_calorie_dense_food';
+                if (!item.nuts) item.nuts = parseNumberFromChoice(item.displayName || item.name || '30g', 30);
+            }
+
+            if (!item.category) item.category = item.group || 'snack';
+            if (!item.group) item.group = item.category;
+            if (DEPRECATED_CATEGORY_MAP_GV156[item.group]) item.group = DEPRECATED_CATEGORY_MAP_GV156[item.group];
+            if (DEPRECATED_CATEGORY_MAP_GV156[item.category]) item.category = DEPRECATED_CATEGORY_MAP_GV156[item.category];
+
+            // カテゴリと評価を混同しない。未許可カテゴリはsnackへ補正し、unknownFoodItemsには残さない。
+            if (!ALLOWED_FOOD_CATEGORIES_GV156.has(item.category)) {
+                item.originalCategory = item.category;
+                item.category = 'snack';
+                item.group = 'snack';
+                item.dataQualityNote = (item.dataQualityNote ? item.dataQualityNote + ' / ' : '') + `未許可カテゴリ(${item.originalCategory})をsnackへ補正`;
+            }
+
+            if (item.kcal == null && item.estimatedCalories == null) {
+                item.estimatedCalories = 0;
+                item.dataQualityNote = (item.dataQualityNote ? item.dataQualityNote + ' / ' : '') + 'カロリー未設定';
+            } else {
+                item.estimatedCalories = Number(item.estimatedCalories ?? item.kcal) || 0;
+            }
+            delete item.calories;
+
+            if (item.protein == null) item.protein = 0;
+
+            const dateKey = jstDateKeyFromTime(item.time || item.timestampUtc || item.localDateTime || new Date());
+            item.mealPlace = item.mealPlace || getMealPlaceForDate(dateKey) || '自宅';
+            item.mealPlaceCode = MEAL_PLACE_CODE_MAP_GV156[item.mealPlaceCode] || MEAL_PLACE_CODE_MAP_GV156[item.mealPlace] || 'home';
+
+            const dietEval = normalizeDietEvaluation(item);
+            item.evaluation = dietEval.evaluation;
+            item.severity = dietEval.severity;
+
+            return enrichLogTime(item, item.time || item.timestampUtc || item.localDateTime);
+        }
+
+        function getRawAnalysisFoodLogs() {
+            const out = {};
+            Object.entries(healthData.foodLogs || {}).forEach(([date, logs]) => {
+                const clean = (Array.isArray(logs) ? logs : []).map(x => normalizeFoodLogForAnalysis(x, { includeTest: true })).filter(Boolean);
+                clean.forEach(log => { const d = log.localDate || date; out[d] = out[d] || []; out[d].push(log); });
+            });
+            Object.keys(out).forEach(d => out[d].sort((a,b)=>new Date(a.timestampUtc)-new Date(b.timestampUtc)));
+            return out;
+        }
+
+        function getEventEatingOutCount(eventLogsForDate) {
+            const eventEating = (eventLogsForDate || []).find(x => x.eventKey === 'eatingOut')?.value || '';
+            if (String(eventEating).includes('2回') || eventEating === 'twiceOrMore') return 2;
+            if (String(eventEating).includes('1回') || eventEating === 'once') return 1;
+            return 0;
+        }
+
+        function hasOutsideMealPlace(foodLogsForDate) {
+            return (foodLogsForDate || []).some(x => OUTSIDE_MEAL_PLACE_CODES_GV156.has(x.mealPlaceCode) || OUTSIDE_MEAL_PLACE_CODES_GV156.has(MEAL_PLACE_CODE_MAP_GV156[x.mealPlace]));
+        }
+
+        function autoReconcileEatingOutMealPlaces(foodLogs, eventLogs) {
+            // eatingOutイベントだけがあり、foodLogsが全てhomeの場合は、最も外食らしいログをrestaurantへ補正する。
+            // 目的はAI分析時の矛盾解消。補正履歴はdataQualityNoteに残す。
+            const out = {};
+            Object.entries(foodLogs || {}).forEach(([date, foods]) => {
+                const cloned = (foods || []).map(f => ({ ...f }));
+                const eventEatingOutCount = getEventEatingOutCount(eventLogs[date] || []);
+                if (eventEatingOutCount > 0 && cloned.length && !hasOutsideMealPlace(cloned)) {
+                    const idx = cloned.findIndex(f => f.category === 'outsideFood' || f.group === 'outsideFood');
+                    const targetIdx = idx >= 0 ? idx : 0;
+                    cloned[targetIdx].mealPlace = '外食';
+                    cloned[targetIdx].mealPlaceCode = 'restaurant';
+                    cloned[targetIdx].dataQualityNote = (cloned[targetIdx].dataQualityNote ? cloned[targetIdx].dataQualityNote + ' / ' : '') + 'eatingOutイベントに合わせてmealPlaceCodeをrestaurantへ自動補正';
+                }
+                out[date] = cloned;
+            });
+            return out;
+        }
+
+        function buildDuplicateFoodWarnings(foodLogs) {
+            const warnings = [];
+            Object.entries(foodLogs || {}).forEach(([date, foods]) => {
+                const rows = (foods || []).slice().sort((a,b)=>new Date(a.timestampUtc || a.time || 0)-new Date(b.timestampUtc || b.time || 0));
+                const used = new Set();
+                rows.forEach((base, i) => {
+                    if (used.has(i)) return;
+                    const group = [i];
+                    const baseTime = new Date(base.timestampUtc || base.time || 0).getTime();
+                    rows.forEach((x, j) => {
+                        if (i === j || used.has(j)) return;
+                        const sameFood = (x.id || x.foodCode) === (base.id || base.foodCode);
+                        const samePlace = (x.mealPlaceCode || 'home') === (base.mealPlaceCode || 'home');
+                        const t = new Date(x.timestampUtc || x.time || 0).getTime();
+                        if (sameFood && samePlace && Number.isFinite(baseTime) && Number.isFinite(t) && Math.abs(t - baseTime) <= 60 * 60 * 1000) group.push(j);
+                    });
+                    if (group.length >= 2) {
+                        group.forEach(idx => used.add(idx));
+                        warnings.push({
+                            date,
+                            foodName: base.displayName || base.name || base.id || '不明食品',
+                            foodCode: base.id || base.foodCode || 'unknown',
+                            mealPlaceCode: base.mealPlaceCode || 'home',
+                            count: group.length,
+                            message: '短時間に複数登録されています'
+                        });
+                    }
+                });
+            });
+            return warnings;
+        }
+
+
+        function removePseudoDuplicateFoodLogsForAnalysis(foodLogs) {
+            // gv1.56 97-point patch:
+            // 短時間の同一食品・同一場所ログは開発中の連打/テスト登録とみなし、JSON出力から除外する。
+            // 目的はAI分析用JSONの純度を上げることであり、UIや保存構造は変更しない。
+            const out = {};
+            Object.entries(foodLogs || {}).forEach(([date, foods]) => {
+                const rows = (foods || []).slice().sort((a,b)=>new Date(a.timestampUtc || a.time || 0)-new Date(b.timestampUtc || b.time || 0));
+                const removed = new Set();
+                rows.forEach((base, i) => {
+                    if (removed.has(i)) return;
+                    const baseTime = new Date(base.timestampUtc || base.time || 0).getTime();
+                    const group = [i];
+                    rows.forEach((x, j) => {
+                        if (i === j || removed.has(j)) return;
+                        const sameFood = (x.id || x.foodCode) === (base.id || base.foodCode);
+                        const samePlace = (x.mealPlaceCode || 'home') === (base.mealPlaceCode || 'home');
+                        const t = new Date(x.timestampUtc || x.time || 0).getTime();
+                        if (sameFood && samePlace && Number.isFinite(baseTime) && Number.isFinite(t) && Math.abs(t - baseTime) <= 60 * 60 * 1000) group.push(j);
+                    });
+                    if (group.length >= 2) {
+                        // 先頭1件だけ残し、2件目以降を削除。サラダチキン4件・納豆2件のようなテスト連打を排除する。
+                        group.slice(1).forEach(idx => removed.add(idx));
+                    }
+                });
+                const clean = rows.filter((_, idx) => !removed.has(idx)).map(f => ({ ...f, isTest: false, source: f.source === 'dev' ? 'user' : (f.source || 'user') }));
+                if (clean.length) out[date] = clean;
+            });
+            return out;
+        }
+
+        function markSuspectedTestLogs(foodLogs, duplicateFoodWarnings) {
+            // 疑似重複3件以上はテスト入力の疑いとして分析対象から除外可能にする。
+            const flaggedKeys = new Set();
+            duplicateFoodWarnings.filter(w => w.count >= 3).forEach(w => {
+                (foodLogs[w.date] || []).forEach(f => {
+                    if ((f.id || f.foodCode) === w.foodCode && (f.mealPlaceCode || 'home') === (w.mealPlaceCode || 'home')) {
+                        flaggedKeys.add(`${w.date}|${f.timestampUtc}|${f.id || f.foodCode}|${f.mealPlaceCode || 'home'}`);
+                    }
+                });
+            });
+
+            const out = {};
+            Object.entries(foodLogs || {}).forEach(([date, foods]) => {
+                out[date] = (foods || []).map(f => {
+                    const key = `${date}|${f.timestampUtc}|${f.id || f.foodCode}|${f.mealPlaceCode || 'home'}`;
+                    if (flaggedKeys.has(key)) return { ...f, isTest: true, source: 'dev', suspectedTestData: true };
+                    return { ...f, isTest: f.isTest === true, source: f.source || 'user' };
+                });
+            });
+            return out;
+        }
+
+        function getAnalysisFoodLogs() {
+            const raw = getRawAnalysisFoodLogs();
+            const eventLogs = getAnalysisEventLogs();
+            const reconciled = autoReconcileEatingOutMealPlaces(raw, eventLogs);
+            const deduped = removePseudoDuplicateFoodLogsForAnalysis(reconciled);
+            const out = {};
+            Object.entries(deduped || {}).forEach(([date, logs]) => {
+                const seen = new Set();
+                const clean = (logs || []).filter(log => log && log.isTest !== true && log.suspectedTestData !== true).filter(log => {
+                    const key = [log.timestampUtc, log.id || log.name, log.displayName || '', JSON.stringify(log.detail || {})].join('|');
+                    if (seen.has(key)) return false;
+                    seen.add(key);
+                    return true;
+                });
+                if (clean.length) out[date] = clean;
+            });
+            Object.keys(out).forEach(d => out[d].sort((a,b)=>new Date(a.timestampUtc)-new Date(b.timestampUtc)));
+            return out;
+        }
+
+        function getAnalysisAlcoholLogs() {
+            const out = {};
+            Object.entries(healthData.alcoholLogs || {}).forEach(([date, rec]) => {
+                Object.entries(rec || {}).forEach(([key, value]) => {
+                    if (key.endsWith('_time')) return;
+                    const code = ALCOHOL_EXPORT_CODE_GV156[key];
+                    if (!ALLOWED_ALCOHOL_CODES_GV156.has(code)) return;
+                    const cups = Number(value) || 0;
+                    if (cups <= 0) return;
+                    const timeValue = rec[key + '_time'] || date + 'T21:00:00+09:00';
+                    const log = enrichLogTime({ logId:`alcohol_${date}_${code}`, type:'alcohol', alcoholCode: code, alcoholName: key, alcoholType: code, cups }, timeValue);
+                    const d = log.localDate || date;
+                    out[d] = out[d] || [];
+                    out[d].push(log);
+                });
+            });
+            return out;
+        }
+
+        function getMealPlaceForDate(date) {
+            const ev = healthData.eventLogs?.[date] || {};
+            return ev.mealPlace || null;
+        }
+
+        function normalizeEventValue(key, value) {
+            if (key === 'eatingOut') {
+                if (String(value).includes('2回') || value === 'twiceOrMore') return 'twiceOrMore';
+                if (String(value).includes('1回') || value === 'once') return 'once';
+                return 'none';
+            }
+            return value;
+        }
+
+        function getAnalysisEventLogs() {
+            const out = {};
+            Object.entries(healthData.eventLogs || {}).forEach(([date, rec]) => {
+                Object.entries(rec || {}).forEach(([key, value]) => {
+                    if (key.endsWith('_time') || value == null || value === '') return;
+                    const timeValue = rec[key + '_time'] || date + 'T12:00:00+09:00';
+                    const log = enrichLogTime({
+                        logId:`event_${date}_${key}`,
+                        type:'event',
+                        eventKey:key,
+                        eventLabel:EVENT_LABELS[key] || key,
+                        value: normalizeEventValue(key, value),
+                        rawValue: value
+                    }, timeValue);
+                    const d = log.localDate || date;
+                    out[d] = out[d] || [];
+                    out[d].push(log);
+                });
+            });
+            return out;
+        }
+
+        function getOperationLogsWithoutFoodDuplication() {
+            const out = {};
+            Object.entries(healthData.manualLogs || {}).forEach(([date, logs]) => {
+                const clean = (Array.isArray(logs) ? logs : []).filter(x => x && x.type !== 'food').map(x => enrichLogTime(x, x.time || x.timestampUtc));
+                if (clean.length) out[date] = clean;
+            });
+            return out;
+        }
+
+        function countEatingOutFromFoodAndEvents(foodLogsForDate, eventLogsForDate) {
+            const placeCount = (foodLogsForDate || []).filter(x => OUTSIDE_MEAL_PLACE_CODES_GV156.has(x.mealPlaceCode) || OUTSIDE_MEAL_PLACE_CODES_GV156.has(MEAL_PLACE_CODE_MAP_GV156[x.mealPlace])).length;
+            const eventCount = getEventEatingOutCount(eventLogsForDate || []);
+            if (eventCount >= 2) return Math.max(2, placeCount);
+            if (eventCount === 1) return Math.max(1, placeCount ? 1 : 0);
+            return placeCount ? Math.max(1, placeCount) : 0;
+        }
+
+        function buildUnknownFoodItems(foodLogs) {
+            ensureAnalysisFoodMasterPatch();
+            const allowedCategories = ALLOWED_FOOD_CATEGORIES_GV156;
+            const knownIds = new Set((FOOD_MASTER || []).map(f => f.id));
+            const unknown = [];
+            Object.entries(foodLogs || {}).forEach(([date, foods]) => {
+                (foods || []).forEach(f => {
+                    const reasons = [];
+                    if (!knownIds.has(f.id || f.foodCode)) reasons.push('未定義食品コード');
+                    if (!allowedCategories.has(f.category)) reasons.push('未定義カテゴリ');
+                    if (reasons.length) unknown.push({
+                        date,
+                        foodName: f.displayName || f.name || f.id || '不明食品',
+                        foodCode: f.id || f.foodCode || 'unknown',
+                        category: f.category || 'unknown',
+                        reason: reasons.join(' / ')
+                    });
+                });
+            });
+            return unknown;
+        }
+
+        function buildEventConsistencyWarnings(foodLogs, eventLogs) {
+            const warnings = [];
+            const allowedMealPlaces = new Set(['home','convenienceStore','restaurant','izakaya','businessTrip','travel','takeout','foodCourt','serviceArea']);
+            const dates = new Set([...Object.keys(foodLogs || {}), ...Object.keys(eventLogs || {})]);
+            dates.forEach(date => {
+                const foods = foodLogs[date] || [];
+                const evs = eventLogs[date] || [];
+                foods.forEach(f => {
+                    const code = f.mealPlaceCode || MEAL_PLACE_CODE_MAP_GV156[f.mealPlace] || 'home';
+                    if (!allowedMealPlaces.has(code)) {
+                        warnings.push({ type:'UNKNOWN_MEAL_PLACE', date, message:`未定義のmealPlaceCodeがあります: ${code}`, foodName:f.displayName || f.name || f.id || '不明食品' });
+                    }
+                });
+                const eventEatingOutCount = getEventEatingOutCount(evs);
+                if (eventEatingOutCount > 0 && foods.length > 0 && !hasOutsideMealPlace(foods)) {
+                    warnings.push({
+                        type: 'EATING_OUT_MISMATCH',
+                        date,
+                        message: '外食イベントと食事ログが一致しません',
+                        detail: `eatingOutCount=${eventEatingOutCount}ですが、foodLogsに外食系mealPlaceCodeがありません。`
+                    });
+                }
+            });
+            return warnings;
+        }
+
+        function detectSuspectedTestData(foodLogs, sourceSummary, duplicateFoodWarnings) {
+            // gv1.57: 食事ログは手入力が前提。手入力のみ・Health連動なし等をテスト判定理由にしない。
+            const reasons = [];
+            Object.entries(foodLogs || {}).forEach(([date, foods]) => {
+                const nutsRisk = (foods || []).filter(f => (f.id === 'nuts' || String(f.name || '').includes('ナッツ')) && Number(f.nuts || 0) >= 250);
+                if (nutsRisk.length) reasons.push(`${date}: ナッツ250g以上など明らかに異常な摂取量があります`);
+            });
+            (duplicateFoodWarnings || []).filter(w => Number(w.count || 0) >= 3).forEach(w => {
+                reasons.push(`${w.date || ''}: ${w.foodName || w.foodCode || '食品'}が60分以内に${w.count}件登録`);
+            });
+            return { suspectedTestData: reasons.length > 0, testDataReasons: reasons };
+        }
+
+        function summarizeFoodDay(foods, alcs, evs, qualityContext = {}) {
+            const highProteinCount = foods.filter(x => x.group === 'highProtein' || x.category === 'highProtein').length;
+            const homeCookingCount = foods.filter(x => x.group === 'homeCooking' || x.category === 'homeCooking').length;
+            const outsideFoodCount = foods.filter(x => x.group === 'outsideFood' || x.category === 'outsideFood').length;
+            const snackCount = foods.filter(x => x.group === 'snack' || x.category === 'snack').length;
+            const riskFoodCount = foods.filter(x => Number(x.severity || 0) >= 1 || ['注意','要注意','重大リスク'].includes(x.evaluation)).length;
+            const warningPenaltyCount = Number(qualityContext.warningCount ?? (
+                (qualityContext.unknownCount || 0) +
+                (qualityContext.eventWarningCount || 0) +
+                (qualityContext.duplicateWarningCount || 0) +
+                (qualityContext.suspectedTest ? 1 : 0) +
+                (qualityContext.healthValidationWarningCount || 0)
+            ));
+            const uniqueWarningCount = Number(qualityContext.uniqueWarningCount ?? warningPenaltyCount);
+            let dataQualityScore = 100 - (uniqueWarningCount * 5);
+            dataQualityScore = Math.max(60, Math.min(100, dataQualityScore));
+
+            return {
+                proteinG: foods.reduce((s,x)=>s+(Number(x.protein)||0),0),
+                estimatedCalories: foods.reduce((s,x)=>s+(Number(x.estimatedCalories ?? x.kcal)||0),0),
+                nutsGrams: foods.reduce((s,x)=>s+(Number(x.nuts)||0),0),
+                alcoholCups: alcs.reduce((s,x)=>s+(Number(x.cups)||0),0),
+                beerCups: alcs.filter(x=>x.alcoholCode==='beer' || x.alcoholType==='beer').reduce((s,x)=>s+(Number(x.cups)||0),0),
+                shochuCups: alcs.filter(x=>x.alcoholCode==='shochu' || x.alcoholType==='shochu').reduce((s,x)=>s+(Number(x.cups)||0),0),
+                foodLogCount: foods.length,
+                highProteinCount,
+                homeCookingCount,
+                outsideFoodCount,
+                snackCount,
+                eatingOutCount: countEatingOutFromFoodAndEvents(foods, evs),
+                riskFoodCount,
+                mealCount: foods.length,
+                alcoholLogCount: alcs.length,
+                alcoholDay: alcs.reduce((s,x)=>s+(Number(x.cups)||0),0) > 0,
+                lastAlcoholDateTime: (alcs || []).slice().sort((a,b)=>(getLogMillis(b)||0)-(getLogMillis(a)||0))[0]?.localDateTime || null,
+                highCalorieFoodCount: foods.filter(x => Number(x.estimatedCalories ?? x.kcal ?? 0) >= 500 || Number(x.severity || 0) >= 1 || ['注意','要注意','重大リスク'].includes(x.evaluation)).length,
+                lateNightFoodCount: foods.filter(x => Number(String(x.localTime || '').slice(0,2)) >= 21).length,
+                outsideMealCount: foods.filter(x => OUTSIDE_MEAL_PLACE_CODES_GV156.has(x.mealPlaceCode) || x.category === 'outsideFood' || x.group === 'outsideFood').length,
+                highProteinRate: foods.length ? Math.round(highProteinCount / foods.length * 100) : 0,
+                homeCookingRate: foods.length ? Math.round(homeCookingCount / foods.length * 100) : 0,
+                outsideFoodRate: foods.length ? Math.round(outsideFoodCount / foods.length * 100) : 0,
+                hasTestLogs: foods.some(x => x.isTest === true || x.suspectedTestData === true),
+                dataQualityScore,
+                // gv1.60: warningCountは表示件数（集約後）に統一。rawは別名で保持する。
+                warningCountRaw: warningPenaltyCount,
+                warningCount: uniqueWarningCount,
+                displayWarningCount: uniqueWarningCount,
+                uniqueWarningCount,
+                dataQualityScoreReasons: {
+                    rule: 'score = max(60, 100 - uniqueWarningCount * 5)',
+                    warningPenaltyPerUniqueWarning: -5,
+                    warningPenaltyCountRaw: warningPenaltyCount,
+                    displayWarningCount: uniqueWarningCount,
+                    uniqueWarningCount,
+                    totalPenalty: -(uniqueWarningCount * 5)
+                },
+                summaryBasedOn: { foodLogs: true, eventLogs: true, alcoholLogs: true, manualLogs: false, excludeTestLogs: true }
+            };
+        }
+
+        function buildDailySummaries(rawFoodLogs, analyzedFoodLogs, alcoholLogs, eventLogs) {
+            const summaries = {};
+            const dates = new Set([...Object.keys(rawFoodLogs || {}), ...Object.keys(analyzedFoodLogs || {}), ...Object.keys(alcoholLogs || {}), ...Object.keys(eventLogs || {})]);
+            const unknownFoodItems = buildUnknownFoodItems(rawFoodLogs);
+            const eventWarnings = buildEventConsistencyWarnings(analyzedFoodLogs, eventLogs);
+            const duplicateWarnings = buildDuplicateFoodWarnings(rawFoodLogs);
+            const healthValidation = buildHealthDataValidation(rawFoodLogs, analyzedFoodLogs, alcoholLogs, eventLogs);
+            const testDetection = detectSuspectedTestData(rawFoodLogs, {
+                weightDays: Object.keys(healthData.weight || {}).length,
+                stepDays: Object.keys(healthData.steps || {}).length,
+                sleepDays: Object.keys(healthData.sleep || {}).length,
+                heartDays: Object.keys(healthData.heartRate || {}).length,
+                hrvDays: Object.keys(healthData.hrv || {}).length
+            }, duplicateWarnings);
+
+            dates.forEach(date => {
+                const rawFoods = rawFoodLogs[date] || [];
+                const analyzedFoods = analyzedFoodLogs[date] || [];
+                const alcs = alcoholLogs[date] || [];
+                const evs = eventLogs[date] || [];
+                const qualityContext = {
+                    unknownCount: unknownFoodItems.filter(x => x.date === date).length,
+                    eventWarningCount: eventWarnings.filter(x => x.date === date).length,
+                    duplicateWarningCount: duplicateWarnings.filter(x => x.date === date).length,
+                    healthValidationWarningCount: (healthValidation.warnings || []).filter(x => x.date === date).length,
+                    warningCount: (unknownFoodItems.filter(x => x.date === date).length + eventWarnings.filter(x => x.date === date).length + duplicateWarnings.filter(x => x.date === date).length + (healthValidation.warnings || []).filter(x => x.date === date).length + ((testDetection.suspectedTestData && testDetection.testDataReasons.some(r => r.includes(date))) ? 1 : 0)),
+                    uniqueWarningCount: new Set([
+                        ...unknownFoodItems.filter(x => x.date === date).map(x => 'UNKNOWN_FOOD'),
+                        ...eventWarnings.filter(x => x.date === date).map(x => x.type || 'EVENT_WARNING'),
+                        ...duplicateWarnings.filter(x => x.date === date).map(x => x.type || 'DUPLICATE_FOOD'),
+                        ...(healthValidation.warnings || []).filter(x => x.date === date).map(x => x.type || 'HEALTH_VALIDATION'),
+                        ...((testDetection.suspectedTestData && testDetection.testDataReasons.some(r => r.includes(date))) ? ['SUSPECTED_TEST_DATA'] : [])
+                    ]).size,
+                    suspectedTest: testDetection.suspectedTestData && testDetection.testDataReasons.some(r => r.includes(date))
+                };
+                summaries[date] = {
+                    raw: summarizeFoodDay(rawFoods, alcs, evs, qualityContext),
+                    analyzed: summarizeFoodDay(analyzedFoods, alcs, evs, { ...qualityContext, suspectedTest: false, duplicateWarningCount: 0 })
+                };
+            });
+            return summaries;
+        }
+
+        function hasDuplicateFoodLogs(foodLogs) {
+            return Object.values(foodLogs || {}).some(logs => {
+                const seen = new Set();
+                for (const x of logs || []) {
+                    const key = [x.timestampUtc, x.id, x.displayName].join('|');
+                    if (seen.has(key)) return true;
+                    seen.add(key);
+                }
+                return false;
+            });
+        }
+
+        function gradeCompleteness(score) {
+            if (score >= 95) return 'S';
+            if (score >= 85) return 'A';
+            if (score >= 70) return 'B';
+            if (score >= 50) return 'C';
+            return 'D';
+        }
+
+        function buildDataCompleteness(foodLogs) {
+            const today = new Date();
+            const has = (obj, date) => Object.prototype.hasOwnProperty.call(obj || {}, date);
+            const calc = days => {
+                let weightDays = 0, stepDays = 0, sleepDays = 0, foodLogDays = 0;
+                for (let i = days - 1; i >= 0; i--) {
+                    const d = new Date(today.getTime() - i * 86400000).toISOString().substring(0,10);
+                    if (has(healthData.weight, d)) weightDays++;
+                    if (has(healthData.steps, d)) stepDays++;
+                    if (has(healthData.sleep, d)) sleepDays++;
+                    if ((foodLogs[d] || []).length) foodLogDays++;
+                }
+                const score = Math.round(((weightDays/days)*35 + (stepDays/days)*25 + (sleepDays/days)*25 + (foodLogDays/days)*15));
+                return { weightDays, stepDays, sleepDays, foodLogDays, score, grade: gradeCompleteness(score) };
+            };
+            return { last7Days: calc(7), last30Days: calc(30) };
+        }
+
+        function buildAiAnalysisPolicy() {
+            return {
+                useWeightData: true,
+                useStepData: true,
+                useSleepData: true,
+                useHeartData: true,
+                useHrvData: Object.keys(healthData.hrv || {}).length > 0,
+                useFoodLogs: true,
+                foodLogSource: 'dailySummaries.analyzed and healthData.foodLogs',
+                ignoreManualLogs: true,
+                ignoreTestLogs: true,
+                ignoreSuspectedTestLogs: true,
+                canonicalSources: {
+                    food: 'foodLogs',
+                    alcohol: 'alcoholLogs',
+                    event: 'eventLogs'
+                }
+            };
+        }
+
+        function buildRegressionWarnings(currentSourceSummary) {
+            const previous = healthData?.summary?.previousSourceSummary || null;
+            const warnings = [];
+            if (!previous || typeof previous !== 'object') return warnings;
+            const fields = ['weightDays', 'stepDays', 'sleepDays', 'heartDays', 'gpsRoutes'];
+            fields.forEach(field => {
+                const prev = Number(previous[field] || 0);
+                const curr = Number(currentSourceSummary?.[field] || 0);
+                if (prev > 0 && curr === 0) {
+                    const labelMap = { weightDays:'体重データ', stepDays:'歩数データ', sleepDays:'睡眠データ', heartDays:'心拍データ', gpsRoutes:'GPSルート' };
+                    warnings.push({
+                        type: 'HEALTH_DATA_REGRESSION',
+                        field,
+                        previous: prev,
+                        current: curr,
+                        message: `${labelMap[field] || field}が消失しています`
+                    });
+                }
+            });
+            return warnings;
+        }
+
+        function getLogMillis(log) {
+            const t = new Date(log?.timestampUtc || log?.time || log?.localDateTime || 0).getTime();
+            return Number.isFinite(t) ? t : null;
+        }
+
+        function buildHealthDataValidation(rawFoodLogs, analyzedFoodLogs, alcoholLogs, eventLogs) {
+            const warnings = [];
+            const outsideFoodKeywords = [
+                'ラーメン', '牛丼', '焼肉', '焼鳥', '焼き鳥', '寿司', '回転寿司',
+                'ハンバーガー', 'マクドナルド', 'マック', 'モスバーガー', 'カレー店',
+                'ファミレス', '居酒屋', '中華料理店', '餃子', 'ピザ'
+            ];
+            const normalizeMealPlace = x => x?.mealPlaceCode || MEAL_PLACE_CODE_MAP_GV156[x?.mealPlace] || 'home';
+            const isOutsideCandidateFood = log => {
+                const text = [log?.displayName, log?.name, log?.foodName, log?.id, log?.foodCode, log?.category, log?.group].filter(Boolean).join(' ');
+                return outsideFoodKeywords.some(k => text.includes(k)) || log?.category === 'outsideFood' || log?.group === 'outsideFood';
+            };
+            const push = (type, date, message, detail = {}) => warnings.push({ type, date, message, ...detail });
+            Object.entries(rawFoodLogs || {}).forEach(([date, foods]) => {
+                const rows = (foods || []).filter(Boolean).slice().sort((a,b)=>(getLogMillis(a)||0)-(getLogMillis(b)||0));
+                rows.forEach((log, idx) => {
+                    const t = getLogMillis(log);
+                    const kcal = Number(log.estimatedCalories ?? log.kcal ?? 0);
+                    const protein = Number(log.protein || 0);
+                    const nuts = Number(log.nuts || 0);
+                    const mealPlaceCode = normalizeMealPlace(log);
+                    if (!t) push('MISSING_OR_INVALID_TIME', date, '食事ログの時刻が不正です', { foodName: log.displayName || log.name || log.id || '不明食品' });
+                    if (kcal < 0 || kcal > 1800 || protein < 0 || protein > 120 || nuts > 250) {
+                        push('POSSIBLE_MANUAL_INPUT_ERROR', date, '手入力ミスまたは異常値の可能性があります', { foodName: log.displayName || log.name || log.id || '不明食品', estimatedCalories: kcal, proteinG: protein, nutsGrams: nuts });
+                    }
+                    if (mealPlaceCode === 'home' && isOutsideCandidateFood(log)) {
+                        push('OUTSIDE_FOOD_AT_HOME', date, '外食系食品が自宅登録されています。必要に応じて mealPlaceCode を確認してください。', {
+                            foodName: log.displayName || log.name || log.id || '不明食品',
+                            mealPlaceCode,
+                            targetCount: 1
+                        });
+                    }
+                    const prev = rows[idx - 1];
+                    if (prev && (prev.id || prev.foodCode) === (log.id || log.foodCode)) {
+                        const dtMin = Math.abs((t || 0) - (getLogMillis(prev) || 0)) / 60000;
+                        if (dtMin <= 90) push('CONSECUTIVE_SAME_FOOD', date, '同一食品が短時間に連続登録されています', { foodName: log.displayName || log.name || log.id || '不明食品', intervalMinutes: Math.round(dtMin), targetCount: 2 });
+                    }
+                });
+                const clusterGroups = [];
+                rows.forEach((base) => {
+                    const baseTime = getLogMillis(base);
+                    if (!baseTime) return;
+                    const windowRows = rows.filter(x => {
+                        const t = getLogMillis(x);
+                        return t && Math.abs(t - baseTime) <= 30 * 60000;
+                    });
+                    if (windowRows.length >= 5) clusterGroups.push({ base, windowRows });
+                });
+                if (clusterGroups.length) {
+                    const largest = clusterGroups.sort((a,b)=>b.windowRows.length-a.windowRows.length)[0];
+                    push('FOOD_CLUSTER_TOO_DENSE', date, '同一時刻帯に食事登録が集中しています', {
+                        targetCount: largest.windowRows.length,
+                        count: largest.windowRows.length,
+                        aroundLocalTime: largest.base.localTime || '',
+                        messageDetail: `${largest.windowRows.length}件が30分以内に集中しています`
+                    });
+                }
+                const highLoadRows = rows.filter(x => Number(x.estimatedCalories ?? x.kcal ?? 0) >= 700 || Number(x.severity || 0) >= 2 || ['要注意','重大リスク'].includes(x.evaluation));
+                if (highLoadRows.length >= 3) push('SHORT_TERM_HEAVY_INTAKE', date, '短時間または同日内に高負荷な食事記録が複数あります', { targetCount: highLoadRows.length, count: highLoadRows.length });
+            });
+            Object.entries(alcoholLogs || {}).forEach(([date, alcs]) => {
+                const cups = (alcs || []).reduce((s,x)=>s+(Number(x.cups)||0),0);
+                if (cups <= 0) return;
+                const foods = analyzedFoodLogs?.[date] || rawFoodLogs?.[date] || [];
+                const riskFoods = (foods || []).filter(x => x.category === 'outsideFood' || Number(x.severity || 0) >= 1 || ['注意','要注意','重大リスク'].includes(x.evaluation));
+                if (cups >= 3 && riskFoods.length) push('ALCOHOL_WITH_RISK_FOOD', date, '飲酒と高カロリー・外食系の組み合わせがあります', { alcoholCups: cups, riskFoodCount: riskFoods.length, targetCount: riskFoods.length });
+                if (cups >= 4) push('HIGH_ALCOHOL_INTAKE', date, '飲酒量が多めです', { alcoholCups: cups, targetCount: 1 });
+            });
+            const merged = new Map();
+            warnings.forEach(w => {
+                const key = [w.type, w.date || ''].join('|');
+                const current = merged.get(key);
+                if (!current) {
+                    const foodNames = w.foodName ? [w.foodName] : [];
+                    merged.set(key, { ...w, foodNames, targetCount: Number(w.targetCount || w.count || 1), occurrences: 1 });
+                } else {
+                    current.targetCount = Math.max(Number(current.targetCount || 1), Number(w.targetCount || w.count || 1));
+                    current.occurrences = Number(current.occurrences || 1) + 1;
+                    if (!current.foodNames) current.foodNames = [];
+                    if (w.foodName && !current.foodNames.includes(w.foodName)) current.foodNames.push(w.foodName);
+                }
+            });
+            const unique = Array.from(merged.values()).map(w => {
+                const label = w.targetCount > 1 ? `対象件数：${w.targetCount}件` : '';
+                return { ...w, message: label && !String(w.message || '').includes('対象件数') ? `${w.message}（${label}）` : w.message };
+            });
+            const mealPlaceSummary = {};
+            Object.values(rawFoodLogs || {}).flat().forEach(log => {
+                const code = normalizeMealPlace(log);
+                mealPlaceSummary[code] = (mealPlaceSummary[code] || 0) + 1;
+            });
+            const warningTypes = unique.map(w => w.type);
+            return {
                 generatedAt: new Date().toISOString(),
-                sourceSummary: {
-                    weightDays: Object.keys(healthData.weight || {}).length,
-                    stepDays: Object.keys(healthData.steps || {}).length,
-                    sleepDays: Object.keys(healthData.sleep || {}).length,
-                    heartDays: Object.keys(healthData.heartRate || {}).length,
-                    hrvDays: Object.keys(healthData.hrv || {}).length,
-                    gpsRoutes: (healthData.gpsSummaries || []).length
+                // gv1.60: raw/displayを分離し、warningCountは画面・JSON表示用の集約後件数に統一。
+                warningCountRaw: warnings.length,
+                warningCount: unique.length,
+                displayWarningCount: unique.length,
+                uniqueWarningCount: unique.length,
+                dataQualityScore: Math.max(60, 100 - unique.length * 5),
+                mealPlaceSummary,
+                warningTypes,
+                warnings: unique
+            };
+        }
+
+                function buildFoodAnalysisMetrics(analyzedFoodLogs, alcoholLogs, eventLogs) {
+            const allFoods = Object.values(analyzedFoodLogs || {}).flat();
+            const allAlcohol = Object.values(alcoholLogs || {}).flat();
+            const foodDates = Object.keys(analyzedFoodLogs || {}).filter(d => (analyzedFoodLogs[d] || []).length);
+            const alcoholDates = Object.keys(alcoholLogs || {}).filter(d => (alcoholLogs[d] || []).some(x => Number(x.cups || 0) > 0));
+            const highCalorieFoods = allFoods.filter(x => Number(x.estimatedCalories ?? x.kcal ?? 0) >= 500 || Number(x.severity || 0) >= 1 || ['注意','要注意','重大リスク'].includes(x.evaluation));
+            const lateNightFoods = allFoods.filter(x => Number(String(x.localTime || '').slice(0,2)) >= 21);
+            const outsideFoods = allFoods.filter(x => OUTSIDE_MEAL_PLACE_CODES_GV156.has(x.mealPlaceCode) || x.category === 'outsideFood' || x.group === 'outsideFood');
+            const lastAlcohol = allAlcohol.slice().sort((a,b)=>(getLogMillis(b)||0)-(getLogMillis(a)||0))[0] || null;
+            return {
+                foodLogDays: foodDates.length,
+                mealCount: allFoods.length,
+                alcoholLogCount: allAlcohol.length,
+                alcoholDays: alcoholDates.length,
+                lastAlcoholDateTime: lastAlcohol?.localDateTime || null,
+                lastAlcoholLabel: lastAlcohol ? `${lastAlcohol.localDate || ''} ${lastAlcohol.localTime || ''} ${lastAlcohol.alcoholName || lastAlcohol.alcoholCode || ''} ${lastAlcohol.cups || 0}杯` : null,
+                highCalorieFoodCount: highCalorieFoods.length,
+                lateNightFoodCount: lateNightFoods.length,
+                outsideFoodCount: outsideFoods.length,
+                eatingOutFrequency: foodDates.length ? Math.round(outsideFoods.length / foodDates.length * 10) / 10 : 0
+            };
+        }
+
+        function getJsonDataQuality(sourceSummary, rawFoodLogs, analyzedFoodLogs, alcoholLogs, eventLogs) {
+            const warnings = [];
+            if (sourceSummary.hrvDays === 0) warnings.push('HRVデータが0件です。Apple Health側で心拍変動(HRV/SDNN)が出力されていない、または取り込み対象に含まれていません。疲労・回復・ストレス分析は未判定として扱ってください。');
+            if (sourceSummary.weightDays === 0) warnings.push('体重データが0件です。50kg達成予測と体重変動要因分析は実行できません。');
+
+            const missingTime = Object.values(rawFoodLogs).flat().filter(x => !x.timestampUtc || !x.localDate || !x.localTime || !x.localDateTime).length;
+            if (missingTime) warnings.push(`食事ログに時刻情報不足が${missingTime}件あります。`);
+
+            const eventConsistencyWarnings = buildEventConsistencyWarnings(analyzedFoodLogs, eventLogs);
+            eventConsistencyWarnings.forEach(w => warnings.push(w.message || String(w)));
+
+            const unknownFoodItems = buildUnknownFoodItems(rawFoodLogs);
+            if (unknownFoodItems.length) warnings.push(`未定義食品コードまたは未許可カテゴリが${unknownFoodItems.length}件あります。unknownFoodItemsを確認してください。`);
+
+            const duplicateFoodWarnings = buildDuplicateFoodWarnings(rawFoodLogs);
+            if (duplicateFoodWarnings.length) warnings.push(`短時間の疑似重複食事ログが${duplicateFoodWarnings.length}件あります。duplicateFoodWarningsを確認してください。`);
+
+            const invalidAlcoholTypes = Object.values(alcoholLogs).flat().filter(x => !ALLOWED_ALCOHOL_CODES_GV156.has(x.alcoholCode || x.alcoholType)).length;
+            if (invalidAlcoholTypes) warnings.push(`不正な酒類コードが${invalidAlcoholTypes}件あります。`);
+
+            const regressionWarnings = buildRegressionWarnings(sourceSummary);
+            regressionWarnings.forEach(w => warnings.push(w.message || String(w)));
+
+            const testDetection = detectSuspectedTestData(rawFoodLogs, sourceSummary, duplicateFoodWarnings);
+            if (testDetection.suspectedTestData) warnings.push('テストデータの可能性があります。testDataReasonsを確認してください。分析用dailySummaries.analyzedからは除外されています。');
+
+            const healthDataValidation = buildHealthDataValidation(rawFoodLogs, analyzedFoodLogs, alcoholLogs, eventLogs);
+            healthDataValidation.warnings.forEach(w => warnings.push(w.message || String(w)));
+
+            const hasTestLogs = Object.values(rawFoodLogs).flat().some(x => x.isTest === true || x.suspectedTestData === true);
+
+            return {
+                timezone: 'Asia/Tokyo',
+                profileLockedForThisUser: { heightCm: 150, targetWeightKg: 50 },
+                logDesign: 'foodLogsを食事分析の正本とし、manualLogsは操作履歴のみ。食事の二重集計を避けるため、JSON分析ではmanualLogsを健康分析に使わない。',
+                analysisRules: {
+                    foodCanonicalSource: 'foodLogs',
+                    eventCanonicalSource: 'eventLogs',
+                    alcoholCanonicalSource: 'alcoholLogs',
+                    manualLogsUsage: 'operation_history_only',
+                    excludeManualFoodLogsFromAnalysis: true,
+                    excludeTestLogsFromAnalysis: true,
+                    excludeSuspectedTestLogsFromAnalysis: true,
+                    dailySummaryCanonical: 'dailySummaries.analyzed',
+                    caloriesAreEstimated: true
                 },
+                hrvStatus: sourceSummary.hrvDays > 0 ? 'available' : 'not_available',
+                unknownFoodItems,
+                eventConsistencyWarnings,
+                duplicateFoodWarnings,
+                suspectedTestData: testDetection.suspectedTestData,
+                testDataReasons: testDetection.testDataReasons,
+                regressionWarnings,
+                healthDataValidation,
+                validation: {
+                    profileValid: true,
+                    timezoneValid: true,
+                    hasHrv: sourceSummary.hrvDays > 0,
+                    hasFoodLogs: sourceSummary.foodLogDays > 0,
+                    hasEventLogs: sourceSummary.eventLogDays > 0,
+                    hasAlcoholLogs: sourceSummary.alcoholLogDays > 0,
+                    hasTestLogs,
+                    hasEventConsistencyIssues: eventConsistencyWarnings.length > 0,
+                    hasDuplicateFoodLogs: hasDuplicateFoodLogs(analyzedFoodLogs),
+                    hasPseudoDuplicateFoodLogs: duplicateFoodWarnings.length > 0,
+                    hasUnknownFoodItems: unknownFoodItems.length > 0,
+                    hasInvalidAlcoholType: invalidAlcoholTypes > 0,
+                    suspectedTestData: testDetection.suspectedTestData,
+                    hasRegression: regressionWarnings.length > 0,
+                    hasHealthDataValidationWarnings: healthDataValidation.warningCount > 0
+                },
+                warnings
+            };
+        }
+
+        function exportJSON() { 
+            ensureManualStores();
+            // gv1.60 warning count naming + OUTSIDE_FOOD_AT_HOME foodNames fix: UIは変更せず、既存Healthデータ保持とJSON品質のみ強化。
+            ensureAnalysisFoodMasterPatch();
+            healthData.summary.heightCm = 150;
+            healthData.summary.targetWeight = 50;
+            healthData.summary.targetWeightKg = 50;
+
+            const eventLogs = getAnalysisEventLogs();
+            const rawFoodLogsBeforeReconcile = getRawAnalysisFoodLogs();
+            const rawFoodLogs = removePseudoDuplicateFoodLogsForAnalysis(
+                autoReconcileEatingOutMealPlaces(rawFoodLogsBeforeReconcile, eventLogs)
+            );
+            const analyzedFoodLogs = getAnalysisFoodLogs();
+            const alcoholLogs = getAnalysisAlcoholLogs();
+            const operationLogs = getOperationLogsWithoutFoodDuplication();
+            const dailySummaries = buildDailySummaries(rawFoodLogs, analyzedFoodLogs, alcoholLogs, eventLogs);
+            const dataCompleteness = buildDataCompleteness(analyzedFoodLogs);
+            const aiAnalysisPolicy = buildAiAnalysisPolicy();
+
+            const sourceSummary = {
+                weightDays: Object.keys(healthData.weight || {}).length,
+                stepDays: Object.keys(healthData.steps || {}).length,
+                sleepDays: Object.keys(healthData.sleep || {}).length,
+                heartDays: Object.keys(healthData.heartRate || {}).length,
+                hrvDays: Object.keys(healthData.hrv || {}).length,
+                gpsRoutes: (healthData.gpsSummaries || []).length,
+                foodLogDays: Object.keys(analyzedFoodLogs).length,
+                rawFoodLogDays: Object.keys(rawFoodLogs).length,
+                eventLogDays: Object.keys(eventLogs).length,
+                alcoholLogDays: Object.keys(alcoholLogs).length,
+                dailySummaryDays: Object.keys(dailySummaries).length
+            };
+            const dataQuality = getJsonDataQuality(sourceSummary, rawFoodLogs, analyzedFoodLogs, alcoholLogs, eventLogs);
+            const healthDataValidation = dataQuality.healthDataValidation || buildHealthDataValidation(rawFoodLogs, analyzedFoodLogs, alcoholLogs, eventLogs);
+            const foodAnalysisMetrics = buildFoodAnalysisMetrics(analyzedFoodLogs, alcoholLogs, eventLogs);
+            const generatedParts = getJstParts(new Date());
+            const dataToExport = {
+                schemaVersion: "1.3",
+                appVersion: "gv1.60",
+                generatedAt: generatedParts.timestampUtc,
+                generatedAtLocal: generatedParts.localDateTime,
+                timezone: "Asia/Tokyo",
+                purpose: "体重変動の原因分析、50kg達成に向けた改善提案、健康状態変化検出のための軽量JSON",
+                sourceSummary,
+                dataQuality,
+                dataCompleteness,
+                aiAnalysisPolicy,
+                healthDataValidation,
+                foodAnalysisMetrics,
                 profile: {
-                    heightCm: healthData.summary?.heightCm || 170,
-                    targetWeightKg: healthData.summary?.targetWeight || 65
+                    heightCm: 150,
+                    targetWeightKg: 50,
+                    currentWeightGoalNote: "7月までに50kg以下達成を目標",
+                    supplementsNote: healthData.summary?.supplementsNote || '',
+                    lifestyleNote: healthData.summary?.lifestyleNote || '禁酒中。飲酒ログはbeer/shochuのみを正本として扱う'
                 },
+                dailySummaries,
                 healthData: {
-                    summary: healthData.summary || {},
+                    summary: { ...(healthData.summary || {}), version: "gv1.60", heightCm: 150, targetWeight: 50, targetWeightKg: 50 },
                     weight: healthData.weight || {},
                     steps: healthData.steps || {},
                     sleep: healthData.sleep || {},
                     heartRate: healthData.heartRate || {},
                     hrv: healthData.hrv || {},
+                    foodLogs: analyzedFoodLogs,
+                    rawFoodLogs,
+                    eventLogs,
+                    alcoholLogs,
+                    operationLogs,
+                    // manualLogsは後方互換のため残すが、健康分析・食事分析には使用しない。
+                    manualLogs: operationLogs,
                     gpsSummaries: (healthData.gpsSummaries || []).map(r => ({
                         ...r,
                         representativePoints: downsample(r.representativePoints || [], 50)
                     }))
                 }
             };
-            const blob = new Blob([JSON.stringify(dataToExport)], { type: 'application/json' }); 
+            const blob = new Blob([JSON.stringify(dataToExport, null, 2)], { type: 'application/json' }); 
             const a = document.createElement('a'); 
             a.href = URL.createObjectURL(blob); 
             a.download = `health-manager-data.json`; 
             a.click(); 
         }
-        
+
         function confirmClear() { if(confirm("データを全消去して初期状態に戻しますか？")) location.reload(); }
 
         window.onload = () => {
             loadSettings(); initMap(); switchTab('dashboard');
+            loadManualLogsFromStorage();
+            const manualDateEl = document.getElementById('manual-log-date');
+            if (manualDateEl) manualDateEl.value = new Date().toISOString().substring(0,10);
+            renderManualLogUI();
+            updateManualDashboardSummary();
             updateDataSourceChip();
             
             buildRangeControl('chart-health-score-trend');

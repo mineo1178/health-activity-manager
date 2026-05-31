@@ -320,7 +320,7 @@
         .manual-choice-btn.active { background: rgba(20,184,166,.22); border-color: rgba(45,212,191,.75); color: #fff; box-shadow: 0 0 0 1px rgba(45,212,191,.25) inset; }
         .manual-detail-label { font-size: 10px; color: #94a3b8; font-weight: 900; text-transform: uppercase; letter-spacing: .08em; margin: 12px 0 8px; }
         @media (max-width: 768px) { .manual-modal-backdrop { align-items: flex-start; padding: 16px 8px calc(var(--mobile-nav-height) + 12px + env(safe-area-inset-bottom)) !important; } .manual-modal-card { border-radius: 22px 22px 18px 18px; max-height: calc(100dvh - var(--mobile-nav-height) - 32px - env(safe-area-inset-bottom)) !important; padding-bottom: calc(var(--mobile-nav-height) + 20px + env(safe-area-inset-bottom)) !important; } }
-        /* gv1.61: モーダル操作中は下部ナビを隠し、食品詳細選択ボタンとの重なりを防止 */
+        /* gv1.63: モーダル操作中は下部ナビを隠し、食品詳細選択ボタンとの重なりを防止 */
         body.manual-modal-open nav.fixed.bottom-0 { display: none !important; }
 
         .timeline-time { min-width:44px; color:#2dd4bf; font-weight:900; font-size:12px; }
@@ -1268,10 +1268,30 @@
     <script>
         // --- Global Variables Setup ---
         let healthData = {
-            summary: { version: "gv1.61", isSample: false, updatedAt: null, heightCm: 150, targetWeight: 50 },
+            summary: { version: "gv1.63", isSample: false, updatedAt: null, heightCm: 150, targetWeight: 50 },
             weight: {}, steps: {}, sleep: {}, heartRate: {}, hrv: {},
             gpsSummaries: [], manualLogs: {}, foodLogs: {}, eventLogs: {}, alcoholLogs: {}
         };
+
+
+        // --- Optional Firestore Sync for manual logs (food / alcohol / event only) ---
+        // Firebase Consoleで取得したWebアプリ設定をここに貼り付けると、食事・飲酒・イベントログだけをFirestoreに保存します。
+        // Apple Health / GPS / 体重 / 睡眠 / 心拍の詳細データはFirestoreへ保存しません。
+        const FIRESTORE_MANUAL_LOG_SYNC = {
+            enabled: true,
+            userId: 'mineo',
+            collectionRoot: 'healthActivityManagerUsers',
+            firebaseConfig: {
+                apiKey: 'AIzaSyCuftEN29JibaGk_MwGLBZcw44k9uEJ1xI',
+                authDomain: 'health-activity-manager.firebaseapp.com',
+                projectId: 'health-activity-manager',
+                storageBucket: 'health-activity-manager.firebasestorage.app',
+                messagingSenderId: '435960172390',
+                appId: '1:435960172390:web:b974f2cd17a69c28df42a7'
+            }
+        };
+        let firestoreManualLogDb = null;
+        let firestoreManualLogModules = null;
 
         let map = null;
         let mapLayers = { allRoutes: [], focusLine: null, markers: [] };
@@ -1709,7 +1729,7 @@
             const previousSourceSummary = data.sourceSummary || targetData.sourceSummary || targetData.summary?.previousSourceSummary || current.summary?.previousSourceSummary || null;
 
             const defSummary = {
-                version: "gv1.61",
+                version: "gv1.63",
                 heightCm: lockedHeight,
                 targetWeight: lockedTarget,
                 targetWeightKg: lockedTarget,
@@ -2436,6 +2456,13 @@
             const sampleBadge = document.getElementById('sample-badge'); if (sampleBadge) sampleBadge.classList.toggle('hidden', !healthData.summary.isSample);
             updateDataSourceChip();
             loadManualLogsFromStorage();
+            loadManualLogsFromFirestore().then((loaded) => {
+                if (loaded) {
+                    renderManualLogUI();
+                    updateManualDashboardSummary();
+                    console.info('[FIRESTORE_MANUAL_LOG] UI refreshed after cloud merge');
+                }
+            });
             renderManualLogUI();
             updateManualDashboardSummary();
             const ind = document.getElementById('status-indicator'); if (ind) ind.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 mr-2 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span> Active`;
@@ -4005,7 +4032,7 @@
             };
         }
         function restoreManualStoresAfterDataRefresh(snapshot, options = {}) {
-            // gv1.61: Apple Health ZIP / location-history.json の再読込は健康・GPSデータ更新であり、食事ログを消してはいけない。
+            // gv1.63: Apple Health ZIP / location-history.json の再読込は健康・GPSデータ更新であり、食事ログを消してはいけない。
             // 軽量JSONを明示的に読み込んだ場合のみ、JSON側ログを正本にしつつlocalStorage分を後でマージする。
             if (!snapshot) return;
             ensureManualStores();
@@ -4058,6 +4085,103 @@
         function saveManualLogsToStorage() {
             ensureManualStores();
             localStorage.setItem('health-manual-logs-v1', JSON.stringify({ manualLogs: healthData.manualLogs, foodLogs: healthData.foodLogs, eventLogs: healthData.eventLogs, alcoholLogs: healthData.alcoholLogs }));
+        }
+
+        function isFirestoreManualLogSyncConfigured() {
+            const cfg = FIRESTORE_MANUAL_LOG_SYNC || {};
+            const fc = cfg.firebaseConfig || {};
+            return !!(cfg.enabled && fc.apiKey && fc.projectId && fc.appId);
+        }
+
+        async function initFirestoreManualLogDb() {
+            if (!isFirestoreManualLogSyncConfigured()) return null;
+            if (firestoreManualLogDb && firestoreManualLogModules) return firestoreManualLogDb;
+            try {
+                const appMod = await import('https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js');
+                const fsMod = await import('https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js');
+                const app = appMod.getApps().length ? appMod.getApps()[0] : appMod.initializeApp(FIRESTORE_MANUAL_LOG_SYNC.firebaseConfig);
+                firestoreManualLogDb = fsMod.getFirestore(app);
+                firestoreManualLogModules = fsMod;
+                console.info('[FIRESTORE_MANUAL_LOG] enabled');
+                return firestoreManualLogDb;
+            } catch (e) {
+                console.warn('[FIRESTORE_MANUAL_LOG] init failed. LocalStorage fallback is still active.', e);
+                return null;
+            }
+        }
+
+        function getFirestoreManualLogPath(kind) {
+            return [
+                FIRESTORE_MANUAL_LOG_SYNC.collectionRoot || 'healthActivityManagerUsers',
+                FIRESTORE_MANUAL_LOG_SYNC.userId || 'defaultUser',
+                kind
+            ].join('/');
+        }
+
+        async function saveManualLogToFirestore(kind, date, log) {
+            // localStorageを正本として維持し、Firestoreは追加の永続保存先として扱う。
+            const db = await initFirestoreManualLogDb();
+            if (!db || !firestoreManualLogModules || !log) return false;
+            try {
+                const fs = firestoreManualLogModules;
+                const logId = log.logId || `${kind}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+                const docRef = fs.doc(db, getFirestoreManualLogPath(kind), logId);
+                await fs.setDoc(docRef, {
+                    ...JSON.parse(JSON.stringify(log)),
+                    logId,
+                    date,
+                    kind,
+                    appVersion: 'gv1.63',
+                    updatedAt: new Date().toISOString(),
+                    source: 'browser'
+                }, { merge: true });
+                console.info(`[FIRESTORE_MANUAL_LOG] saved ${kind}/${logId}`);
+                return true;
+            } catch (e) {
+                console.warn(`[FIRESTORE_MANUAL_LOG] save failed: ${kind}`, e);
+                return false;
+            }
+        }
+
+        async function loadManualLogsFromFirestore() {
+            const db = await initFirestoreManualLogDb();
+            if (!db || !firestoreManualLogModules) return false;
+            const fs = firestoreManualLogModules;
+            try {
+                ensureManualStores();
+                const kinds = ['foodLogs', 'alcoholLogs', 'eventLogs'];
+                for (const kind of kinds) {
+                    const snap = await fs.getDocs(fs.collection(db, getFirestoreManualLogPath(kind)));
+                    snap.forEach(docSnap => {
+                        const log = docSnap.data() || {};
+                        const date = log.date || (log.time ? String(log.time).substring(0, 10) : null);
+                        if (!date) return;
+                        if (kind === 'foodLogs') {
+                            healthData.foodLogs[date] = healthData.foodLogs[date] || [];
+                            const exists = healthData.foodLogs[date].some(x => (x.logId || '') === (log.logId || docSnap.id));
+                            if (!exists) healthData.foodLogs[date].push({ ...log, logId: log.logId || docSnap.id });
+                        } else if (kind === 'alcoholLogs') {
+                            healthData.alcoholLogs[date] = { ...(healthData.alcoholLogs[date] || {}), ...(log.values || log.alcoholValues || {}) };
+                            if (log.alcoholType && log.cups != null) {
+                                healthData.alcoholLogs[date][log.alcoholType] = log.cups;
+                                healthData.alcoholLogs[date][log.alcoholType + '_time'] = log.time || log.updatedAt;
+                            }
+                        } else if (kind === 'eventLogs') {
+                            healthData.eventLogs[date] = { ...(healthData.eventLogs[date] || {}), ...(log.values || log.eventValues || {}) };
+                            if (log.eventKey) {
+                                healthData.eventLogs[date][log.eventKey] = log.value;
+                                healthData.eventLogs[date][log.eventKey + '_time'] = log.time || log.updatedAt;
+                            }
+                        }
+                    });
+                }
+                saveManualLogsToStorage();
+                console.info('[FIRESTORE_MANUAL_LOG] loaded and merged');
+                return true;
+            } catch (e) {
+                console.warn('[FIRESTORE_MANUAL_LOG] load failed. LocalStorage data remains active.', e);
+                return false;
+            }
         }
         function stars(n) { return '★★★★★☆☆☆☆☆'.substring(5 - Math.max(1, Math.min(5, n)), 10 - Math.max(1, Math.min(5, n))); }
         function handleFoodSelect(id) {
@@ -4148,8 +4272,10 @@
             const date = dateKeyFromDate(dt);
             const arr = healthData.foodLogs[date] || [];
             const log = buildFoodLogFromSelection(item, detailOptions.selections || {});
-            arr.push(enrichLogTime({ ...log, logId:'food_' + Date.now() + '_' + Math.random().toString(36).slice(2,6), type:'food', category:log.group, mealPlace:getMealPlaceForDate(date) || '自宅' }, dt));
+            const enrichedFoodLog = enrichLogTime({ ...log, logId:'food_' + Date.now() + '_' + Math.random().toString(36).slice(2,6), type:'food', category:log.group, mealPlace:getMealPlaceForDate(date) || '自宅' }, dt);
+            arr.push(enrichedFoodLog);
             healthData.foodLogs[date] = arr;
+            saveManualLogToFirestore('foodLogs', date, enrichedFoodLog);
             // 食事ログは foodLogs に一本化。manualLogs へ同じ食事を複製しない（二重集計防止）。
             const dateEl = document.getElementById('manual-log-date'); if (dateEl) dateEl.value = date;
             const dtEl = document.getElementById('manual-log-datetime'); if (dtEl) dtEl.value = toLocalDateTimeValue(new Date());
@@ -4161,8 +4287,9 @@
             if (found) return handleFoodSelect(found.id);
             ensureManualStores();
             const dt = getManualLogDateTime(); const date = dateKeyFromDate(dt); const arr = healthData.foodLogs[date] || [];
-            arr.push(enrichLogTime({ id:'meal_other', logId:'meal_' + Date.now(), name:String(label).replace(/^(朝食|昼食|夕食):/,''), displayName:String(label).replace(/^(朝食|昼食|夕食):/,''), protein:0, kcal:0, group:'staple', category:'staple', comment:'一般食事ログ', type:'food', mealPlace:getMealPlaceForDate(date) || '自宅' }, dt));
-            healthData.foodLogs[date] = arr; saveManualLogsToStorage(); renderManualLogUI(); updateManualDashboardSummary();
+            const enrichedMealLog = enrichLogTime({ id:'meal_other', logId:'meal_' + Date.now(), name:String(label).replace(/^(朝食|昼食|夕食):/,''), displayName:String(label).replace(/^(朝食|昼食|夕食):/,''), protein:0, kcal:0, group:'staple', category:'staple', comment:'一般食事ログ', type:'food', mealPlace:getMealPlaceForDate(date) || '自宅' }, dt);
+            arr.push(enrichedMealLog);
+            healthData.foodLogs[date] = arr; saveManualLogToFirestore('foodLogs', date, enrichedMealLog); saveManualLogsToStorage(); renderManualLogUI(); updateManualDashboardSummary();
         }
         function deleteFoodLog(date, logId) {
             ensureManualStores();
@@ -4176,7 +4303,9 @@
             healthData.alcoholLogs[date] = healthData.alcoholLogs[date] || {};
             healthData.alcoholLogs[date][type] = cups; healthData.alcoholLogs[date][type + '_time'] = dt.toISOString();
             healthData.manualLogs[date] = healthData.manualLogs[date] || [];
-            healthData.manualLogs[date].push(enrichLogTime({ logId:'alcohol_' + Date.now(), type:'alcohol', alcoholType:type, cups:cups }, dt));
+            const alcoholOperationLog = enrichLogTime({ logId:'alcohol_' + Date.now(), type:'alcohol', alcoholType:type, cups:cups }, dt);
+            healthData.manualLogs[date].push(alcoholOperationLog);
+            saveManualLogToFirestore('alcoholLogs', date, { ...alcoholOperationLog, values: { ...healthData.alcoholLogs[date] } });
             const dateEl = document.getElementById('manual-log-date'); if (dateEl) dateEl.value = date;
             saveManualLogsToStorage(); renderManualLogUI(); updateManualDashboardSummary();
         }
@@ -4186,7 +4315,9 @@
             healthData.eventLogs[date] = healthData.eventLogs[date] || {};
             healthData.eventLogs[date][key] = value; healthData.eventLogs[date][key + '_time'] = dt.toISOString();
             healthData.manualLogs[date] = healthData.manualLogs[date] || [];
-            healthData.manualLogs[date].push(enrichLogTime({ logId:'event_' + Date.now(), type:'event', eventKey:key, value:value }, dt));
+            const eventOperationLog = enrichLogTime({ logId:'event_' + Date.now(), type:'event', eventKey:key, value:value }, dt);
+            healthData.manualLogs[date].push(eventOperationLog);
+            saveManualLogToFirestore('eventLogs', date, { ...eventOperationLog, values: { ...healthData.eventLogs[date] } });
             const dateEl = document.getElementById('manual-log-date'); if (dateEl) dateEl.value = date;
             saveManualLogsToStorage(); renderManualLogUI(); updateManualDashboardSummary();
         }
@@ -5190,7 +5321,7 @@
             const generatedParts = getJstParts(new Date());
             const dataToExport = {
                 schemaVersion: "1.3",
-                appVersion: "gv1.61",
+                appVersion: "gv1.63",
                 generatedAt: generatedParts.timestampUtc,
                 generatedAtLocal: generatedParts.localDateTime,
                 timezone: "Asia/Tokyo",
@@ -5200,12 +5331,15 @@
                 dataCompleteness,
                 aiAnalysisPolicy,
                 manualLogPersistencePolicy: {
-                    storage: "localStorage + lightweight JSON export",
+                    storage: "localStorage + lightweight JSON export + optional Firestore",
                     localStorageKey: "health-manual-logs-v1",
                     preserveOnAppleHealthRefresh: true,
                     preserveOnLocationHistoryRefresh: true,
                     exportToLightweightJson: true,
-                    githubPersistenceRequiresCommit: true
+                    githubPersistenceRequiresCommit: true,
+                    firestoreEnabled: isFirestoreManualLogSyncConfigured(),
+                    firestoreCollectionRoot: FIRESTORE_MANUAL_LOG_SYNC.collectionRoot,
+                    firestoreUserId: FIRESTORE_MANUAL_LOG_SYNC.userId
                 },
                 healthDataValidation,
                 foodAnalysisMetrics,
@@ -5218,7 +5352,7 @@
                 },
                 dailySummaries,
                 healthData: {
-                    summary: { ...(healthData.summary || {}), version: "gv1.61", heightCm: 150, targetWeight: 50, targetWeightKg: 50 },
+                    summary: { ...(healthData.summary || {}), version: "gv1.63", heightCm: 150, targetWeight: 50, targetWeightKg: 50 },
                     weight: healthData.weight || {},
                     steps: healthData.steps || {},
                     sleep: healthData.sleep || {},

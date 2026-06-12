@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Health Activity Manager gv1.70</title>
-    <!-- gv1.70 chart axis/grid foreground + GPS period playback + gv1.70 condition/risk indices + gv1.67 healthy food items + gv1.66 food event includes fix + gv1.65 tablet food date fix + HRV SDNN import fix. Existing UI preserved. -->
+    <title>Health Activity Manager gv1.71</title>
+    <!-- gv1.71 chart axis labels + foreground reference lines + weekday tooltip + GPS period playback + gv1.71 condition/risk indices + gv1.67 healthy food items + gv1.66 food event includes fix + gv1.65 tablet food date fix + HRV SDNN import fix. Existing UI preserved. -->
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
     <meta name="apple-mobile-web-app-title" content="HealthManager">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -337,7 +337,7 @@
                 <h1 onclick="goHomeStartup()" class="text-xl font-bold text-blue-500 flex items-center tracking-tight cursor-pointer hover:text-blue-400 transition" title="スタート画面へ戻る">
                     <i class="fas fa-heartbeat mr-2 text-2xl"></i>HealthManager
                 </h1>
-                <p class="text-[10px] text-slate-500 font-mono mt-1 uppercase tracking-widest">gv1.70 OS PRO</p>
+                <p class="text-[10px] text-slate-500 font-mono mt-1 uppercase tracking-widest">gv1.71 OS PRO</p>
             </div>
             <nav class="flex-1 px-4 space-y-1 overflow-y-auto custom-scrollbar">
                 <button onclick="switchTab('dashboard')" class="nav-btn w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl transition" data-tab="dashboard">
@@ -1323,7 +1323,7 @@
     <script>
         // --- Global Variables Setup ---
         let healthData = {
-            summary: { version: "gv1.70", isSample: false, updatedAt: null, heightCm: 150, targetWeight: 50 },
+            summary: { version: "gv1.71", isSample: false, updatedAt: null, heightCm: 150, targetWeight: 50 },
             weight: {}, steps: {}, sleep: {}, heartRate: {}, hrv: {},
             gpsSummaries: [], manualLogs: {}, foodLogs: {}, eventLogs: {}, alcoholLogs: {}
         };
@@ -1787,7 +1787,7 @@
             const previousSourceSummary = data.sourceSummary || targetData.sourceSummary || targetData.summary?.previousSourceSummary || current.summary?.previousSourceSummary || null;
 
             const defSummary = {
-                version: "gv1.70",
+                version: "gv1.71",
                 heightCm: lockedHeight,
                 targetWeight: lockedTarget,
                 targetWeightKg: lockedTarget,
@@ -3575,10 +3575,90 @@
             return s;
         }
 
+        function getWeekdayJa(dateStr) {
+            const d = new Date(`${dateStr}T00:00:00+09:00`);
+            if (isNaN(d.getTime())) return '';
+            return ['日','月','火','水','木','金','土'][d.getDay()];
+        }
+
         function formatChartDateFull(value) {
             const s = String(value || '');
-            if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s.replaceAll('-', '/');
+            if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return `${s.replaceAll('-', '/')}（${getWeekdayJa(s)}）`;
             return s;
+        }
+
+        function getDateTickIndexes(labels, maxTicks = 8) {
+            const len = labels ? labels.length : 0;
+            if (!len) return [];
+            if (len <= maxTicks) return labels.map((_, i) => i);
+            const out = new Set([0, len - 1]);
+            const step = Math.ceil((len - 1) / (maxTicks - 1));
+            for (let i = 0; i < len; i += step) out.add(i);
+            return [...out].sort((a,b) => a - b).slice(0, maxTicks);
+        }
+
+        const explicitDateAxisAndReferenceLinePlugin = {
+            id: 'explicitDateAxisAndReferenceLinePlugin',
+            afterDatasetsDraw(chart) {
+                const { ctx, chartArea, scales } = chart;
+                if (!chartArea || !scales?.x || !scales?.y) return;
+                const x = scales.x;
+                const y = scales.y;
+
+                // 補助線はChart.js標準描画だと塗りつぶしの後ろに隠れるため、最前面に再描画する。
+                (chart.data.datasets || []).forEach(ds => {
+                    if (!ds || !ds.isReferenceLine) return;
+                    const val = Array.isArray(ds.data) ? ds.data.find(v => v != null && !isNaN(v)) : null;
+                    if (val == null || isNaN(val)) return;
+                    const py = y.getPixelForValue(val);
+                    if (py < chartArea.top || py > chartArea.bottom) return;
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.setLineDash(ds.borderDash || [6, 5]);
+                    ctx.lineWidth = Math.max(ds.borderWidth || 3, 3);
+                    ctx.strokeStyle = ds.borderColor || 'rgba(255,255,255,0.9)';
+                    ctx.moveTo(chartArea.left, py);
+                    ctx.lineTo(chartArea.right, py);
+                    ctx.stroke();
+                    ctx.restore();
+                });
+
+                // 軸線と日付目盛りを明示描画。スクショ上で軸が消える問題を回避する。
+                const labels = chart.data.labels || [];
+                const isDateAxis = labels.some(v => /^\d{4}-\d{2}-\d{2}$/.test(String(v || '')));
+                ctx.save();
+                ctx.strokeStyle = 'rgba(226,232,240,0.75)';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(chartArea.left, chartArea.top);
+                ctx.lineTo(chartArea.left, chartArea.bottom);
+                ctx.lineTo(chartArea.right, chartArea.bottom);
+                ctx.stroke();
+
+                if (isDateAxis) {
+                    ctx.fillStyle = 'rgba(203,213,225,0.95)';
+                    ctx.font = '600 11px Inter, system-ui, -apple-system, sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'top';
+                    const indexes = getDateTickIndexes(labels, 8);
+                    indexes.forEach(i => {
+                        const px = x.getPixelForValue(i);
+                        if (!isFinite(px)) return;
+                        ctx.strokeStyle = 'rgba(226,232,240,0.55)';
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(px, chartArea.bottom);
+                        ctx.lineTo(px, chartArea.bottom + 5);
+                        ctx.stroke();
+                        ctx.fillText(formatChartDateShort(labels[i]), px, chartArea.bottom + 8);
+                    });
+                }
+                ctx.restore();
+            }
+        };
+
+        if (typeof Chart !== 'undefined' && !Chart.registry.plugins.get('explicitDateAxisAndReferenceLinePlugin')) {
+            Chart.register(explicitDateAxisAndReferenceLinePlugin);
         }
 
         function getDefaultChartOptions() {
@@ -3586,7 +3666,7 @@
                 responsive: true,
                 maintainAspectRatio: false,
                 interaction: { mode: 'index', intersect: false },
-                layout: { padding: { left: 4, right: 8, top: 2, bottom: 16 } },
+                layout: { padding: { left: 8, right: 12, top: 4, bottom: 34 } },
                 plugins: {
                     legend: { display: true, position: 'top', labels: { color: '#94a3b8', boxWidth: 12, font: { size: 10 } } },
                     tooltip: {
@@ -3648,10 +3728,11 @@
                 label,
                 data: labels.map(() => value),
                 type: 'line',
-                order: options.order ?? -20,
-                borderDash: options.borderDash || [5, 5],
+                isReferenceLine: true,
+                order: options.order ?? -50,
+                borderDash: options.borderDash || [6, 5],
                 borderWidth: options.borderWidth || 3,
-                borderColor: options.borderColor || 'rgba(255,255,255,0.75)',
+                borderColor: options.borderColor || 'rgba(255,255,255,0.9)',
                 backgroundColor: 'rgba(0,0,0,0)',
                 pointRadius: 0,
                 pointHoverRadius: 0,
@@ -3751,7 +3832,7 @@
             const ext30Scores = allScores.slice(Math.max(0, allScores.length - range - 29)); const ma30Data = movingAverage(ext30Scores.map(s => s.score), 30).slice(-targetScores.length);
             const pointColors = targetScores.map(s => s.date === dashboardSelectedDate ? config.color : config.pointColor);
             const pointRadii = targetScores.map(s => s.date === dashboardSelectedDate ? 5 : 2);
-            const options = getDefaultChartOptions(); applySmartYAxis(options, data, [...ma7Data, ...ma30Data], { hardMin: 0, hardMax: 100, minSpan: config.lowerIsBetter ? 12 : 8, minPad: 2 });
+            const options = getDefaultChartOptions(); applySmartYAxis(options, data, [config.goodLine, config.warnLine, ...ma7Data, ...ma30Data], { hardMin: 0, hardMax: 100, minSpan: config.lowerIsBetter ? 14 : 12, minPad: 1 });
             charts[canvasId] = new Chart(el, { type: 'line', data: { labels: labels, datasets: [
                 { label: config.label, data: data, borderColor: config.color, backgroundColor: config.fillColor, fill: true, tension: 0.3, pointBackgroundColor: pointColors, pointRadius: pointRadii, borderWidth: 3, order: 10 },
                 { label: '7日平均', data: ma7Data, type: 'line', borderColor: 'rgba(148, 163, 184, 0.9)', borderWidth: 3, pointRadius: 0, fill: false, tension: 0.3, order: -10, clip: false },
@@ -4603,7 +4684,7 @@
                     logId,
                     date,
                     kind,
-                    appVersion: 'gv1.70',
+                    appVersion: 'gv1.71',
                     updatedAt: new Date().toISOString(),
                     source: 'browser'
                 }, { merge: true });
@@ -5802,7 +5883,7 @@
             const generatedParts = getJstParts(new Date());
             const dataToExport = {
                 schemaVersion: "1.3",
-                appVersion: "gv1.70",
+                appVersion: "gv1.71",
                 generatedAt: generatedParts.timestampUtc,
                 generatedAtLocal: generatedParts.localDateTime,
                 timezone: "Asia/Tokyo",
@@ -5833,7 +5914,7 @@
                 },
                 dailySummaries,
                 healthData: {
-                    summary: { ...(healthData.summary || {}), version: "gv1.70", heightCm: 150, targetWeight: 50, targetWeightKg: 50 },
+                    summary: { ...(healthData.summary || {}), version: "gv1.71", heightCm: 150, targetWeight: 50, targetWeightKg: 50 },
                     weight: healthData.weight || {},
                     steps: healthData.steps || {},
                     sleep: healthData.sleep || {},

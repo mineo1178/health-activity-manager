@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Health Activity Manager gv1.65</title>
-    <!-- gv1.65 tablet food date fix + gv1.65 HRV SDNN import fix. Existing UI preserved. -->
+    <title>Health Activity Manager gv1.67</title>
+    <!-- gv1.67 healthy food items + gv1.66 food event includes fix + gv1.65 tablet food date fix + HRV SDNN import fix. Existing UI preserved. -->
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
     <meta name="apple-mobile-web-app-title" content="HealthManager">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -337,7 +337,7 @@
                 <h1 onclick="goHomeStartup()" class="text-xl font-bold text-blue-500 flex items-center tracking-tight cursor-pointer hover:text-blue-400 transition" title="スタート画面へ戻る">
                     <i class="fas fa-heartbeat mr-2 text-2xl"></i>HealthManager
                 </h1>
-                <p class="text-[10px] text-slate-500 font-mono mt-1 uppercase tracking-widest">gv1.65 OS PRO</p>
+                <p class="text-[10px] text-slate-500 font-mono mt-1 uppercase tracking-widest">gv1.67 OS PRO</p>
             </div>
             <nav class="flex-1 px-4 space-y-1 overflow-y-auto custom-scrollbar">
                 <button onclick="switchTab('dashboard')" class="nav-btn w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl transition" data-tab="dashboard">
@@ -3976,7 +3976,11 @@
             { id:'fish_protein_bar', name:'魚肉たんぱく食品', protein:8, kcal:90, group:'highProtein', comment:'低脂質で良い' },
 
             { id:'salad', name:'サラダ', protein:2, kcal:80, group:'homeCooking', comment:'野菜不足対策' },
-            { id:'nimono', name:'煮物', protein:5, kcal:160, group:'homeCooking', comment:'家庭料理として良い' },
+            { id:'vegetable_soup', name:'野菜スープ', protein:4, kcal:120, group:'homeCooking', comment:'低カロリーで満腹感を作りやすい' },
+            { id:'chicken_vegetable_soup', name:'鶏むね野菜スープ', protein:25, kcal:220, group:'homeCooking', comment:'高タンパク＋野菜でかなり良い' },
+            { id:'steamed_vegetables', name:'温野菜', protein:3, kcal:100, group:'homeCooking', comment:'食物繊維を増やしやすい' },
+            { id:'nimono', name:'煮物', protein:5, kcal:160, group:'homeCooking', comment:'家庭料理として良い。根菜多めは量に注意' },
+            { id:'oden', name:'おでん', protein:15, kcal:260, group:'homeCooking', comment:'具材次第で高タンパク。練り物と塩分に注意' },
             { id:'grilled_fish', name:'焼き魚', protein:22, kcal:220, group:'homeCooking', comment:'高タンパクで良い' },
             { id:'sashimi', name:'刺身', protein:20, kcal:180, group:'homeCooking', comment:'低糖質・高タンパク' },
             { id:'pork_miso_soup', name:'豚汁', protein:12, kcal:180, group:'homeCooking', comment:'具沢山なら高評価' },
@@ -4032,6 +4036,14 @@
             natto: [{ key:'packs', label:'量', choices:['1パック','2パック'], default:'1パック' }],
             hiyayakko: [{ key:'portion', label:'量', choices:['半丁','1丁'], default:'半丁' }],
             boiled_egg: [{ key:'pieces', label:'個数', choices:['1個','2個'], default:'1個' }],
+            vegetable_soup: [{ key:'size', label:'量', choices:['小 bowl','普通','多め'], default:'普通' }],
+            chicken_vegetable_soup: [
+                { key:'size', label:'量', choices:['普通','多め'], default:'普通' },
+                { key:'proteinChoice', label:'タンパク質', choices:['20g','25g','30g'], default:'25g' }
+            ],
+            steamed_vegetables: [{ key:'amount', label:'量', choices:['少量','普通','多め'], default:'普通' }],
+            nimono: [{ key:'amount', label:'量', choices:['少量','普通','多め'], default:'普通' }],
+            oden: [{ key:'items', label:'具材数', choices:['2〜3品','4〜5品','6品以上'], default:'4〜5品' }],
             nuts: [{ key:'amount', label:'量', choices:['30g','60g','100g','150g','250g以上'], default:'30g' }],
             yakitori: [
                 { key:'sauce', label:'味', choices:['塩','タレ'], default:'塩' },
@@ -4411,7 +4423,13 @@
             const kcal = foods.reduce((s,x)=>s+(Number(x.kcal)||0),0);
             const nuts = foods.reduce((s,x)=>s+(Number(x.nuts)||0),0);
             const alcoholCups = Object.entries(alcohol).filter(([k])=>!k.endsWith('_time')).reduce((s,[,x])=>s+(Number(x)||0),0);
-            const eatingOutCount = (events.mealPlace === '居酒屋' || events.mealPlace === '外食' || events.eatingOut || 'なし').includes('2回') ? 2 : ((events.mealPlace === '居酒屋' || events.mealPlace === '外食' || (events.eatingOut || 'なし').includes('1回')) ? 1 : 0);
+            // gv1.66: mealPlace判定(boolean)とeatingOut文字列を混在させて .includes() していたため、
+            // 「居酒屋/外食」選択時に true.includes is not a function で描画が停止していた。
+            // 食事場所と外食回数を分離して安全に判定する。
+            const mealPlaceValue = String(events.mealPlace || '自宅');
+            const eatingOutValue = String(events.eatingOut || 'なし');
+            const isOutsideMealPlace = mealPlaceValue === '居酒屋' || mealPlaceValue === '外食';
+            const eatingOutCount = eatingOutValue.includes('2回') ? 2 : (isOutsideMealPlace || eatingOutValue.includes('1回') ? 1 : 0);
             const highProteinCount = foods.filter(x => x.group === 'highProtein').length;
             const homeCookingCount = foods.filter(x => x.group === 'homeCooking').length;
             const outsideCount = foods.filter(x => x.group === 'outsideFood').length;

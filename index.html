@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Health Activity Manager gv1.74</title>
-    <!-- gv1.74 mobile-safe x-axis labels + weekend coloring + foreground reference lines + weekday tooltip + GPS period playback + gv1.73 condition/risk indices + gv1.67 healthy food items + gv1.66 food event includes fix + gv1.65 tablet food date fix + HRV SDNN import fix. Existing UI preserved. -->
+    <title>Health Activity Manager gv1.76</title>
+    <!-- gv1.76 food log edit visibility/date sync fix + gv1.75 food log edit support + gv1.74 mobile-safe x-axis labels + weekend coloring + foreground reference lines + weekday tooltip + GPS period playback. Existing UI preserved. -->
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
     <meta name="apple-mobile-web-app-title" content="HealthManager">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -320,12 +320,19 @@
         .manual-choice-btn.active { background: rgba(20,184,166,.22); border-color: rgba(45,212,191,.75); color: #fff; box-shadow: 0 0 0 1px rgba(45,212,191,.25) inset; }
         .manual-detail-label { font-size: 10px; color: #94a3b8; font-weight: 900; text-transform: uppercase; letter-spacing: .08em; margin: 12px 0 8px; }
         @media (max-width: 768px) { .manual-modal-backdrop { align-items: flex-start; padding: 16px 8px calc(var(--mobile-nav-height) + 12px + env(safe-area-inset-bottom)) !important; } .manual-modal-card { border-radius: 22px 22px 18px 18px; max-height: calc(100dvh - var(--mobile-nav-height) - 32px - env(safe-area-inset-bottom)) !important; padding-bottom: calc(var(--mobile-nav-height) + 20px + env(safe-area-inset-bottom)) !important; } }
-        /* gv1.65: モーダル操作中は下部ナビを隠し、食品詳細選択ボタンとの重なりを防止 */
+        /* gv1.75: モーダル操作中は下部ナビを隠し、食品詳細選択ボタンとの重なりを防止 */
         body.manual-modal-open nav.fixed.bottom-0 { display: none !important; }
 
         .timeline-time { min-width:44px; color:#2dd4bf; font-weight:900; font-size:12px; }
         .timeline-title { color:#fff; font-weight:900; font-size:13px; }
         .timeline-sub { color:#94a3b8; font-weight:700; font-size:10px; }
+
+        /* gv1.76 Food timeline edit controls */
+        .timeline-row .timeline-actions { flex-shrink: 0; }
+        @media (max-width: 768px) {
+            .timeline-row { align-items: flex-start; }
+            .timeline-row button { font-size: 10px !important; padding: 4px 6px !important; }
+        }
 
     </style>
 </head>
@@ -337,7 +344,7 @@
                 <h1 onclick="goHomeStartup()" class="text-xl font-bold text-blue-500 flex items-center tracking-tight cursor-pointer hover:text-blue-400 transition" title="スタート画面へ戻る">
                     <i class="fas fa-heartbeat mr-2 text-2xl"></i>HealthManager
                 </h1>
-                <p class="text-[10px] text-slate-500 font-mono mt-1 uppercase tracking-widest">gv1.74 OS PRO</p>
+                <p class="text-[10px] text-slate-500 font-mono mt-1 uppercase tracking-widest">gv1.76 OS PRO</p>
             </div>
             <nav class="flex-1 px-4 space-y-1 overflow-y-auto custom-scrollbar">
                 <button onclick="switchTab('dashboard')" class="nav-btn w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl transition" data-tab="dashboard">
@@ -510,44 +517,6 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
-                        <div id="dashboard-condition-score-card" class="dashboard-score-card">
-                            <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 items-center">
-                                <div class="xl:col-span-2">
-                                    <div class="text-cyan-100 text-xl font-black tracking-widest mb-2">コンディション指数 <span class="text-xs font-normal opacity-70 ml-2">※今日の戦闘力</span></div>
-                                    <div class="flex items-end gap-4">
-                                        <div id="condition-performance-score" class="score-big">--</div>
-                                        <div class="text-2xl text-cyan-100 font-black mb-3">/ 100</div>
-                                    </div>
-                                    <div id="condition-performance-comment" class="text-lg text-slate-100 font-bold mt-4">データ読込後に評価を表示します。</div>
-                                </div>
-                                <div class="grid grid-cols-1 sm:grid-cols-3 xl:grid-cols-1 gap-3">
-                                    <div class="score-compare-box"><div class="text-sm font-bold text-slate-300">昨日比</div><div id="condition-vs-yesterday" class="text-3xl font-black text-emerald-300">--</div></div>
-                                    <div class="score-compare-box"><div class="text-sm font-bold text-slate-300">先週平均比</div><div id="condition-vs-week" class="text-3xl font-black text-amber-300">--</div></div>
-                                    <div class="score-compare-box"><div class="text-sm font-bold text-slate-300">月間平均比</div><div id="condition-vs-month" class="text-3xl font-black text-cyan-200">--</div></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div id="dashboard-risk-score-card" class="dashboard-score-card">
-                            <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 items-center">
-                                <div class="xl:col-span-2">
-                                    <div class="text-cyan-100 text-xl font-black tracking-widest mb-2">体調リスク指数 <span class="text-xs font-normal opacity-70 ml-2">※高いほど注意</span></div>
-                                    <div class="flex items-end gap-4">
-                                        <div id="condition-risk-score" class="score-big">--</div>
-                                        <div class="text-2xl text-cyan-100 font-black mb-3">/ 100</div>
-                                    </div>
-                                    <div id="condition-risk-comment" class="text-lg text-slate-100 font-bold mt-4">データ読込後に評価を表示します。</div>
-                                </div>
-                                <div class="grid grid-cols-1 sm:grid-cols-3 xl:grid-cols-1 gap-3">
-                                    <div class="score-compare-box"><div class="text-sm font-bold text-slate-300">昨日比</div><div id="risk-vs-yesterday" class="text-3xl font-black text-emerald-300">--</div></div>
-                                    <div class="score-compare-box"><div class="text-sm font-bold text-slate-300">先週平均比</div><div id="risk-vs-week" class="text-3xl font-black text-amber-300">--</div></div>
-                                    <div class="score-compare-box"><div class="text-sm font-bold text-slate-300">月間平均比</div><div id="risk-vs-month" class="text-3xl font-black text-cyan-200">--</div></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                     <div class="mt-6 glass-card p-4 md:p-6 bg-slate-900/30 border border-cyan-500/20 w-full max-w-full">
                         <div class="flex items-center justify-between mb-3">
                             <h3 class="text-sm md:text-base font-black text-cyan-100">
@@ -556,22 +525,6 @@
                         </div>
                         <div class="chart-container"><canvas id="chart-health-score-trend"></canvas></div>
                         <div id="health-score-trend-comment" class="mt-3 text-sm md:text-base text-slate-100 leading-relaxed"></div>
-                    </div>
-                    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
-                        <div class="glass-card p-4 md:p-6 bg-slate-900/30 border border-cyan-500/20 w-full max-w-full">
-                            <div class="flex items-center justify-between mb-3">
-                                <h3 class="text-sm md:text-base font-black text-cyan-100"><i class="fas fa-bolt mr-2 text-emerald-300"></i>コンディション指数トレンド</h3>
-                            </div>
-                            <div class="chart-container"><canvas id="chart-condition-score-trend"></canvas></div>
-                            <div id="condition-score-trend-comment" class="mt-3 text-sm md:text-base text-slate-100 leading-relaxed"></div>
-                        </div>
-                        <div class="glass-card p-4 md:p-6 bg-slate-900/30 border border-cyan-500/20 w-full max-w-full">
-                            <div class="flex items-center justify-between mb-3">
-                                <h3 class="text-sm md:text-base font-black text-cyan-100"><i class="fas fa-shield-virus mr-2 text-rose-300"></i>体調リスク指数トレンド</h3>
-                            </div>
-                            <div class="chart-container"><canvas id="chart-risk-score-trend"></canvas></div>
-                            <div id="risk-score-trend-comment" class="mt-3 text-sm md:text-base text-slate-100 leading-relaxed"></div>
-                        </div>
                     </div>
 
                     <section id="weekly-review-section" class="hidden glass-card p-5 md:p-6 space-y-5 border-t-4 border-blue-500 mt-6">
@@ -1058,10 +1011,9 @@
                                     <input type="date" id="gps-filter-end" onchange="setGpsCustomDateRange()" class="flex-1 bg-slate-800 border border-slate-700 text-xs rounded-lg px-2 py-2 focus:outline-none focus:ring-1 focus:ring-emerald-500/50 text-slate-200 cursor-pointer min-h-[44px]">
                                 </div>
                                 
-                                <div class="flex justify-between items-center mt-1 gap-2">
-                                    <div id="gps-active-period-label" class="text-[10px] font-bold text-emerald-400/80 uppercase tracking-widest bg-emerald-500/10 px-2 py-1 rounded border border-emerald-500/20 flex-1">表示期間: --</div>
-                                    <button id="gps-period-play-btn" onclick="playCurrentGpsPeriodRoutes()" class="text-[10px] bg-emerald-600/20 text-emerald-400 hover:bg-emerald-500 hover:text-white px-2 py-1 rounded border border-emerald-500/30 transition whitespace-nowrap hidden"><i class="fas fa-play mr-1"></i>期間再生</button>
-                                    <button id="gps-legend-toggle" onclick="toggleGpsLegend()" class="text-[10px] text-slate-400 underline hover:text-slate-300 whitespace-nowrap">ルート色凡例</button>
+                                <div class="flex justify-between items-center mt-1">
+                                    <div id="gps-active-period-label" class="text-[10px] font-bold text-emerald-400/80 uppercase tracking-widest bg-emerald-500/10 px-2 py-1 rounded border border-emerald-500/20">表示期間: --</div>
+                                    <button id="gps-legend-toggle" onclick="toggleGpsLegend()" class="text-[10px] text-slate-400 underline hover:text-slate-300">ルート色凡例を表示</button>
                                 </div>
                             </div>
 
@@ -1151,7 +1103,7 @@
                             <div class="flex flex-col sm:flex-row sm:items-center gap-2">
                                 <div class="flex items-center gap-2">
                                     <button onclick="moveManualDate(-1)" class="bg-slate-800 hover:bg-slate-700 text-white px-3 py-2 rounded-lg font-bold"><i class="fas fa-chevron-left"></i></button>
-                                    <input type="date" id="manual-log-date" onchange="syncManualDateTimeToManualDate(); renderManualLogUI()" class="bg-slate-900 border border-slate-700 text-white px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-teal-500 cursor-pointer shadow min-h-[44px]">
+                                    <input type="date" id="manual-log-date" onchange="syncManualDateTimeToManualDate(); renderManualLogUI(); updateManualDashboardSummary()" class="bg-slate-900 border border-slate-700 text-white px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-teal-500 cursor-pointer shadow min-h-[44px]">
                                     <button onclick="moveManualDate(1)" class="bg-slate-800 hover:bg-slate-700 text-white px-3 py-2 rounded-lg font-bold"><i class="fas fa-chevron-right"></i></button>
                                 </div>
                                 <input type="datetime-local" id="manual-log-datetime" class="bg-slate-900 border border-slate-700 text-white px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-teal-500 cursor-pointer shadow min-h-[44px]" title="後から登録する場合は日時を変更">
@@ -1306,7 +1258,7 @@
             <div id="manual-detail-options" class="space-y-3"></div>
             <div class="grid grid-cols-2 gap-3 mt-5">
                 <button onclick="closeFoodDetailModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-3 rounded-xl font-black min-h-[46px]">キャンセル</button>
-                <button onclick="confirmFoodDetailModal()" class="bg-teal-600 hover:bg-teal-500 text-white px-4 py-3 rounded-xl font-black shadow-lg min-h-[46px]"><i class="fas fa-plus mr-1"></i>登録</button>
+                <button id="manual-detail-confirm-btn" onclick="confirmFoodDetailModal()" class="bg-teal-600 hover:bg-teal-500 text-white px-4 py-3 rounded-xl font-black shadow-lg min-h-[46px]"><i class="fas fa-plus mr-1"></i>登録</button>
             </div>
         </div>
     </div>
@@ -1323,7 +1275,7 @@
     <script>
         // --- Global Variables Setup ---
         let healthData = {
-            summary: { version: "gv1.74", isSample: false, updatedAt: null, heightCm: 150, targetWeight: 50 },
+            summary: { version: "gv1.76", isSample: false, updatedAt: null, heightCm: 150, targetWeight: 50 },
             weight: {}, steps: {}, sleep: {}, heartRate: {}, hrv: {},
             gpsSummaries: [], manualLogs: {}, foodLogs: {}, eventLogs: {}, alcoholLogs: {}
         };
@@ -1355,8 +1307,6 @@
         
         let chartRanges = {
             'chart-health-score-trend': 7,
-            'chart-condition-score-trend': 7,
-            'chart-risk-score-trend': 7,
             'chart-weight-dash': 7,
             'chart-steps-dash': 7,
             'chart-weight-full': 7,
@@ -1374,7 +1324,6 @@
 
         let gpsPlaybackData = { points: [], active: false, timer: null, step: 0, marker: null, startTimeStr: '', endTimeStr: '', speed: 1 };
         let currentPlaybackRouteKey = null;
-        let currentGpsFilteredRoutes = [];
 
         const ASLEEP_CATEGORIES = [
             "HKCategoryValueSleepAnalysisAsleep", "HKCategoryValueSleepAnalysisAsleepCore",
@@ -1787,7 +1736,7 @@
             const previousSourceSummary = data.sourceSummary || targetData.sourceSummary || targetData.summary?.previousSourceSummary || current.summary?.previousSourceSummary || null;
 
             const defSummary = {
-                version: "gv1.74",
+                version: "gv1.76",
                 heightCm: lockedHeight,
                 targetWeight: lockedTarget,
                 targetWeightKg: lockedTarget,
@@ -2087,73 +2036,33 @@
         }
 
         function parseHealthXmlFromBytes(bytes) {
-            // gv1.65: Apple HealthのRecordには2種類ある。
-            // 1) <Record ... /> の自己完結形式
-            // 2) <Record ...> ... </Record> の子要素付き形式
-            // HRV(SDNN)は後者になりやすく、旧実装の /<Record ...\/>/ では取り逃がしていた。
             const decoder = new TextDecoder("utf-8");
             const chunkSize = 1024 * 1024 * 2; // 2MB
-            let buffer = "";
-            let count = 0;
+            let buffer = ""; let count = 0;
             for (let offset = 0; offset < bytes.length; offset += chunkSize) {
                 const slice = bytes.subarray(offset, offset + chunkSize);
                 buffer += decoder.decode(slice, { stream: offset + chunkSize < bytes.length });
-
-                const parsed = parseHealthXmlRecordsPart(buffer);
-                count += parsed.count;
-
-                // 最後に処理できたRecord開始タグの末尾までは破棄する。
-                // 子要素や</Record>は健康指標の集計に不要。
-                if (parsed.lastIndex > 0) {
-                    buffer = buffer.slice(parsed.lastIndex);
-                } else if (buffer.length > 1024 * 1024) {
-                    // 不完全タグだけを残す。巨大XMLでメモリが増え続けることを防ぐ。
-                    const lastStart = buffer.lastIndexOf('<Record');
-                    buffer = lastStart >= 0 ? buffer.slice(lastStart) : buffer.slice(-1024);
-                }
-
-                if (count % 50000 === 0) {
-                    updateLoader(30 + Math.min(25, (offset / bytes.length) * 25), `Export.xml 処理中... (${count})`);
-                }
+                const lastRecordEnd = buffer.lastIndexOf("/>");
+                if (lastRecordEnd === -1) continue;
+                const processPart = buffer.slice(0, lastRecordEnd + 2);
+                buffer = buffer.slice(lastRecordEnd + 2);
+                count += parseHealthXmlRecordsPart(processPart);
+                if (count % 50000 === 0) updateLoader(30 + Math.min(25, (offset / bytes.length) * 25), `Export.xml 処理中... (${count})`);
             }
-            if (buffer.trim()) {
-                count += parseHealthXmlRecordsPart(buffer).count;
-            }
+            if (buffer.trim()) { count += parseHealthXmlRecordsPart(buffer); }
         }
 
         function parseHealthXmlRecordsPart(text) {
-            // 自己完結Recordと子要素付きRecordの開始タグを両方拾う。
-            // 開始タグに type / startDate / endDate / value が入っているため、子要素本文を読む必要はない。
-            const recordRegex = /<Record\b[^>]*>/g;
-            let match;
-            let count = 0;
-            let lastIndex = 0;
-            while ((match = recordRegex.exec(text)) !== null) {
-                processHealthRecord(match[0]);
-                count++;
-                lastIndex = recordRegex.lastIndex;
-            }
-            return { count, lastIndex };
-        }
-
-        function addDailyAverageMetric(targetMap, aggKey, dateKey, val) {
-            if (!Number.isFinite(val)) return;
-            if (!healthData.__dailyAverageAgg) healthData.__dailyAverageAgg = {};
-            if (!healthData.__dailyAverageAgg[aggKey]) healthData.__dailyAverageAgg[aggKey] = {};
-            const agg = healthData.__dailyAverageAgg[aggKey];
-            if (!agg[dateKey]) agg[dateKey] = { sum: 0, count: 0 };
-            agg[dateKey].sum += val;
-            agg[dateKey].count += 1;
-            targetMap[dateKey] = agg[dateKey].sum / agg[dateKey].count;
+            const recordRegex = /<Record\b[^>]*\/>/g;
+            let match; let count = 0;
+            while ((match = recordRegex.exec(text)) !== null) { processHealthRecord(match[0]); count++; }
+            return count;
         }
 
         function processHealthRecord(chunk) {
-            const type = getXmlAttr(chunk, 'type');
-            const startStr = getXmlAttr(chunk, 'startDate');
-            const dateKey = (startStr || '').substring(0, 10);
-            const val = parseFloat(getXmlAttr(chunk, 'value'));
+            const type = getXmlAttr(chunk, 'type'); const startStr = getXmlAttr(chunk, 'startDate');
+            const dateKey = (startStr || '').substring(0, 10); const val = parseFloat(getXmlAttr(chunk, 'value'));
             if (!type || !dateKey) return;
-
             if (type.includes('BodyMass') && !isNaN(val)) healthData.weight[dateKey] = val;
             if (type.includes('StepCount') && !isNaN(val)) healthData.steps[dateKey] = (healthData.steps[dateKey] || 0) + val;
             if (type.includes('SleepAnalysis')) {
@@ -2164,12 +2073,8 @@
                     if (Number.isFinite(duration) && duration > 0 && duration < 24) healthData.sleep[dateKey] = (healthData.sleep[dateKey] || 0) + duration;
                 }
             }
-            if (type.includes('RestingHeartRate') && !isNaN(val)) {
-                addDailyAverageMetric(healthData.heartRate, 'heartRate', dateKey, val);
-            }
-            if ((type.includes('HeartRateVariability') || type.includes('HeartRateVariabilitySDNN')) && !isNaN(val)) {
-                addDailyAverageMetric(healthData.hrv, 'hrv', dateKey, val);
-            }
+            if (type.includes('RestingHeartRate') && !isNaN(val)) healthData.heartRate[dateKey] = val;
+            if (type.includes('HeartRateVariability') && !isNaN(val)) healthData.hrv[dateKey] = val;
         }
 
         function getXmlAttr(text, attr) { const m = text.match(new RegExp(`${attr}="([^"]+)"`)); return m ? m[1] : null; }
@@ -3256,187 +3161,6 @@
             });
         }
 
-
-        function getDailySummaryForDate(date) {
-            const ds = (typeof dailySummaries !== 'undefined' && dailySummaries && dailySummaries[date]) ? dailySummaries[date] : null;
-            if (ds && ds.analyzed) return ds.analyzed;
-            return ((healthData.dailySummaries || {})[date] || {}).analyzed || ((healthData.dailySummaries || {})[date] || {}).raw || null;
-        }
-
-        function getPrevDateString(date) {
-            const d = new Date(date + 'T00:00:00');
-            d.setDate(d.getDate() - 1);
-            return d.toISOString().substring(0, 10);
-        }
-
-        function avgForKeys(obj, keys) {
-            const vals = keys.map(k => obj[k]).filter(v => v != null && !isNaN(v));
-            return vals.length ? vals.reduce((a,b)=>a+b,0) / vals.length : null;
-        }
-
-        function baselineBefore(obj, keys, idx, days = 30) {
-            if (idx <= 0) return null;
-            return avgForKeys(obj, keys.slice(Math.max(0, idx - days), idx));
-        }
-
-        function getDailyContextRows() {
-            return Array.from(new Set([
-                ...Object.keys(healthData.steps || {}),
-                ...Object.keys(healthData.sleep || {}),
-                ...Object.keys(healthData.heartRate || {}),
-                ...Object.keys(healthData.hrv || {}),
-                ...Object.keys(healthData.weight || {})
-            ])).sort();
-        }
-
-        function calcDailyPerformanceScores() {
-            const dates = getDailyContextRows();
-            const hrvKeys = Object.keys(healthData.hrv || {}).sort();
-            const hrKeys = Object.keys(healthData.heartRate || {}).sort();
-            const stepKeys = Object.keys(healthData.steps || {}).sort();
-            return dates.map(d => {
-                let score = 82;
-                const sl = healthData.sleep[d], st = healthData.steps[d], hr = healthData.heartRate[d], hrv = healthData.hrv[d];
-                const hrvIdx = hrvKeys.indexOf(d), hrIdx = hrKeys.indexOf(d), stepIdx = stepKeys.indexOf(d);
-                const hrvBase = baselineBefore(healthData.hrv || {}, hrvKeys, hrvIdx, 30);
-                const hrBase = baselineBefore(healthData.heartRate || {}, hrKeys, hrIdx, 30);
-                const stepBase = baselineBefore(healthData.steps || {}, stepKeys, stepIdx, 30);
-                const food = getDailySummaryForDate(d) || {};
-                const prevFood = getDailySummaryForDate(getPrevDateString(d)) || {};
-
-                if (hrv != null && hrvBase) {
-                    const ratio = hrv / hrvBase;
-                    if (ratio >= 1.15) score += 10;
-                    else if (ratio >= 1.00) score += 5;
-                    else if (ratio < 0.65) score -= 24;
-                    else if (ratio < 0.80) score -= 14;
-                    else if (ratio < 0.90) score -= 6;
-                } else if (hrv == null) score -= 8;
-
-                if (hr != null && hrBase) {
-                    const diff = hr - hrBase;
-                    if (diff <= -4) score += 5;
-                    else if (diff >= 10) score -= 22;
-                    else if (diff >= 5) score -= 12;
-                } else if (hr == null) score -= 5;
-
-                if (sl != null) {
-                    if (sl >= 7 && sl <= 8.5) score += 8;
-                    else if (sl < 5) score -= 22;
-                    else if (sl < 6) score -= 12;
-                    else if (sl < 6.5) score -= 6;
-                    else if (sl > 9.5) score -= 4;
-                } else score -= 6;
-
-                if (st != null && stepBase) {
-                    if (st > 35000) score -= 10;
-                    else if (st > 25000) score -= 5;
-                    else if (st >= 8000 && st <= 22000) score += 3;
-                    else if (st < 3000) score -= 6;
-                }
-
-                const alcohol = Number(food.alcoholCups || 0) + Number(prevFood.alcoholCups || 0) * 0.6;
-                if (alcohol >= 4) score -= 16;
-                else if (alcohol >= 2) score -= 9;
-                else if (alcohol > 0) score -= 4;
-                if ((food.lateNightFoodCount || 0) >= 2) score -= 5;
-                if ((food.proteinG || 0) >= 60) score += 3;
-
-                return { date: d, score: Math.max(0, Math.min(100, Math.round(score))) };
-            });
-        }
-
-        function calcDailyRiskScores() {
-            const dates = getDailyContextRows();
-            const hrvKeys = Object.keys(healthData.hrv || {}).sort();
-            const hrKeys = Object.keys(healthData.heartRate || {}).sort();
-            const stepKeys = Object.keys(healthData.steps || {}).sort();
-            return dates.map(d => {
-                let risk = 8;
-                const sl = healthData.sleep[d], st = healthData.steps[d], hr = healthData.heartRate[d], hrv = healthData.hrv[d];
-                const hrvIdx = hrvKeys.indexOf(d), hrIdx = hrKeys.indexOf(d), stepIdx = stepKeys.indexOf(d);
-                const hrvBase = baselineBefore(healthData.hrv || {}, hrvKeys, hrvIdx, 30);
-                const hrBase = baselineBefore(healthData.heartRate || {}, hrKeys, hrIdx, 30);
-                const stepBase = baselineBefore(healthData.steps || {}, stepKeys, stepIdx, 30);
-                const food = getDailySummaryForDate(d) || {};
-
-                if (hrv != null && hrvBase) {
-                    const ratio = hrv / hrvBase;
-                    if (ratio < 0.60) risk += 38;
-                    else if (ratio < 0.75) risk += 24;
-                    else if (ratio < 0.85) risk += 12;
-                }
-                if (hr != null && hrBase) {
-                    const diff = hr - hrBase;
-                    if (diff >= 12) risk += 34;
-                    else if (diff >= 8) risk += 24;
-                    else if (diff >= 5) risk += 14;
-                }
-                if (sl != null) {
-                    if (sl < 5) risk += 22;
-                    else if (sl < 5.5) risk += 14;
-                    else if (sl < 6.5) risk += 6;
-                }
-                if (st != null && stepBase && stepBase > 0) {
-                    const ratio = st / stepBase;
-                    if (ratio < 0.35) risk += 20;
-                    else if (ratio < 0.55) risk += 12;
-                }
-                if (st != null && st < 2500) risk += 8;
-                if ((food.alcoholCups || 0) >= 4) risk += 10;
-                else if ((food.alcoholCups || 0) > 0) risk += 5;
-                if ((food.lateNightFoodCount || 0) >= 3) risk += 6;
-
-                return { date: d, score: Math.max(0, Math.min(100, Math.round(risk))) };
-            });
-        }
-
-        function findScoreForTarget(rows, targetDate) {
-            if (!rows.length) return { row: null, idx: -1 };
-            let idx = rows.findIndex(r => r.date === targetDate);
-            if (idx === -1) {
-                const pastRows = rows.filter(r => r.date < targetDate);
-                if (pastRows.length) idx = rows.findIndex(r => r.date === pastRows[pastRows.length - 1].date);
-            }
-            return { row: idx >= 0 ? rows[idx] : null, idx };
-        }
-
-        function updateIndexPanel(rows, targetDate, ids, commentBuilder) {
-            const found = findScoreForTarget(rows, targetDate);
-            const latest = found.row, latestIdx = found.idx;
-            if (!latest) {
-                safeSetText(ids.score, '--'); safeSetText(ids.yesterday, '--'); safeSetText(ids.week, '--'); safeSetText(ids.month, '--');
-                const el = document.getElementById(ids.comment); if (el) el.innerText = 'スコアを算出できません。';
-                return;
-            }
-            const prev = latestIdx > 0 ? rows[latestIdx-1] : null;
-            const weekRows = rows.slice(Math.max(0, latestIdx-7), latestIdx);
-            const weekAvg = weekRows.length ? weekRows.reduce((a,b)=>a+b.score,0)/weekRows.length : null;
-            const monthRows = rows.slice(Math.max(0, latestIdx-30), latestIdx);
-            const monthAvg = monthRows.length ? monthRows.reduce((a,b)=>a+b.score,0)/monthRows.length : null;
-            safeSetText(ids.score, latest.score);
-            safeSetText(ids.yesterday, prev ? signed(latest.score - prev.score) : '--');
-            safeSetText(ids.week, weekAvg != null ? signed(latest.score - weekAvg) : '--');
-            safeSetText(ids.month, monthAvg != null ? signed(latest.score - monthAvg) : '--');
-            const el = document.getElementById(ids.comment); if (el) el.innerText = commentBuilder(latest.score, latest.date);
-        }
-
-        function buildConditionComment(score) {
-            if (score >= 90) return '絶好調です。重要商談・設計判断・集中開発に向く日です。';
-            if (score >= 80) return '良好です。通常より高めの負荷まで対応できます。';
-            if (score >= 70) return '普通です。重い作業は詰め込みすぎない方が安定します。';
-            if (score >= 60) return '注意です。高負荷作業は短時間に区切り、夜は回復優先にしてください。';
-            return '回復優先です。判断負荷の高い作業・深夜開発は避けるべきです。';
-        }
-
-        function buildRiskComment(score) {
-            if (score <= 20) return '低リスクです。体調悪化の明確な兆候は見られません。';
-            if (score <= 40) return '軽度注意です。睡眠・心拍・HRVの変化を翌日も確認してください。';
-            if (score <= 60) return '要注意です。風邪・疲労蓄積の前兆として扱い、負荷を下げてください。';
-            if (score <= 80) return '高リスクです。無理な運動・飲酒・深夜作業は避けてください。';
-            return '非常に高リスクです。体調不良の可能性を優先して休養してください。';
-        }
-
         function signed(n) { return (n == null || isNaN(n)) ? '--' : (Math.round(n) >= 0 ? '+' : '') + Math.round(n); }
 
         function updateDashboard(targetDate) {
@@ -3524,13 +3248,6 @@
                     document.getElementById('overall-health-comment').innerText = 'スコアを算出できません。';
                 }
             }
-
-            updateIndexPanel(calcDailyPerformanceScores(), targetDate, {
-                score: 'condition-performance-score', yesterday: 'condition-vs-yesterday', week: 'condition-vs-week', month: 'condition-vs-month', comment: 'condition-performance-comment'
-            }, buildConditionComment);
-            updateIndexPanel(calcDailyRiskScores(), targetDate, {
-                score: 'condition-risk-score', yesterday: 'risk-vs-yesterday', week: 'risk-vs-week', month: 'risk-vs-month', comment: 'condition-risk-comment'
-            }, buildRiskComment);
         }
 
         function updateAlerts() {
@@ -3569,187 +3286,11 @@
             safeSetText('act-low-streak', maxStreak + ' days');
         }
 
-        function formatChartDateShort(value) {
-            const s = String(value || '');
-            if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s.substring(5).replace('-', '/');
-            return s;
-        }
-
-        function formatChartDateTick(value) {
-            const s = String(value || '');
-            if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return `${s.substring(5).replace('-', '/')}（${getWeekdayJa(s)}）`;
-            return s;
-        }
-
-        function formatChartDateTickCompact(value) {
-            const s = String(value || '');
-            if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s.substring(5).replace('-', '/');
-            return s;
-        }
-
-        function getResponsiveDateTickConfig(chart, labels) {
-            const width = chart?.width || chart?.chartArea?.width || window.innerWidth || 0;
-            const len = labels ? labels.length : 0;
-            if (width < 420) return { maxTicks: Math.min(len, 3), compact: true, fontSize: 9, bottomOffset: 7 };
-            if (width < 640) return { maxTicks: Math.min(len, 4), compact: true, fontSize: 9, bottomOffset: 7 };
-            if (width < 900) return { maxTicks: Math.min(len, 6), compact: false, fontSize: 10, bottomOffset: 9 };
-            return { maxTicks: len <= 10 ? len : 8, compact: false, fontSize: 11, bottomOffset: 9 };
-        }
-
-        function getChartDateTickColor(value) {
-            const s = String(value || '');
-            if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return '#cbd5e1';
-            const d = new Date(`${s}T00:00:00+09:00`);
-            if (isNaN(d.getTime())) return '#cbd5e1';
-            const day = d.getDay();
-            if (day === 6) return '#60a5fa'; // 土曜: 青系
-            if (day === 0) return '#fb7185'; // 日曜: 赤系
-            return '#cbd5e1';
-        }
-
-        function getWeekdayJa(dateStr) {
-            const d = new Date(`${dateStr}T00:00:00+09:00`);
-            if (isNaN(d.getTime())) return '';
-            return ['日','月','火','水','木','金','土'][d.getDay()];
-        }
-
-        function formatChartDateFull(value) {
-            const s = String(value || '');
-            if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return `${s.replaceAll('-', '/')}（${getWeekdayJa(s)}）`;
-            return s;
-        }
-
-        function getDateTickIndexes(labels, maxTicks = 8) {
-            const len = labels ? labels.length : 0;
-            if (!len) return [];
-            if (len <= maxTicks) return labels.map((_, i) => i);
-            const out = new Set([0, len - 1]);
-            const step = Math.ceil((len - 1) / (maxTicks - 1));
-            for (let i = 0; i < len; i += step) out.add(i);
-            return [...out].sort((a,b) => a - b).slice(0, maxTicks);
-        }
-
-        const explicitDateAxisAndReferenceLinePlugin = {
-            id: 'explicitDateAxisAndReferenceLinePlugin',
-            afterDatasetsDraw(chart) {
-                const { ctx, chartArea, scales } = chart;
-                if (!chartArea || !scales?.y) return;
-                const y = scales.y;
-
-                // 補助線はChart.js標準描画だと塗りつぶしの後ろに隠れるため、最前面に再描画する。
-                (chart.data.datasets || []).forEach(ds => {
-                    if (!ds || !ds.isReferenceLine) return;
-                    const val = Array.isArray(ds.data) ? ds.data.find(v => v != null && !isNaN(v)) : null;
-                    if (val == null || isNaN(val)) return;
-                    const py = y.getPixelForValue(val);
-                    if (py < chartArea.top || py > chartArea.bottom) return;
-                    ctx.save();
-                    ctx.beginPath();
-                    ctx.setLineDash(ds.borderDash || [6, 5]);
-                    ctx.lineWidth = Math.max(ds.borderWidth || 3, 3);
-                    ctx.strokeStyle = ds.borderColor || 'rgba(255,255,255,0.95)';
-                    ctx.moveTo(chartArea.left, py);
-                    ctx.lineTo(chartArea.right, py);
-                    ctx.stroke();
-                    ctx.restore();
-                });
-            },
-            afterDraw(chart) {
-                const { ctx, chartArea, scales } = chart;
-                if (!chartArea || !scales?.x || !scales?.y) return;
-                const x = scales.x;
-                const labels = chart.data.labels || [];
-                const isDateAxis = labels.some(v => /^\d{4}-\d{2}-\d{2}$/.test(String(v || '')));
-
-                // 軸線を最後に描画して、塗りや補助線に埋もれないようにする。
-                ctx.save();
-                ctx.strokeStyle = 'rgba(226,232,240,0.75)';
-                ctx.lineWidth = 1.5;
-                ctx.beginPath();
-                ctx.moveTo(chartArea.left, chartArea.top);
-                ctx.lineTo(chartArea.left, chartArea.bottom);
-                ctx.lineTo(chartArea.right, chartArea.bottom);
-                ctx.stroke();
-
-                // 日付軸はChart.js標準tickを非表示にし、このプラグインで1回だけ明示描画する。
-                if (isDateAxis && labels.length) {
-                    const cfg = getResponsiveDateTickConfig(chart, labels);
-                    const tickIdxs = getDateTickIndexes(labels, cfg.maxTicks);
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'top';
-                    ctx.font = `700 ${cfg.fontSize}px Inter, system-ui, -apple-system, sans-serif`;
-                    tickIdxs.forEach(i => {
-                        const label = labels[i];
-                        const px = x.getPixelForValue(i);
-                        if (px < chartArea.left - 2 || px > chartArea.right + 2) return;
-                        ctx.strokeStyle = 'rgba(226,232,240,0.35)';
-                        ctx.lineWidth = 1;
-                        ctx.beginPath();
-                        ctx.moveTo(px, chartArea.bottom);
-                        ctx.lineTo(px, chartArea.bottom + 5);
-                        ctx.stroke();
-                        ctx.fillStyle = getChartDateTickColor(label);
-                        const labelText = cfg.compact ? formatChartDateTickCompact(label) : formatChartDateTick(label);
-                        ctx.fillText(labelText, px, chartArea.bottom + cfg.bottomOffset);
-                    });
-                }
-                ctx.restore();
-            }
-        };
-
-        if (typeof Chart !== 'undefined' && !Chart.registry.plugins.get('explicitDateAxisAndReferenceLinePlugin')) {
-            Chart.register(explicitDateAxisAndReferenceLinePlugin);
-        }
-
         function getDefaultChartOptions() {
             return {
-                responsive: true,
-                maintainAspectRatio: false,
-                interaction: { mode: 'index', intersect: false },
-                layout: { padding: { left: 8, right: 12, top: 4, bottom: 34 } },
-                plugins: {
-                    legend: { display: true, position: 'top', labels: { color: '#94a3b8', boxWidth: 12, font: { size: 10 } } },
-                    tooltip: {
-                        mode: 'index',
-                        intersect: false,
-                        callbacks: {
-                            title: (items) => items && items.length ? formatChartDateFull(items[0].label) : ''
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        display: true,
-                        offset: false,
-                        ticks: {
-                            display: true,
-                            color: function(context) {
-                                const label = context.chart?.data?.labels?.[context.index];
-                                return getChartDateTickColor(label);
-                            },
-                            maxTicksLimit: 8,
-                            autoSkip: true,
-                            maxRotation: 0,
-                            padding: 10,
-                            font: { size: 10, weight: '700' },
-                            callback: function(value) { const raw = this.getLabelForValue(value); return /^\d{4}-\d{2}-\d{2}$/.test(String(raw || '')) ? '' : formatChartDateTick(raw); }
-                        },
-                        grid: {
-                            display: true,
-                            color: 'rgba(148,163,184,0.12)',
-                            drawBorder: true,
-                            drawTicks: true,
-                            tickLength: 6
-                        },
-                        border: { display: true, color: 'rgba(203,213,225,0.35)', width: 1 }
-                    },
-                    y: {
-                        display: true,
-                        ticks: { display: true, color: '#cbd5e1', padding: 8, font: { size: 11, weight: '600' } },
-                        grid: { display: true, color: 'rgba(255,255,255,0.07)', drawBorder: true, drawTicks: true, tickLength: 6 },
-                        border: { display: true, color: 'rgba(203,213,225,0.35)', width: 1 }
-                    }
-                }
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: true, position: 'top', labels: { color: '#94a3b8', boxWidth: 12, font: { size: 10 } } }, tooltip: { mode: 'index', intersect: false } },
+                scales: { x: { ticks: { color: '#94a3b8', maxTicksLimit: 14 }, grid: { display: false } }, y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } } }
             };
         }
 
@@ -3767,58 +3308,19 @@
         }
 
         function buildHorizontalLineDataset(label, value, labels, options = {}) {
-            return {
-                label,
-                data: labels.map(() => value),
-                type: 'line',
-                isReferenceLine: true,
-                order: options.order ?? -50,
-                borderDash: options.borderDash || [6, 5],
-                borderWidth: options.borderWidth || 3,
-                borderColor: options.borderColor || 'rgba(255,255,255,0.9)',
-                backgroundColor: 'rgba(0,0,0,0)',
-                pointRadius: 0,
-                pointHoverRadius: 0,
-                fill: false,
-                tension: 0,
-                clip: false,
-                ...options
-            };
+            return { label, data: labels.map(() => value), type: 'line', borderDash: options.borderDash || [5, 5], borderWidth: options.borderWidth || 2, borderColor: options.borderColor || 'rgba(255,255,255,0.5)', pointRadius: 0, fill: false, ...options };
         }
 
-        function applySmartYAxis(options, values, extraValues = [], opts = {}) {
+        function applySmartYAxis(options, values, extraValues = []) {
             const allVals = [...values, ...extraValues].filter(v => v != null && !isNaN(v));
-            if (allVals.length === 0) return;
-            const minVal = Math.min(...allVals);
-            const maxVal = Math.max(...allVals);
-            const minSpan = opts.minSpan ?? 4;
-            const hardMin = opts.hardMin;
-            const hardMax = opts.hardMax;
-            let span = Math.max(maxVal - minVal, minSpan);
-            let mid = (minVal + maxVal) / 2;
-            let yMin = mid - span / 2;
-            let yMax = mid + span / 2;
-            const pad = Math.max(span * 0.12, opts.minPad ?? 1);
-            yMin -= pad;
-            yMax += pad;
-            if (hardMin != null) yMin = Math.max(hardMin, yMin);
-            if (hardMax != null) yMax = Math.min(hardMax, yMax);
-            if ((yMax - yMin) < minSpan && hardMax != null && yMin + minSpan <= hardMax) yMax = yMin + minSpan;
-            if ((yMax - yMin) < minSpan && hardMin != null && yMax - minSpan >= hardMin) yMin = yMax - minSpan;
-            const finalMin = Math.floor(yMin);
-            const finalMax = Math.ceil(yMax);
-            options.scales.y.min = finalMin;
-            options.scales.y.max = finalMax;
-            const finalSpan = Math.max(1, finalMax - finalMin);
-            options.scales.y.ticks = options.scales.y.ticks || {};
-            options.scales.y.ticks.stepSize = finalSpan <= 12 ? 2 : finalSpan <= 30 ? 5 : undefined;
+            if (allVals.length > 0) { const minVal = Math.min(...allVals); const maxVal = Math.max(...allVals); const pad = (maxVal - minVal) * 0.1 || 1; options.scales.y.suggestedMin = Math.floor(minVal - pad); options.scales.y.suggestedMax = Math.ceil(maxVal + pad); }
         }
 
         function renderWeightTrendChart(canvasId) {
             if(charts[canvasId]) charts[canvasId].destroy(); const el = document.getElementById(canvasId); if(!el) return;
             const keys = Object.keys(healthData.weight).sort(); const range = chartRanges[canvasId] === 'all' ? keys.length : chartRanges[canvasId]; const targetKeys = keys.slice(Math.max(0, keys.length - range));
             if(targetKeys.length === 0) { drawEmptyChart(el); return; }
-            const labels = targetKeys; const actualData = targetKeys.map(k => healthData.weight[k]);
+            const labels = targetKeys.map(k => k.substring(5)); const actualData = targetKeys.map(k => healthData.weight[k]);
             const extendedKeys = keys.slice(Math.max(0, keys.length - range - 6)); const extendedData = extendedKeys.map(k => healthData.weight[k]);
             const maDataExtended = movingAverage(extendedData, 7); const movingAverageData = maDataExtended.slice(maDataExtended.length - targetKeys.length);
             const targetWeight = healthData.summary.targetWeight || 50;
@@ -3831,113 +3333,65 @@
             if(charts[canvasId]) charts[canvasId].destroy(); const el = document.getElementById(canvasId); if(!el) return;
             const keys = Object.keys(healthData.steps).sort(); const range = chartRanges[canvasId] === 'all' ? keys.length : chartRanges[canvasId]; const targetKeys = keys.slice(Math.max(0, keys.length - range));
             if(targetKeys.length === 0) { drawEmptyChart(el); return; }
-            const labels = targetKeys; const actualData = targetKeys.map(k => healthData.steps[k]);
+            const labels = targetKeys.map(k => k.substring(5)); const actualData = targetKeys.map(k => healthData.steps[k]);
             const extendedKeys = keys.slice(Math.max(0, keys.length - range - 6)); const extendedData = extendedKeys.map(k => healthData.steps[k]);
             const maDataExtended = movingAverage(extendedData, 7); const movingAverageData = maDataExtended.slice(maDataExtended.length - targetKeys.length);
             const bgColors = targetKeys.map(k => k === dashboardSelectedDate ? '#60a5fa' : '#334155'); const borderColors = targetKeys.map(k => k === dashboardSelectedDate ? '#93c5fd' : '#475569');
-            const options = getDefaultChartOptions(); applySmartYAxis(options, actualData, [...movingAverageData, 10000, 8000], { hardMin: 0, minSpan: 5000, minPad: 500 });
-            charts[canvasId] = new Chart(el, { type: 'bar', data: { labels: labels, datasets: [ { label: '歩数', data: actualData, backgroundColor: bgColors, borderColor: borderColors, borderWidth: 1, order: 10 }, { label: '7日平均', data: movingAverageData, type: 'line', borderColor: 'rgba(148, 163, 184, 0.8)', borderWidth: 3, pointRadius: 0, fill: false, tension: 0.3 }, buildHorizontalLineDataset('10k(目標)', 10000, labels, { borderColor: 'rgba(16, 185, 129, 0.6)' }), buildHorizontalLineDataset('8k(良好)', 8000, labels, { borderColor: 'rgba(56, 189, 248, 0.6)' }) ] }, options: options });
+            const options = getDefaultChartOptions(); options.scales.y.beginAtZero = true;
+            charts[canvasId] = new Chart(el, { type: 'bar', data: { labels: labels, datasets: [ { label: '歩数', data: actualData, backgroundColor: bgColors, borderColor: borderColors, borderWidth: 1 }, { label: '7日平均', data: movingAverageData, type: 'line', borderColor: 'rgba(148, 163, 184, 0.8)', borderWidth: 3, pointRadius: 0, fill: false, tension: 0.3 }, buildHorizontalLineDataset('10k(目標)', 10000, labels, { borderColor: 'rgba(16, 185, 129, 0.6)' }), buildHorizontalLineDataset('8k(良好)', 8000, labels, { borderColor: 'rgba(56, 189, 248, 0.6)' }) ] }, options: options });
         }
 
         function renderSleepTrendChart(canvasId) {
             if(charts[canvasId]) charts[canvasId].destroy(); const el = document.getElementById(canvasId); if(!el) return;
             const keys = Object.keys(healthData.sleep).sort(); const range = chartRanges[canvasId] === 'all' ? keys.length : chartRanges[canvasId]; const targetKeys = keys.slice(Math.max(0, keys.length - range));
             if(targetKeys.length === 0) { drawEmptyChart(el); return; }
-            const labels = targetKeys; const actualData = targetKeys.map(k => healthData.sleep[k]);
+            const labels = targetKeys.map(k => k.substring(5)); const actualData = targetKeys.map(k => healthData.sleep[k]);
             const extendedKeys = keys.slice(Math.max(0, keys.length - range - 6)); const extendedData = extendedKeys.map(k => healthData.sleep[k]);
             const maDataExtended = movingAverage(extendedData, 7); const movingAverageData = maDataExtended.slice(maDataExtended.length - targetKeys.length);
             const bgColors = targetKeys.map(k => { const v = healthData.sleep[k]; let color = v >= 7 ? 'rgba(34, 197, 94, 0.8)' : v >= 5.5 ? 'rgba(59, 130, 246, 0.8)' : 'rgba(234, 179, 8, 0.8)'; if (k === dashboardSelectedDate) color = v >= 7 ? 'rgba(74, 222, 128, 1)' : v >= 5.5 ? 'rgba(96, 165, 250, 1)' : 'rgba(250, 204, 21, 1)'; return color; });
-            const options = getDefaultChartOptions(); applySmartYAxis(options, actualData, [...movingAverageData, 7, 5.5], { hardMin: 0, minSpan: 3, minPad: 0.3 });
-            charts[canvasId] = new Chart(el, { type: 'bar', data: { labels: labels, datasets: [ { label: '睡眠', data: actualData, backgroundColor: bgColors, borderRadius: 4, order: 10 }, { label: '7日平均', data: movingAverageData, type: 'line', borderColor: 'rgba(148, 163, 184, 0.8)', borderWidth: 3, pointRadius: 0, fill: false, tension: 0.3 }, buildHorizontalLineDataset('7h(良好)', 7, labels, { borderColor: 'rgba(34, 197, 94, 0.6)' }), buildHorizontalLineDataset('5.5h(不足)', 5.5, labels, { borderColor: 'rgba(234, 179, 8, 0.6)' }) ] }, options: options });
+            const options = getDefaultChartOptions(); options.scales.y.beginAtZero = true;
+            charts[canvasId] = new Chart(el, { type: 'bar', data: { labels: labels, datasets: [ { label: '睡眠', data: actualData, backgroundColor: bgColors, borderRadius: 4 }, { label: '7日平均', data: movingAverageData, type: 'line', borderColor: 'rgba(148, 163, 184, 0.8)', borderWidth: 3, pointRadius: 0, fill: false, tension: 0.3 }, buildHorizontalLineDataset('7h(良好)', 7, labels, { borderColor: 'rgba(34, 197, 94, 0.6)' }), buildHorizontalLineDataset('5.5h(不足)', 5.5, labels, { borderColor: 'rgba(234, 179, 8, 0.6)' }) ] }, options: options });
         }
 
         function renderHeartTrendChart(canvasId) {
             if(charts[canvasId]) charts[canvasId].destroy(); const el = document.getElementById(canvasId); if(!el) return;
             const keys = Object.keys(healthData.heartRate).sort(); const range = chartRanges[canvasId] === 'all' ? keys.length : chartRanges[canvasId]; const targetKeys = keys.slice(Math.max(0, keys.length - range));
             if(targetKeys.length === 0) { drawEmptyChart(el); return; }
-            const labels = targetKeys; const actualData = targetKeys.map(k => healthData.heartRate[k]);
+            const labels = targetKeys.map(k => k.substring(5)); const actualData = targetKeys.map(k => healthData.heartRate[k]);
             const ext7Keys = keys.slice(Math.max(0, keys.length - range - 6)); const ma7Data = movingAverage(ext7Keys.map(k => healthData.heartRate[k]), 7).slice(-targetKeys.length);
             const ext30Keys = keys.slice(Math.max(0, keys.length - range - 29)); const ma30Data = movingAverage(ext30Keys.map(k => healthData.heartRate[k]), 30).slice(-targetKeys.length);
             const bgColors = targetKeys.map(k => k === dashboardSelectedDate ? '#fb7185' : '#e11d48');
             const options = getDefaultChartOptions(); applySmartYAxis(options, actualData, [85, ...ma30Data]);
-            charts[canvasId] = new Chart(el, { type: 'bar', data: { labels: labels, datasets: [ { label: '心拍', data: actualData, backgroundColor: bgColors, order: 10 }, { label: '7日平均', data: ma7Data, type: 'line', borderColor: 'rgba(148, 163, 184, 0.9)', borderWidth: 3, pointRadius: 0, fill: false, tension: 0.3, order: -10, clip: false }, { label: '30日平均', data: ma30Data, type: 'line', borderColor: 'rgba(96, 165, 250, 0.8)', borderWidth: 2, borderDash: [5,5], pointRadius: 0, fill: false, tension: 0.3, order: -10, clip: false }, buildHorizontalLineDataset('85bpm(注意)', 85, labels, { borderColor: 'rgba(244, 63, 94, 0.6)' }) ] }, options: options });
+            charts[canvasId] = new Chart(el, { type: 'bar', data: { labels: labels, datasets: [ { label: '心拍', data: actualData, backgroundColor: bgColors }, { label: '7日平均', data: ma7Data, type: 'line', borderColor: 'rgba(148, 163, 184, 0.8)', borderWidth: 3, pointRadius: 0, fill: false, tension: 0.3 }, { label: '30日平均', data: ma30Data, type: 'line', borderColor: 'rgba(96, 165, 250, 0.6)', borderWidth: 2, borderDash: [5,5], pointRadius: 0, fill: false, tension: 0.3 }, buildHorizontalLineDataset('85bpm(注意)', 85, labels, { borderColor: 'rgba(244, 63, 94, 0.6)' }) ] }, options: options });
         }
 
-        function renderScoreTrendChart(config) {
-            const canvasId = config.canvasId;
-            if(charts[canvasId]) charts[canvasId].destroy();
-            const el = document.getElementById(canvasId); if(!el) return;
-            const allScores = config.calc(); if(allScores.length === 0) { drawEmptyChart(el); return; }
-            const range = chartRanges[canvasId] === 'all' ? allScores.length : chartRanges[canvasId];
-            const targetScores = allScores.slice(Math.max(0, allScores.length - range));
-            const labels = targetScores.map(s => s.date); const data = targetScores.map(s => s.score);
+        function renderHealthScoreTrendChart() {
+            const canvasId = 'chart-health-score-trend'; if(charts[canvasId]) charts[canvasId].destroy(); const el = document.getElementById(canvasId); if(!el) return;
+            const allScores = calcDailyHealthScores(); if(allScores.length === 0) { drawEmptyChart(el); return; }
+            const range = chartRanges[canvasId] === 'all' ? allScores.length : chartRanges[canvasId]; const targetScores = allScores.slice(Math.max(0, allScores.length - range));
+            const labels = targetScores.map(s => s.date.substring(5)); const data = targetScores.map(s => s.score);
             const ext7Scores = allScores.slice(Math.max(0, allScores.length - range - 6)); const ma7Data = movingAverage(ext7Scores.map(s => s.score), 7).slice(-targetScores.length);
             const ext30Scores = allScores.slice(Math.max(0, allScores.length - range - 29)); const ma30Data = movingAverage(ext30Scores.map(s => s.score), 30).slice(-targetScores.length);
-            const pointColors = targetScores.map(s => s.date === dashboardSelectedDate ? config.color : config.pointColor);
-            const pointRadii = targetScores.map(s => s.date === dashboardSelectedDate ? 5 : 2);
-            const options = getDefaultChartOptions(); applySmartYAxis(options, data, [config.goodLine, config.warnLine, ...ma7Data, ...ma30Data], { hardMin: 0, hardMax: 100, minSpan: config.lowerIsBetter ? 14 : 12, minPad: 1 });
-            charts[canvasId] = new Chart(el, { type: 'line', data: { labels: labels, datasets: [
-                { label: config.label, data: data, borderColor: config.color, backgroundColor: config.fillColor, fill: true, tension: 0.3, pointBackgroundColor: pointColors, pointRadius: pointRadii, borderWidth: 3, order: 10 },
-                { label: '7日平均', data: ma7Data, type: 'line', borderColor: 'rgba(148, 163, 184, 0.9)', borderWidth: 3, pointRadius: 0, fill: false, tension: 0.3, order: -10, clip: false },
-                { label: '30日平均', data: ma30Data, type: 'line', borderColor: 'rgba(96, 165, 250, 0.8)', borderWidth: 2, borderDash: [5,5], pointRadius: 0, fill: false, tension: 0.3, order: -10, clip: false },
-                buildHorizontalLineDataset(config.goodLineLabel, config.goodLine, labels, { borderColor: config.goodLineColor }),
-                buildHorizontalLineDataset(config.warnLineLabel, config.warnLine, labels, { borderColor: config.warnLineColor })
-            ] }, options: options });
-
-            const commentEl = document.getElementById(config.commentId);
+            const pointColors = targetScores.map(s => s.date === dashboardSelectedDate ? '#22d3ee' : 'rgba(34, 211, 238, 0.4)'); const pointRadii = targetScores.map(s => s.date === dashboardSelectedDate ? 5 : 2);
+            const options = getDefaultChartOptions(); options.scales.y.min = 0; options.scales.y.max = 100;
+            charts[canvasId] = new Chart(el, { type: 'line', data: { labels: labels, datasets: [ { label: 'スコア', data: data, borderColor: '#22d3ee', backgroundColor: 'rgba(34, 211, 238, 0.1)', fill: true, tension: 0.3, pointBackgroundColor: pointColors, pointRadius: pointRadii, borderWidth: 2 }, { label: '7日平均', data: ma7Data, type: 'line', borderColor: 'rgba(148, 163, 184, 0.8)', borderWidth: 3, pointRadius: 0, fill: false, tension: 0.3 }, { label: '30日平均', data: ma30Data, type: 'line', borderColor: 'rgba(96, 165, 250, 0.6)', borderWidth: 2, borderDash: [5,5], pointRadius: 0, fill: false, tension: 0.3 }, buildHorizontalLineDataset('80点(良好)', 80, labels, { borderColor: 'rgba(52, 211, 153, 0.6)' }), buildHorizontalLineDataset('70点(注意)', 70, labels, { borderColor: 'rgba(250, 204, 21, 0.6)' }) ] }, options: options });
+            
+            const commentEl = document.getElementById('health-score-trend-comment');
             if(commentEl) {
                 if(data.length >= 1) {
                     const latest = data[data.length-1]; const avg7 = ma7Data[ma7Data.length-1]; const avg30 = ma30Data[ma30Data.length-1];
-                    let text = config.comment(latest);
-                    if (avg7 != null && avg30 != null) {
-                        const diff = avg7 - avg30;
-                        if (config.lowerIsBetter) {
-                            if (diff <= -3) text += ` 最近1週間は30日平均よりリスク低下傾向です。`;
-                            else if (diff >= 3) text += ` 最近1週間は30日平均よりリスク上昇気味です。`;
-                        } else {
-                            if (diff >= 3) text += ` 最近1週間は30日平均より良い傾向です。`;
-                            else if (diff <= -3) text += ` 最近1週間は30日平均よりスコアが低下気味です。`;
-                        }
-                    }
+                    let text = "";
+                    if (latest >= 80) text = `<span class="text-emerald-400"><i class="fas fa-check-circle mr-1"></i> スコアは良好な水準です。</span>`;
+                    else if (latest >= 70) text = `<span class="text-yellow-400"><i class="fas fa-exclamation-triangle mr-1"></i> スコアは注意水準です。休養を意識してください。</span>`;
+                    else text = `<span class="text-rose-400"><i class="fas fa-exclamation-circle mr-1"></i> 疲労が蓄積しています。回復を最優先してください。</span>`;
+                    if (avg7 != null && avg30 != null) { const diff = avg7 - avg30; if (diff >= 3) text += ` 最近1週間は30日平均より良い傾向です。`; else if (diff <= -3) text += ` 最近1週間は30日平均よりスコアが低下気味です。`; }
                     commentEl.innerHTML = text;
                 } else { commentEl.innerText = "データが蓄積されると傾向が表示されます。"; }
             }
         }
 
-        function renderHealthScoreTrendChart() {
-            renderScoreTrendChart({
-                canvasId: 'chart-health-score-trend', calc: calcDailyHealthScores, label: '総合健康指数', commentId: 'health-score-trend-comment',
-                color: '#22d3ee', pointColor: 'rgba(34, 211, 238, 0.4)', fillColor: 'rgba(34, 211, 238, 0.1)',
-                goodLine: 80, warnLine: 70, goodLineLabel: '80点(良好)', warnLineLabel: '70点(注意)',
-                goodLineColor: 'rgba(52, 211, 153, 0.6)', warnLineColor: 'rgba(250, 204, 21, 0.6)', lowerIsBetter: false,
-                comment: (latest) => latest >= 80 ? `<span class="text-emerald-400"><i class="fas fa-check-circle mr-1"></i> スコアは良好な水準です。</span>` : latest >= 70 ? `<span class="text-yellow-400"><i class="fas fa-exclamation-triangle mr-1"></i> スコアは注意水準です。休養を意識してください。</span>` : `<span class="text-rose-400"><i class="fas fa-exclamation-circle mr-1"></i> 疲労が蓄積しています。回復を最優先してください。</span>`
-            });
-        }
-
-        function renderConditionScoreTrendChart() {
-            renderScoreTrendChart({
-                canvasId: 'chart-condition-score-trend', calc: calcDailyPerformanceScores, label: 'コンディション指数', commentId: 'condition-score-trend-comment',
-                color: '#34d399', pointColor: 'rgba(52, 211, 153, 0.35)', fillColor: 'rgba(52, 211, 153, 0.1)',
-                goodLine: 80, warnLine: 70, goodLineLabel: '80点(良好)', warnLineLabel: '70点(普通)',
-                goodLineColor: 'rgba(52, 211, 153, 0.6)', warnLineColor: 'rgba(250, 204, 21, 0.6)', lowerIsBetter: false,
-                comment: (latest) => latest >= 85 ? `<span class="text-emerald-400"><i class="fas fa-bolt mr-1"></i> パフォーマンスは高い水準です。</span>` : latest >= 70 ? `<span class="text-yellow-400"><i class="fas fa-info-circle mr-1"></i> 通常運転レベルです。負荷の積み増しは慎重に。</span>` : `<span class="text-rose-400"><i class="fas fa-bed mr-1"></i> コンディション低下。回復優先です。</span>`
-            });
-        }
-
-        function renderRiskScoreTrendChart() {
-            renderScoreTrendChart({
-                canvasId: 'chart-risk-score-trend', calc: calcDailyRiskScores, label: '体調リスク指数', commentId: 'risk-score-trend-comment',
-                color: '#fb7185', pointColor: 'rgba(251, 113, 133, 0.35)', fillColor: 'rgba(251, 113, 133, 0.1)',
-                goodLine: 20, warnLine: 40, goodLineLabel: '20以下(低リスク)', warnLineLabel: '40超(注意)',
-                goodLineColor: 'rgba(52, 211, 153, 0.6)', warnLineColor: 'rgba(250, 204, 21, 0.6)', lowerIsBetter: true,
-                comment: (latest) => latest <= 20 ? `<span class="text-emerald-400"><i class="fas fa-shield-alt mr-1"></i> 体調悪化の兆候は低い状態です。</span>` : latest <= 40 ? `<span class="text-yellow-400"><i class="fas fa-exclamation-triangle mr-1"></i> 軽度注意。翌日の心拍・HRVを確認してください。</span>` : `<span class="text-rose-400"><i class="fas fa-virus mr-1"></i> 体調リスク上昇。休養優先です。</span>`
-            });
-        }
-
         function updateAllCharts() {
             renderHealthScoreTrendChart();
-            renderConditionScoreTrendChart();
-            renderRiskScoreTrendChart();
             renderWeightTrendChart('chart-weight-dash');
             renderWeightTrendChart('chart-weight-full');
             renderStepsTrendChart('chart-steps-dash');
@@ -4178,13 +3632,6 @@
                 labelEl.innerText = `表示期間: ${range.start || '--'} 〜 ${range.end || '--'}`;
             }
             
-            currentGpsFilteredRoutes = filtered.slice();
-            const periodPlayBtn = document.getElementById('gps-period-play-btn');
-            if (periodPlayBtn) {
-                const playableCount = currentGpsFilteredRoutes.filter(r => Array.isArray(r.representativePoints) && r.representativePoints.length >= 2).length;
-                periodPlayBtn.classList.toggle('hidden', playableCount < 2);
-                periodPlayBtn.innerHTML = `<i class="fas fa-play mr-1"></i>${range.start === range.end ? '1日再生' : '期間再生'}`;
-            }
             renderGpsList(filtered);
             drawBatchOnMap(filtered);
             updateGpsPlaybackVisibility(filtered);
@@ -4336,19 +3783,14 @@
             }
         }
 
-        function playCurrentGpsPeriodRoutes() {
-            const routes = (currentGpsFilteredRoutes || []).filter(r => Array.isArray(r.representativePoints) && r.representativePoints.length >= 2);
-            playGpsRoutes(routes, 'period');
-        }
-
-        function playGpsRoutes(routes, label = 'period') {
-            if (!Array.isArray(routes) || routes.length === 0) return;
-            routes = routes
-                .filter(r => Array.isArray(r.representativePoints) && r.representativePoints.length >= 2)
-                .sort((a, b) => (`${a.date || ''} ${a.startTimeStr || ''}`).localeCompare(`${b.date || ''} ${b.startTimeStr || ''}`));
+        function playDateAllRoutes(dateStr) {
+            const routes = (healthData.gpsSummaries || []).filter(r => r.date === dateStr && r.representativePoints && r.representativePoints.length >= 2);
             if (routes.length === 0) return;
+            
+            routes.sort((a, b) => (a.startTimeStr || "").localeCompare(b.startTimeStr || ""));
 
             document.querySelectorAll('[id^="route-card-"] .glass-card').forEach(c => c.classList.remove('border-l-emerald-500', 'bg-emerald-900/10'));
+            
             if (mapLayers.focusLine) { map.removeLayer(mapLayers.focusLine); mapLayers.focusLine = null; }
             mapLayers.markers.forEach(m => map.removeLayer(m)); mapLayers.markers = [];
             if(gpsPlaybackData.active) toggleGpsPlayback();
@@ -4357,11 +3799,16 @@
 
             let allPts = [];
             let bounds = L.latLngBounds();
-            const isMobileLine = isMobileLikeView();
+
             routes.forEach((r) => {
-                const pts = r.representativePoints || [];
+                const pts = r.representativePoints;
                 const routeColor = getRouteColor(r);
-                const line = L.polyline(pts, { color: routeColor, weight: isMobileLine ? 8 : 4, opacity: 0.9 }).addTo(map);
+                const isMobileLine = isMobileLikeView();
+                const line = L.polyline(pts, {
+                    color: routeColor,
+                    weight: isMobileLine ? 8 : 4,
+                    opacity: 0.9
+                }).addTo(map);
                 mapLayers.markers.push(line);
                 pts.forEach(p => bounds.extend(p));
                 allPts = allPts.concat(pts);
@@ -4372,21 +3819,22 @@
                 const eIcon = L.divIcon({ html: '<div class="w-4 h-4 bg-rose-500 rounded-full border-[3px] border-white shadow-lg"></div>', className: '' });
                 mapLayers.markers.push(L.marker(allPts[0], { icon: sIcon }).addTo(map));
                 mapLayers.markers.push(L.marker(allPts[allPts.length - 1], { icon: eIcon }).addTo(map));
+                
                 const isMobile = isMobileLikeView();
-                if (bounds.isValid()) map.fitBounds(bounds, { padding: isMobile ? [12, 12] : [60, 60], maxZoom: isMobile ? 18 : 16 });
-                const first = routes[0];
-                const last = routes[routes.length - 1];
-                const startLabel = `${first.date || ''} ${first.startTimeStr || 'Start'}`.trim();
-                const endLabel = `${last.date || ''} ${last.endTimeStr || 'End'}`.trim();
-                const dummyRoute = { id: `gps-play-${label}-${first.date || ''}-${last.date || ''}-${routes.length}`, representativePoints: allPts, startTimeStr: startLabel, endTimeStr: endLabel };
+                map.fitBounds(bounds, { 
+                    padding: isMobile ? [12, 12] : [60, 60], 
+                    maxZoom: isMobile ? 18 : 16 
+                });
+                
+                const dummyRoute = {
+                    id: `daily-all-${dateStr}`,
+                    representativePoints: allPts,
+                    startTimeStr: routes[0].startTimeStr || dateStr + ' Start',
+                    endTimeStr: routes[routes.length - 1].endTimeStr || 'End'
+                };
                 currentPlaybackRouteKey = dummyRoute.id;
                 initGpsPlayback(dummyRoute);
             }
-        }
-
-        function playDateAllRoutes(dateStr) {
-            const routes = (healthData.gpsSummaries || []).filter(r => r.date === dateStr && Array.isArray(r.representativePoints) && r.representativePoints.length >= 2);
-            playGpsRoutes(routes, `daily-${dateStr}`);
         }
 
         function resetGpsFocus() { document.querySelectorAll('[id^="route-card-"] .glass-card').forEach(c => c.classList.remove('border-l-emerald-500', 'bg-emerald-900/10')); filterGpsData(); }
@@ -4491,11 +3939,7 @@
             { id:'fish_protein_bar', name:'魚肉たんぱく食品', protein:8, kcal:90, group:'highProtein', comment:'低脂質で良い' },
 
             { id:'salad', name:'サラダ', protein:2, kcal:80, group:'homeCooking', comment:'野菜不足対策' },
-            { id:'vegetable_soup', name:'野菜スープ', protein:4, kcal:120, group:'homeCooking', comment:'低カロリーで満腹感を作りやすい' },
-            { id:'chicken_vegetable_soup', name:'鶏むね野菜スープ', protein:25, kcal:220, group:'homeCooking', comment:'高タンパク＋野菜でかなり良い' },
-            { id:'steamed_vegetables', name:'温野菜', protein:3, kcal:100, group:'homeCooking', comment:'食物繊維を増やしやすい' },
-            { id:'nimono', name:'煮物', protein:5, kcal:160, group:'homeCooking', comment:'家庭料理として良い。根菜多めは量に注意' },
-            { id:'oden', name:'おでん', protein:15, kcal:260, group:'homeCooking', comment:'具材次第で高タンパク。練り物と塩分に注意' },
+            { id:'nimono', name:'煮物', protein:5, kcal:160, group:'homeCooking', comment:'家庭料理として良い' },
             { id:'grilled_fish', name:'焼き魚', protein:22, kcal:220, group:'homeCooking', comment:'高タンパクで良い' },
             { id:'sashimi', name:'刺身', protein:20, kcal:180, group:'homeCooking', comment:'低糖質・高タンパク' },
             { id:'pork_miso_soup', name:'豚汁', protein:12, kcal:180, group:'homeCooking', comment:'具沢山なら高評価' },
@@ -4551,14 +3995,6 @@
             natto: [{ key:'packs', label:'量', choices:['1パック','2パック'], default:'1パック' }],
             hiyayakko: [{ key:'portion', label:'量', choices:['半丁','1丁'], default:'半丁' }],
             boiled_egg: [{ key:'pieces', label:'個数', choices:['1個','2個'], default:'1個' }],
-            vegetable_soup: [{ key:'size', label:'量', choices:['小 bowl','普通','多め'], default:'普通' }],
-            chicken_vegetable_soup: [
-                { key:'size', label:'量', choices:['普通','多め'], default:'普通' },
-                { key:'proteinChoice', label:'タンパク質', choices:['20g','25g','30g'], default:'25g' }
-            ],
-            steamed_vegetables: [{ key:'amount', label:'量', choices:['少量','普通','多め'], default:'普通' }],
-            nimono: [{ key:'amount', label:'量', choices:['少量','普通','多め'], default:'普通' }],
-            oden: [{ key:'items', label:'具材数', choices:['2〜3品','4〜5品','6品以上'], default:'4〜5品' }],
             nuts: [{ key:'amount', label:'量', choices:['30g','60g','100g','150g','250g以上'], default:'30g' }],
             yakitori: [
                 { key:'sauce', label:'味', choices:['塩','タレ'], default:'塩' },
@@ -4603,7 +4039,7 @@
             };
         }
         function restoreManualStoresAfterDataRefresh(snapshot, options = {}) {
-            // gv1.65: Apple Health ZIP / location-history.json の再読込は健康・GPSデータ更新であり、食事ログを消してはいけない。
+            // gv1.75: Apple Health ZIP / location-history.json の再読込は健康・GPSデータ更新であり、食事ログを消してはいけない。
             // 軽量JSONを明示的に読み込んだ場合のみ、JSON側ログを正本にしつつlocalStorage分を後でマージする。
             if (!snapshot) return;
             ensureManualStores();
@@ -4625,35 +4061,30 @@
             const pad = n => String(n).padStart(2,'0');
             return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
         }
-        function getManualLogTimePart() {
-            const el = document.getElementById('manual-log-datetime');
-            if (el && el.value) {
-                const m = String(el.value).match(/T(\d{2}:\d{2})/);
-                if (m) return m[1];
-            }
-            const now = new Date();
-            const pad = n => String(n).padStart(2,'0');
-            return `${pad(now.getHours())}:${pad(now.getMinutes())}`;
-        }
-        function buildManualDateTimeValue(dateKey, timePart = null) {
-            const safeDate = /^\d{4}-\d{2}-\d{2}$/.test(String(dateKey || '')) ? dateKey : new Date().toISOString().substring(0,10);
-            const safeTime = /^\d{2}:\d{2}$/.test(String(timePart || '')) ? timePart : getManualLogTimePart();
-            return `${safeDate}T${safeTime}`;
-        }
-        function syncManualDateTimeToManualDate() {
-            // gv1.65 tablet fix:
-            // Food登録日は画面上部の「対象日」を正本にする。
-            // タブレット幅では datetime-local が見えているため、過去日に切替えても日時欄の日付が今日のままだと
-            // 追加ログが今日に登録され、過去日へ登録できないように見えていた。
-            const dtEl = document.getElementById('manual-log-datetime');
-            if (!dtEl) return;
-            const date = getManualDate();
-            dtEl.value = buildManualDateTimeValue(date, getManualLogTimePart());
+        function addDaysToDateKey(dateKey, delta) {
+            // gv1.77: Do not use toISOString() for date-only navigation.
+            // In JST, local midnight converted to UTC becomes the previous day, causing right-arrow no-op and left-arrow two-day jumps.
+            const m = String(dateKey || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+            const base = m ? new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]), 12, 0, 0) : new Date();
+            base.setDate(base.getDate() + Number(delta || 0));
+            const pad = n => String(n).padStart(2, '0');
+            return `${base.getFullYear()}-${pad(base.getMonth() + 1)}-${pad(base.getDate())}`;
         }
         function getManualLogDateTime() {
-            const date = getManualDate();
-            const value = buildManualDateTimeValue(date, getManualLogTimePart());
-            return new Date(value);
+            const el = document.getElementById('manual-log-datetime');
+            if (el && el.value) return new Date(el.value);
+            return new Date();
+        }
+        function syncManualDateTimeToManualDate() {
+            const dateEl = document.getElementById('manual-log-date');
+            const dtEl = document.getElementById('manual-log-datetime');
+            if (!dateEl || !dateEl.value || !dtEl) return;
+            const now = new Date();
+            let timePart = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+            if (dtEl.value && dtEl.value.includes('T')) {
+                timePart = dtEl.value.split('T')[1] || timePart;
+            }
+            dtEl.value = `${dateEl.value}T${timePart}`;
         }
         function dateKeyFromDate(d) { return getJstParts(d).localDate; }
         function getManualDate() {
@@ -4663,8 +4094,10 @@
         }
         function moveManualDate(delta) {
             const el = document.getElementById('manual-log-date'); if (!el) return;
-            const d = new Date((el.value || getManualDate()) + 'T00:00:00'); d.setDate(d.getDate() + delta);
-            el.value = d.toISOString().substring(0,10); syncManualDateTimeToManualDate(); renderManualLogUI(); updateManualDashboardSummary();
+            el.value = addDaysToDateKey(el.value || getManualDate(), delta);
+            syncManualDateTimeToManualDate();
+            renderManualLogUI();
+            updateManualDashboardSummary();
         }
         function loadManualLogsFromStorage() {
             ensureManualStores();
@@ -4727,7 +4160,7 @@
                     logId,
                     date,
                     kind,
-                    appVersion: 'gv1.74',
+                    appVersion: 'gv1.76',
                     updatedAt: new Date().toISOString(),
                     source: 'browser'
                 }, { merge: true });
@@ -4735,6 +4168,21 @@
                 return true;
             } catch (e) {
                 console.warn(`[FIRESTORE_MANUAL_LOG] save failed: ${kind}`, e);
+                return false;
+            }
+        }
+
+
+        async function deleteManualLogFromFirestore(kind, logId) {
+            const db = await initFirestoreManualLogDb();
+            if (!db || !firestoreManualLogModules || !logId) return false;
+            try {
+                const fs = firestoreManualLogModules;
+                await fs.deleteDoc(fs.doc(db, getFirestoreManualLogPath(kind), logId));
+                console.info(`[FIRESTORE_MANUAL_LOG] deleted ${kind}/${logId}`);
+                return true;
+            } catch (e) {
+                console.warn(`[FIRESTORE_MANUAL_LOG] delete failed: ${kind}/${logId}`, e);
                 return false;
             }
         }
@@ -4784,15 +4232,64 @@
             if (FOOD_DETAIL_OPTIONS[id]) return openFoodDetailModal(id);
             return addFoodLog(id);
         }
-        function openFoodDetailModal(id) {
+
+        function getFoodLogKey(log) {
+            return log?.logId || `${log?.time || ''}_${log?.name || log?.displayName || ''}`;
+        }
+        function jsArg(value) { return JSON.stringify(String(value ?? '')); }
+        function findFoodLogEntry(date, logId) {
+            ensureManualStores();
+            const arr = healthData.foodLogs[date] || [];
+            const idx = arr.findIndex(x => getFoodLogKey(x) === logId);
+            return { arr, idx, log: idx >= 0 ? arr[idx] : null };
+        }
+        function inferFoodIdFromLog(log) {
+            if (!log) return null;
+            const id = log.id || log.foodCode;
+            if (id && FOOD_MASTER.some(x => x.id === id)) return id;
+            const name = String(log.name || log.displayName || '').replace(/（.*$/, '');
+            return FOOD_MASTER.find(x => x.name === name)?.id || id || null;
+        }
+        function getDefaultFoodSelections(id) {
+            const selections = {};
+            (FOOD_DETAIL_OPTIONS[id] || []).forEach(opt => selections[opt.key] = opt.default || opt.choices[0]);
+            return selections;
+        }
+        function inferFoodSelectionsFromLog(id, log) {
+            const selections = { ...getDefaultFoodSelections(id), ...(log?.detail || {}) };
+            const display = String(log?.displayName || log?.name || '');
+            if (id === 'nuts' && log?.nuts != null) {
+                const grams = Number(log.nuts);
+                selections.amount = grams >= 250 ? '250g以上' : `${grams}g`;
+            }
+            if (id === 'greek_yogurt') {
+                if (display.includes('加糖')) selections.sweetness = '加糖';
+                if (log?.protein) selections.proteinChoice = `${Number(log.protein)}g`;
+            }
+            if (id === 'salad_chicken' && log?.protein) selections.proteinChoice = `${Number(log.protein)}g`;
+            if ((id === 'protein_drink' || id === 'tofu_bar') && log?.protein) selections.proteinChoice = `${Number(log.protein)}g`;
+            if (id === 'natto' && Number(log?.protein || 0) >= 14) selections.packs = '2パック';
+            if (id === 'hiyayakko' && Number(log?.protein || 0) >= 16) selections.portion = '1丁';
+            if (id === 'boiled_egg' && Number(log?.protein || 0) >= 12) selections.pieces = '2個';
+            return selections;
+        }
+        function openFoodDetailModal(id, editContext = null) {
             const item = FOOD_MASTER.find(x => x.id === id); if (!item) return;
-            const options = FOOD_DETAIL_OPTIONS[id] || [];
-            manualDetailState = { foodId:id, selections:{} };
-            options.forEach(opt => manualDetailState.selections[opt.key] = opt.default || opt.choices[0]);
-            const title = document.getElementById('manual-detail-title'); if (title) title.textContent = item.name;
-            const comment = document.getElementById('manual-detail-comment'); if (comment) comment.textContent = item.comment || '体重変動の原因分析に必要な粒度だけ選択します。';
-            syncManualDateTimeToManualDate();
-            const dt = document.getElementById('manual-detail-datetime'); if (dt) dt.value = toLocalDateTimeValue(getManualLogDateTime());
+            const existingLog = editContext?.log || null;
+            manualDetailState = {
+                foodId: id,
+                selections: existingLog ? inferFoodSelectionsFromLog(id, existingLog) : getDefaultFoodSelections(id),
+                mode: editContext ? 'edit' : 'add',
+                originalDate: editContext?.date || null,
+                originalLogId: editContext?.logId || null,
+                existingLog
+            };
+            document.getElementById('manual-detail-title').textContent = editContext ? `${item.name}を修正` : item.name;
+            document.getElementById('manual-detail-comment').textContent = editContext ? '内容・量・登録日時を変更できます。' : (item.comment || '体重変動の原因分析に必要な粒度だけ選択します。');
+            const dt = document.getElementById('manual-detail-datetime');
+            if (dt) dt.value = toLocalDateTimeValue(existingLog ? new Date(existingLog.time || existingLog.timestampUtc || existingLog.localDateTime) : getManualLogDateTime());
+            const confirmBtn = document.getElementById('manual-detail-confirm-btn');
+            if (confirmBtn) confirmBtn.innerHTML = editContext ? '<i class="fas fa-save mr-1"></i>変更を保存' : '<i class="fas fa-plus mr-1"></i>登録';
             renderFoodDetailOptions();
             document.body.classList.add('manual-modal-open');
             const modal = document.getElementById('manual-detail-modal'); if (modal) modal.classList.add('active');
@@ -4800,6 +4297,8 @@
         function closeFoodDetailModal() {
             manualDetailState = null;
             document.body.classList.remove('manual-modal-open');
+            const confirmBtn = document.getElementById('manual-detail-confirm-btn');
+            if (confirmBtn) confirmBtn.innerHTML = '<i class="fas fa-plus mr-1"></i>登録';
             const modal = document.getElementById('manual-detail-modal'); if (modal) modal.classList.remove('active');
         }
         function setFoodDetailChoice(key, value) {
@@ -4810,14 +4309,17 @@
         function renderFoodDetailOptions() {
             const box = document.getElementById('manual-detail-options'); if (!box || !manualDetailState) return;
             const opts = FOOD_DETAIL_OPTIONS[manualDetailState.foodId] || [];
-            box.innerHTML = opts.map(opt => `<div><div class="manual-detail-label">${opt.label}</div><div class="manual-choice-grid">${opt.choices.map(choice => `<button onclick="setFoodDetailChoice('${opt.key}','${choice}')" class="manual-choice-btn ${manualDetailState.selections[opt.key]===choice?'active':''}">${choice}</button>`).join('')}</div></div>`).join('');
+            box.innerHTML = opts.length ? opts.map(opt => `<div><div class="manual-detail-label">${opt.label}</div><div class="manual-choice-grid">${opt.choices.map(choice => `<button onclick="setFoodDetailChoice('${opt.key}','${choice}')" class="manual-choice-btn ${manualDetailState.selections[opt.key]===choice?'active':''}">${choice}</button>`).join('')}</div></div>`).join('') : '<div class="text-xs text-slate-400 bg-slate-800/60 border border-slate-700 rounded-xl p-3">この食品は量の詳細選択がありません。日時のみ変更できます。</div>';
         }
         function confirmFoodDetailModal() {
             if (!manualDetailState) return;
             const dtEl = document.getElementById('manual-detail-datetime');
-            const timePart = dtEl && dtEl.value ? (String(dtEl.value).match(/T(\d{2}:\d{2})/)?.[1] || getManualLogTimePart()) : getManualLogTimePart();
-            const dt = new Date(buildManualDateTimeValue(getManualDate(), timePart));
-            addFoodLog(manualDetailState.foodId, { selections: { ...manualDetailState.selections }, datetime: dt });
+            const dt = dtEl && dtEl.value ? new Date(dtEl.value) : getManualLogDateTime();
+            if (manualDetailState.mode === 'edit') {
+                updateFoodLog(manualDetailState.originalDate, manualDetailState.originalLogId, manualDetailState.foodId, { selections: { ...manualDetailState.selections }, datetime: dt });
+            } else {
+                addFoodLog(manualDetailState.foodId, { selections: { ...manualDetailState.selections }, datetime: dt });
+            }
             closeFoodDetailModal();
         }
         function parseNumberFromChoice(v, fallback=0) {
@@ -4862,21 +4364,56 @@
             }
             return log;
         }
-        function addFoodLog(id, detailOptions = {}) {
-            ensureManualStores();
+        function buildEnrichedFoodLog(id, detailOptions = {}, existingLog = null) {
             const item = FOOD_MASTER.find(x => x.id === id);
-            if (!item) return;
+            if (!item) return null;
             const dt = detailOptions.datetime || getManualLogDateTime();
             const date = dateKeyFromDate(dt);
-            const arr = healthData.foodLogs[date] || [];
             const log = buildFoodLogFromSelection(item, detailOptions.selections || {});
-            const enrichedFoodLog = enrichLogTime({ ...log, logId:'food_' + Date.now() + '_' + Math.random().toString(36).slice(2,6), type:'food', category:log.group, mealPlace:getMealPlaceForDate(date) || '自宅' }, dt);
-            arr.push(enrichedFoodLog);
+            return {
+                date,
+                log: enrichLogTime({
+                    ...log,
+                    logId: existingLog?.logId || `food_${Date.now()}_${Math.random().toString(36).slice(2,6)}`,
+                    type:'food',
+                    category:log.group,
+                    mealPlace: existingLog?.mealPlace || getMealPlaceForDate(date) || '自宅'
+                }, dt)
+            };
+        }
+        function addFoodLog(id, detailOptions = {}) {
+            ensureManualStores();
+            const built = buildEnrichedFoodLog(id, detailOptions);
+            if (!built) return;
+            const { date, log } = built;
+            const arr = healthData.foodLogs[date] || [];
+            arr.push(log);
             healthData.foodLogs[date] = arr;
-            saveManualLogToFirestore('foodLogs', date, enrichedFoodLog);
-            // 食事ログは foodLogs に一本化。manualLogs へ同じ食事を複製しない（二重集計防止）。
+            saveManualLogToFirestore('foodLogs', date, log);
             const dateEl = document.getElementById('manual-log-date'); if (dateEl) dateEl.value = date;
-            const dtEl = document.getElementById('manual-log-datetime'); if (dtEl) dtEl.value = buildManualDateTimeValue(date, getManualLogTimePart());
+            const dtEl = document.getElementById('manual-log-datetime'); if (dtEl) dtEl.value = toLocalDateTimeValue(new Date());
+            saveManualLogsToStorage(); renderManualLogUI(); updateManualDashboardSummary();
+        }
+        function editFoodLog(date, logId) {
+            const entry = findFoodLogEntry(date, logId);
+            if (!entry.log) { alert('修正対象の食事ログが見つかりません。'); return; }
+            const id = inferFoodIdFromLog(entry.log);
+            if (!id || !FOOD_MASTER.some(x => x.id === id)) { alert('この食事ログは食品マスタにないため修正できません。削除して再登録してください。'); return; }
+            return openFoodDetailModal(id, { date, logId, log: entry.log });
+        }
+        function updateFoodLog(originalDate, originalLogId, id, detailOptions = {}) {
+            ensureManualStores();
+            const entry = findFoodLogEntry(originalDate, originalLogId);
+            if (!entry.log) { alert('修正対象の食事ログが見つかりません。'); return; }
+            const built = buildEnrichedFoodLog(id, detailOptions, entry.log);
+            if (!built) return;
+            const { date: newDate, log: updatedLog } = built;
+            healthData.foodLogs[originalDate] = (healthData.foodLogs[originalDate] || []).filter(x => getFoodLogKey(x) !== originalLogId);
+            if (!healthData.foodLogs[originalDate].length) delete healthData.foodLogs[originalDate];
+            healthData.foodLogs[newDate] = healthData.foodLogs[newDate] || [];
+            healthData.foodLogs[newDate].push({ ...updatedLog, updatedAt: new Date().toISOString() });
+            saveManualLogToFirestore('foodLogs', newDate, { ...updatedLog, updatedAt: new Date().toISOString() });
+            const dateEl = document.getElementById('manual-log-date'); if (dateEl) dateEl.value = newDate;
             saveManualLogsToStorage(); renderManualLogUI(); updateManualDashboardSummary();
         }
         function toggleProteinFood(id) { handleFoodSelect(id); }
@@ -4891,8 +4428,10 @@
         }
         function deleteFoodLog(date, logId) {
             ensureManualStores();
-            const arr = healthData.foodLogs[date] || [];
-            healthData.foodLogs[date] = arr.filter(x => (x.logId || x.time + '_' + x.name) !== logId);
+            const entry = findFoodLogEntry(date, logId);
+            healthData.foodLogs[date] = (healthData.foodLogs[date] || []).filter(x => getFoodLogKey(x) !== logId);
+            if (!healthData.foodLogs[date].length) delete healthData.foodLogs[date];
+            if (entry.log?.logId) deleteManualLogFromFirestore('foodLogs', entry.log.logId);
             saveManualLogsToStorage(); renderManualLogUI(); updateManualDashboardSummary();
         }
         function setAlcohol(type, cups) {
@@ -4920,7 +4459,7 @@
             saveManualLogsToStorage(); renderManualLogUI(); updateManualDashboardSummary();
         }
         function getManualTimeline(date) {
-            const foods = (healthData.foodLogs[date] || []).map(x => ({ kind:'food', ...x }));
+            const foods = (healthData.foodLogs[date] || []).map(x => ({ ...x, kind:'food' }));
             const alcohol = healthData.alcoholLogs[date] || {};
             const alcoholLogs = Object.keys(alcohol).filter(k => !k.endsWith('_time') && Number(alcohol[k]) > 0).map(k => ({ kind:'alcohol', name:`${k}（${Number(alcohol[k])>=4?'4杯以上':Number(alcohol[k])+'杯'}）`, time:alcohol[k + '_time'] || date + 'T21:00:00', protein:0, kcal:0, group:'outsideFood' }));
             return foods.concat(alcoholLogs).sort((a,b) => new Date(b.time || 0) - new Date(a.time || 0));
@@ -4938,13 +4477,7 @@
             const kcal = foods.reduce((s,x)=>s+(Number(x.kcal)||0),0);
             const nuts = foods.reduce((s,x)=>s+(Number(x.nuts)||0),0);
             const alcoholCups = Object.entries(alcohol).filter(([k])=>!k.endsWith('_time')).reduce((s,[,x])=>s+(Number(x)||0),0);
-            // gv1.66: mealPlace判定(boolean)とeatingOut文字列を混在させて .includes() していたため、
-            // 「居酒屋/外食」選択時に true.includes is not a function で描画が停止していた。
-            // 食事場所と外食回数を分離して安全に判定する。
-            const mealPlaceValue = String(events.mealPlace || '自宅');
-            const eatingOutValue = String(events.eatingOut || 'なし');
-            const isOutsideMealPlace = mealPlaceValue === '居酒屋' || mealPlaceValue === '外食';
-            const eatingOutCount = eatingOutValue.includes('2回') ? 2 : (isOutsideMealPlace || eatingOutValue.includes('1回') ? 1 : 0);
+            const eatingOutValue = String(events.eatingOut || 'なし'); const isOutsidePlace = events.mealPlace === '居酒屋' || events.mealPlace === '外食'; const eatingOutCount = eatingOutValue.includes('2回') ? 2 : (isOutsidePlace || eatingOutValue.includes('1回') ? 1 : 0);
             const highProteinCount = foods.filter(x => x.group === 'highProtein').length;
             const homeCookingCount = foods.filter(x => x.group === 'homeCooking').length;
             const outsideCount = foods.filter(x => x.group === 'outsideFood').length;
@@ -4976,8 +4509,11 @@
         }
         function renderManualLogUI() {
             ensureManualStores(); const date = getManualDate(); const dateEl = document.getElementById('manual-log-date'); if (dateEl && !dateEl.value) dateEl.value = date;
-            const dtEl = document.getElementById('manual-log-datetime'); if (dtEl && !dtEl.value) dtEl.value = buildManualDateTimeValue(date, getManualLogTimePart());
-            syncManualDateTimeToManualDate();
+            const dtEl = document.getElementById('manual-log-datetime');
+            if (dtEl) {
+                if (!dtEl.value) dtEl.value = `${date}T${toLocalDateTimeValue(new Date()).split('T')[1]}`;
+                else if (!String(dtEl.value).startsWith(date + 'T')) syncManualDateTimeToManualDate();
+            }
             const foods = healthData.foodLogs[date] || []; const alcohol = healthData.alcoholLogs[date] || {}; const events = healthData.eventLogs[date] || {};
             const proteinBox = document.getElementById('protein-food-buttons');
             if (proteinBox) proteinBox.innerHTML = Object.keys(FOOD_GROUPS).map(g => renderFoodGroup(g, FOOD_MASTER.filter(x => x.group === g))).join('');
@@ -4997,7 +4533,8 @@
                     const d = x.time ? new Date(x.time) : new Date(); const hhmm = d.toLocaleTimeString('ja-JP', { hour:'2-digit', minute:'2-digit' }); const key = x.logId || x.time + '_' + x.name;
                     const title = x.displayName || x.name;
                     const evalText = x.evaluation ? ` / ${x.evaluation}` : '';
-                    return `<div class="timeline-row"><div class="flex items-center gap-3 min-w-0"><div class="timeline-time">${hhmm}</div><div class="min-w-0"><div class="timeline-title truncate">${title}</div><div class="timeline-sub">P${Number(x.protein)||0}g / ${Number(x.kcal)||0}kcal / ${FOOD_GROUPS[x.group]?.label || ''}${evalText}</div></div></div>${x.kind==='food'?`<button onclick="deleteFoodLog('${date}','${key}')" class="text-slate-500 hover:text-red-300 px-2" title="削除"><i class="fas fa-times"></i></button>`:''}</div>`;
+                    const canEdit = x.kind === 'food' || x.type === 'food' || !!x.logId;
+                    return `<div class="timeline-row"><div class="flex items-center gap-3 min-w-0 flex-1"><div class="timeline-time">${hhmm}</div><div class="min-w-0 flex-1"><div class="timeline-title truncate">${title}</div><div class="timeline-sub">P${Number(x.protein)||0}g / ${Number(x.kcal)||0}kcal / ${FOOD_GROUPS[x.group]?.label || ''}${evalText}</div></div></div>${canEdit?`<div class="flex items-center gap-2 flex-shrink-0 ml-2"><button onclick="editFoodLog(${jsArg(date)},${jsArg(key)})" class="bg-teal-500/15 border border-teal-400/30 text-teal-200 hover:bg-teal-500/25 px-2 py-1 rounded-lg text-[11px] font-black" title="修正"><i class="fas fa-pen mr-1"></i>修正</button><button onclick="deleteFoodLog(${jsArg(date)},${jsArg(key)})" class="bg-red-500/10 border border-red-400/25 text-red-200 hover:bg-red-500/20 px-2 py-1 rounded-lg text-[11px] font-black" title="削除"><i class="fas fa-times mr-1"></i>削除</button></div>`:''}</div>`;
                 }).join('') : '<div class="text-xs text-slate-500">今日の食事ログは未入力です。</div>';
             }
             const hist = document.getElementById('manual-log-history');
@@ -5889,7 +5426,7 @@
 
         function exportJSON() { 
             ensureManualStores();
-            // gv1.65 HRV SDNN import fix: UIは変更せず、Apple Healthの子要素付きRecordも取り込む。
+            // gv1.60 warning count naming + OUTSIDE_FOOD_AT_HOME foodNames fix: UIは変更せず、既存Healthデータ保持とJSON品質のみ強化。
             ensureAnalysisFoodMasterPatch();
             healthData.summary.heightCm = 150;
             healthData.summary.targetWeight = 50;
@@ -5926,7 +5463,7 @@
             const generatedParts = getJstParts(new Date());
             const dataToExport = {
                 schemaVersion: "1.3",
-                appVersion: "gv1.74",
+                appVersion: "gv1.76",
                 generatedAt: generatedParts.timestampUtc,
                 generatedAtLocal: generatedParts.localDateTime,
                 timezone: "Asia/Tokyo",
@@ -5957,7 +5494,7 @@
                 },
                 dailySummaries,
                 healthData: {
-                    summary: { ...(healthData.summary || {}), version: "gv1.74", heightCm: 150, targetWeight: 50, targetWeightKg: 50 },
+                    summary: { ...(healthData.summary || {}), version: "gv1.76", heightCm: 150, targetWeight: 50, targetWeightKg: 50 },
                     weight: healthData.weight || {},
                     steps: healthData.steps || {},
                     sleep: healthData.sleep || {},
@@ -5995,8 +5532,6 @@
             updateDataSourceChip();
             
             buildRangeControl('chart-health-score-trend');
-            buildRangeControl('chart-condition-score-trend');
-            buildRangeControl('chart-risk-score-trend');
             buildRangeControl('chart-weight-dash'); 
             buildRangeControl('chart-steps-dash'); 
             buildRangeControl('chart-weight-full'); 

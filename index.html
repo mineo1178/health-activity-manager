@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Health Activity Manager gv1.76</title>
-    <!-- gv1.76 food log edit visibility/date sync fix + gv1.75 food log edit support + gv1.74 mobile-safe x-axis labels + weekend coloring + foreground reference lines + weekday tooltip + GPS period playback. Existing UI preserved. -->
+    <title>Health Activity Manager gv1.78.3</title>
+    <!-- gv1.78.3 restores weekend-aware date axis labels and weekday tooltips + gv1.78.1 step source normalization and trend rendering fix. Existing UI preserved. -->
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
     <meta name="apple-mobile-web-app-title" content="HealthManager">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -57,6 +57,12 @@
         .dashboard-score-card { background: linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(37, 99, 235, 0.15)); border: 1px solid rgba(125, 211, 252, 0.25); border-radius: 24px; padding: 28px; }
         .score-big { font-size: clamp(76px, 8vw, 120px); line-height: .9; font-weight: 900; color: #ffffff; }
         .score-compare-box { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 16px; }
+        .health-index-card { background: rgba(15,23,42,0.58); border: 1px solid rgba(148,163,184,0.16); border-radius: 18px; padding: 18px; min-height: 150px; }
+        .health-index-title { font-size: 12px; color: #cbd5e1; font-weight: 900; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 8px; }
+        .health-index-value { font-size: clamp(34px, 4vw, 54px); line-height: 1; font-weight: 900; color: #ffffff; }
+        .health-index-label { display: inline-flex; align-items: center; margin-top: 8px; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 900; border: 1px solid rgba(148,163,184,.22); background: rgba(255,255,255,.06); }
+        .health-index-comment { margin-top: 10px; font-size: 12px; line-height: 1.45; color: #cbd5e1; font-weight: 700; }
+        .health-index-trend { margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(148,163,184,.12); font-size: 11px; line-height: 1.45; color: #94a3b8; font-weight: 800; }
         
         .metric-title-ja { font-size: 14px; color: #94a3b8; font-weight: 800; margin-bottom: 4px; }
         .metric-number-ja { font-size: 28px; font-weight: 900; color: #ffffff; }
@@ -327,7 +333,7 @@
         .timeline-title { color:#fff; font-weight:900; font-size:13px; }
         .timeline-sub { color:#94a3b8; font-weight:700; font-size:10px; }
 
-        /* gv1.76 Food timeline edit controls */
+        /* gv1.77 Food timeline edit controls */
         .timeline-row .timeline-actions { flex-shrink: 0; }
         @media (max-width: 768px) {
             .timeline-row { align-items: flex-start; }
@@ -344,7 +350,7 @@
                 <h1 onclick="goHomeStartup()" class="text-xl font-bold text-blue-500 flex items-center tracking-tight cursor-pointer hover:text-blue-400 transition" title="スタート画面へ戻る">
                     <i class="fas fa-heartbeat mr-2 text-2xl"></i>HealthManager
                 </h1>
-                <p class="text-[10px] text-slate-500 font-mono mt-1 uppercase tracking-widest">gv1.76 OS PRO</p>
+                <p class="text-[10px] text-slate-500 font-mono mt-1 uppercase tracking-widest">gv1.78.3 OS PRO</p>
             </div>
             <nav class="flex-1 px-4 space-y-1 overflow-y-auto custom-scrollbar">
                 <button onclick="switchTab('dashboard')" class="nav-btn w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl transition" data-tab="dashboard">
@@ -517,6 +523,53 @@
                         </div>
                     </div>
 
+                    <section id="health-sub-index-section" class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                        <div class="health-index-card border border-emerald-500/20">
+                            <div class="health-index-title"><i class="fas fa-bolt text-emerald-300 mr-2"></i>パフォーマンス指数</div>
+                            <div class="flex items-end gap-2">
+                                <div id="performance-score" class="health-index-value">--</div>
+                                <div class="text-sm text-slate-400 font-black mb-1">/100</div>
+                            </div>
+                            <div id="performance-label" class="health-index-label text-slate-300">--</div>
+                            <div id="performance-trend" class="health-index-trend">前日比 -- / 7日平均比 -- / 30日平均比 --</div>
+                            <div id="performance-comment" class="health-index-comment">睡眠・HRV・心拍・活動量から当日の動ける状態を評価します。</div>
+                        </div>
+                        <div class="health-index-card border border-amber-500/20">
+                            <div class="health-index-title"><i class="fas fa-battery-quarter text-amber-300 mr-2"></i>疲労リスク</div>
+                            <div class="flex items-end gap-2">
+                                <div id="fatigue-risk-score" class="health-index-value">--</div>
+                                <div class="text-sm text-slate-400 font-black mb-1">/100</div>
+                            </div>
+                            <div id="fatigue-risk-label" class="health-index-label text-slate-300">--</div>
+                            <div id="fatigue-risk-trend" class="health-index-trend">前日比 -- / 7日平均比 -- / 30日平均比 --</div>
+                            <div id="fatigue-risk-comment" class="health-index-comment">睡眠不足・HRV低下・心拍上昇・長距離移動を別指標で評価します。</div>
+                        </div>
+                        <div class="health-index-card border border-rose-500/20">
+                            <div class="health-index-title"><i class="fas fa-shield-heart text-rose-300 mr-2"></i>生活習慣リスク</div>
+                            <div class="flex items-end gap-2">
+                                <div id="disease-risk-score" class="health-index-value">--</div>
+                                <div class="text-sm text-slate-400 font-black mb-1">/100</div>
+                            </div>
+                            <div id="disease-risk-label" class="health-index-label text-slate-300">--</div>
+                            <div id="disease-risk-trend" class="health-index-trend">前日比 -- / 7日平均比 -- / 30日平均比 --</div>
+                            <div id="disease-risk-comment" class="health-index-comment">病気リスクそのものではなく、体重・BMI・食事・飲酒・活動量から見た生活習慣リスクの目安です。</div>
+                        </div>
+                    </section>
+
+                    <section id="import-diagnostics-mini" class="glass-card p-4 md:p-5 mt-6 border border-slate-700/50 bg-slate-900/25">
+                        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-3">
+                            <h3 class="text-sm md:text-base font-black text-slate-200"><i class="fas fa-database text-cyan-300 mr-2"></i>取込・評価信頼度</h3>
+                            <div class="text-[10px] text-slate-500 font-bold uppercase">gv1.78.3 diagnostics</div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-3 text-xs">
+                            <div class="report-metric-box"><div class="text-[10px] text-slate-400 font-bold uppercase mb-1">歩数集計</div><div id="diag-step-method" class="font-black text-white">--</div></div>
+                            <div class="report-metric-box"><div class="text-[10px] text-slate-400 font-bold uppercase mb-1">歩数二重計上疑い</div><div id="diag-step-status" class="font-black text-white">--</div></div>
+                            <div class="report-metric-box"><div class="text-[10px] text-slate-400 font-bold uppercase mb-1">HRV最終取得日</div><div id="diag-hrv-last-date" class="font-black text-white">--</div></div>
+                            <div class="report-metric-box"><div class="text-[10px] text-slate-400 font-bold uppercase mb-1">直近7日HRV</div><div id="diag-hrv-last7" class="font-black text-white">--</div></div>
+                        </div>
+                        <div id="diag-reliability-comment" class="text-xs text-slate-300 leading-relaxed mt-3">データ取込後に歩数・HRVの評価信頼度を表示します。</div>
+                    </section>
+
                     <div class="mt-6 glass-card p-4 md:p-6 bg-slate-900/30 border border-cyan-500/20 w-full max-w-full">
                         <div class="flex items-center justify-between mb-3">
                             <h3 class="text-sm md:text-base font-black text-cyan-100">
@@ -525,6 +578,36 @@
                         </div>
                         <div class="chart-container"><canvas id="chart-health-score-trend"></canvas></div>
                         <div id="health-score-trend-comment" class="mt-3 text-sm md:text-base text-slate-100 leading-relaxed"></div>
+                    </div>
+
+                    <div class="mt-6 glass-card p-4 md:p-6 bg-slate-900/30 border border-emerald-500/20 w-full max-w-full">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-sm md:text-base font-black text-emerald-100">
+                                <i class="fas fa-bolt mr-2 text-emerald-300"></i>パフォーマンス指数トレンド
+                            </h3>
+                        </div>
+                        <div class="chart-container"><canvas id="chart-performance-trend"></canvas></div>
+                        <div id="performance-trend-comment" class="mt-3 text-sm md:text-base text-slate-100 leading-relaxed"></div>
+                    </div>
+
+                    <div class="mt-6 glass-card p-4 md:p-6 bg-slate-900/30 border border-amber-500/20 w-full max-w-full">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-sm md:text-base font-black text-amber-100">
+                                <i class="fas fa-battery-quarter mr-2 text-amber-300"></i>疲労リスクトレンド
+                            </h3>
+                        </div>
+                        <div class="chart-container"><canvas id="chart-fatigue-risk-trend"></canvas></div>
+                        <div id="fatigue-risk-trend-comment" class="mt-3 text-sm md:text-base text-slate-100 leading-relaxed"></div>
+                    </div>
+
+                    <div class="mt-6 glass-card p-4 md:p-6 bg-slate-900/30 border border-rose-500/20 w-full max-w-full">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-sm md:text-base font-black text-rose-100">
+                                <i class="fas fa-shield-heart mr-2 text-rose-300"></i>生活習慣リスクトレンド
+                            </h3>
+                        </div>
+                        <div class="chart-container"><canvas id="chart-disease-risk-trend"></canvas></div>
+                        <div id="disease-risk-trend-comment" class="mt-3 text-sm md:text-base text-slate-100 leading-relaxed"></div>
                     </div>
 
                     <section id="weekly-review-section" class="hidden glass-card p-5 md:p-6 space-y-5 border-t-4 border-blue-500 mt-6">
@@ -1275,10 +1358,18 @@
     <script>
         // --- Global Variables Setup ---
         let healthData = {
-            summary: { version: "gv1.76", isSample: false, updatedAt: null, heightCm: 150, targetWeight: 50 },
+            summary: { version: "gv1.78.3", isSample: false, updatedAt: null, heightCm: 150, targetWeight: 50 },
             weight: {}, steps: {}, sleep: {}, heartRate: {}, hrv: {},
-            gpsSummaries: [], manualLogs: {}, foodLogs: {}, eventLogs: {}, alcoholLogs: {}
+            gpsSummaries: [], manualLogs: {}, foodLogs: {}, eventLogs: {}, alcoholLogs: {},
+            stepImportDiagnostics: null, hrvImportDiagnostics: null, metricReliability: null, importWarnings: []
         };
+
+        let stepSourceDailyGV178 = {};
+        let hrvDailyValuesGV178 = {};
+        let stepImportDiagnosticsGV178 = null;
+        let hrvImportDiagnosticsGV178 = null;
+        let metricReliabilityGV178 = null;
+        let importWarningsGV178 = [];
 
 
         // --- Optional Firestore Sync for manual logs (food / alcohol / event only) ---
@@ -1307,6 +1398,9 @@
         
         let chartRanges = {
             'chart-health-score-trend': 7,
+            'chart-performance-trend': 7,
+            'chart-fatigue-risk-trend': 7,
+            'chart-disease-risk-trend': 7,
             'chart-weight-dash': 7,
             'chart-steps-dash': 7,
             'chart-weight-full': 7,
@@ -1736,7 +1830,7 @@
             const previousSourceSummary = data.sourceSummary || targetData.sourceSummary || targetData.summary?.previousSourceSummary || current.summary?.previousSourceSummary || null;
 
             const defSummary = {
-                version: "gv1.76",
+                version: "gv1.78.3",
                 heightCm: lockedHeight,
                 targetWeight: lockedTarget,
                 targetWeightKg: lockedTarget,
@@ -1759,7 +1853,11 @@
                 manualLogs: targetData.manualLogs || current.manualLogs || {},
                 foodLogs: targetData.foodLogs || current.foodLogs || {},
                 eventLogs: targetData.eventLogs || current.eventLogs || {},
-                alcoholLogs: targetData.alcoholLogs || current.alcoholLogs || {}
+                alcoholLogs: targetData.alcoholLogs || current.alcoholLogs || {},
+                stepImportDiagnostics: data.stepImportDiagnostics || targetData.stepImportDiagnostics || current.stepImportDiagnostics || null,
+                hrvImportDiagnostics: data.hrvImportDiagnostics || targetData.hrvImportDiagnostics || current.hrvImportDiagnostics || null,
+                metricReliability: data.metricReliability || targetData.metricReliability || current.metricReliability || null,
+                importWarnings: data.importWarnings || targetData.importWarnings || current.importWarnings || []
             };
 
             normalized.gpsSummaries = Array.isArray(normalized.gpsSummaries) ? normalized.gpsSummaries : [];
@@ -2039,32 +2137,61 @@
             const decoder = new TextDecoder("utf-8");
             const chunkSize = 1024 * 1024 * 2; // 2MB
             let buffer = ""; let count = 0;
+
+            // gv1.78: StepCountは複数ソースを単純合算しない。HRVは自己完結/子要素付きRecord双方を開始タグで拾う。
+            stepSourceDailyGV178 = {};
+            hrvDailyValuesGV178 = {};
+            stepImportDiagnosticsGV178 = null;
+            hrvImportDiagnosticsGV178 = null;
+            metricReliabilityGV178 = null;
+            importWarningsGV178 = [];
+            healthData.steps = {};
+            healthData.hrv = {};
+
             for (let offset = 0; offset < bytes.length; offset += chunkSize) {
                 const slice = bytes.subarray(offset, offset + chunkSize);
                 buffer += decoder.decode(slice, { stream: offset + chunkSize < bytes.length });
-                const lastRecordEnd = buffer.lastIndexOf("/>");
-                if (lastRecordEnd === -1) continue;
-                const processPart = buffer.slice(0, lastRecordEnd + 2);
-                buffer = buffer.slice(lastRecordEnd + 2);
+
+                // チャンク末尾で<Record ...が切れるケースを避けるため、最後に完了した「>」までだけ処理する。
+                const lastTagEnd = buffer.lastIndexOf(">");
+                if (lastTagEnd === -1) continue;
+                const processPart = buffer.slice(0, lastTagEnd + 1);
+                buffer = buffer.slice(lastTagEnd + 1);
                 count += parseHealthXmlRecordsPart(processPart);
                 if (count % 50000 === 0) updateLoader(30 + Math.min(25, (offset / bytes.length) * 25), `Export.xml 処理中... (${count})`);
             }
-            if (buffer.trim()) { count += parseHealthXmlRecordsPart(buffer); }
+            if (buffer.trim() && buffer.includes('>')) { count += parseHealthXmlRecordsPart(buffer); }
+            finalizeStepImportGV178();
+            finalizeHrvImportGV178();
+            metricReliabilityGV178 = buildMetricReliabilityGV178();
+            importWarningsGV178 = buildImportWarningsGV178();
+            healthData.metricReliability = metricReliabilityGV178;
+            healthData.importWarnings = importWarningsGV178;
+            console.info('[APPLE_HEALTH_IMPORT_GV178]', { records: count, stepImportDiagnosticsGV178, hrvImportDiagnosticsGV178, metricReliabilityGV178, importWarningsGV178 });
         }
 
         function parseHealthXmlRecordsPart(text) {
-            const recordRegex = /<Record\b[^>]*\/>/g;
+            // 自己完結 <Record ... /> と 子要素付き <Record ...>...</Record> の開始タグを両方拾う。
+            const recordRegex = /<Record\b[^>]*>/g;
             let match; let count = 0;
             while ((match = recordRegex.exec(text)) !== null) { processHealthRecord(match[0]); count++; }
             return count;
         }
 
         function processHealthRecord(chunk) {
-            const type = getXmlAttr(chunk, 'type'); const startStr = getXmlAttr(chunk, 'startDate');
-            const dateKey = (startStr || '').substring(0, 10); const val = parseFloat(getXmlAttr(chunk, 'value'));
+            const type = getXmlAttr(chunk, 'type');
+            const startStr = getXmlAttr(chunk, 'startDate');
+            const dateKey = (startStr || '').substring(0, 10); // Apple Healthのローカル日付を正本にする。toISOStringは禁止。
+            const val = parseFloat(getXmlAttr(chunk, 'value'));
             if (!type || !dateKey) return;
+
             if (type.includes('BodyMass') && !isNaN(val)) healthData.weight[dateKey] = val;
-            if (type.includes('StepCount') && !isNaN(val)) healthData.steps[dateKey] = (healthData.steps[dateKey] || 0) + val;
+
+            if (type === 'HKQuantityTypeIdentifierStepCount' || type.includes('StepCount')) {
+                processStepCountRecordGV178(chunk, dateKey, val);
+                return;
+            }
+
             if (type.includes('SleepAnalysis')) {
                 const valueCode = getXmlAttr(chunk, 'value');
                 if (valueCode && ASLEEP_CATEGORIES.some(c => valueCode.includes(c))) {
@@ -2074,10 +2201,266 @@
                 }
             }
             if (type.includes('RestingHeartRate') && !isNaN(val)) healthData.heartRate[dateKey] = val;
-            if (type.includes('HeartRateVariability') && !isNaN(val)) healthData.hrv[dateKey] = val;
+
+            if (type === 'HKQuantityTypeIdentifierHeartRateVariabilitySDNN' || type.includes('HeartRateVariability')) {
+                processHrvRecordGV178(chunk, dateKey, val);
+            }
         }
 
-        function getXmlAttr(text, attr) { const m = text.match(new RegExp(`${attr}="([^"]+)"`)); return m ? m[1] : null; }
+        function getXmlAttr(text, attr) {
+            const m = text.match(new RegExp(`${attr}="([^"]+)"`));
+            return m ? decodeXmlAttrGV178(m[1]) : null;
+        }
+
+        function decodeXmlAttrGV178(value) {
+            return String(value || '')
+                .replace(/&quot;/g, '"').replace(/&apos;/g, "'")
+                .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+        }
+
+        function normalizeHealthDeviceGV178(device) {
+            const raw = String(device || '').trim();
+            if (!raw) return '';
+            // Apple Healthのdevice属性には毎回変わるHKDeviceメモリアドレスやcreation dateが含まれる。
+            // これをsourceKeyに入れると、同じApple Watchが日内で複数ソースに分裂し、歩数が過小評価される。
+            return raw
+                .replace(/^<<HKDevice:\s*0x[0-9a-fA-F]+>,\s*/i, '')
+                .replace(/,\s*creation date:[^>]+>?$/i, '')
+                .replace(/>+$/g, '')
+                .trim();
+        }
+
+        function buildSourceKeyGV178(sourceName, sourceVersion, device) {
+            const src = sourceName || 'unknown-source';
+            const ver = sourceVersion || '';
+            const dev = normalizeHealthDeviceGV178(device || '');
+            return [src, ver, dev].filter(x => String(x).trim()).join('|') || src;
+        }
+
+        function isAppleWatchSourceGV178(sourceKey) {
+            const s = String(sourceKey || '').toLowerCase();
+            return s.includes('watch') || s.includes('apple watch');
+        }
+
+        function isIphoneSourceGV178(sourceKey) {
+            const s = String(sourceKey || '').toLowerCase();
+            return s.includes('iphone');
+        }
+
+        function processStepCountRecordGV178(chunk, dateKey, val) {
+            if (!Number.isFinite(val)) return;
+            const sourceName = getXmlAttr(chunk, 'sourceName') || '';
+            const sourceVersion = getXmlAttr(chunk, 'sourceVersion') || '';
+            const device = getXmlAttr(chunk, 'device') || '';
+            const sourceKey = buildSourceKeyGV178(sourceName, sourceVersion, device);
+            if (!stepSourceDailyGV178[dateKey]) stepSourceDailyGV178[dateKey] = {};
+            stepSourceDailyGV178[dateKey][sourceKey] = (stepSourceDailyGV178[dateKey][sourceKey] || 0) + val;
+        }
+
+        function pickStepSourceGV178(sourceTotals) {
+            const entries = Object.entries(sourceTotals || {}).map(([key, value]) => ({ key, value: Number(value) || 0 })).filter(x => x.value > 0);
+            if (!entries.length) return null;
+            const maxByValue = rows => rows.slice().sort((a,b)=>b.value-a.value)[0];
+            const watchRows = entries.filter(x => isAppleWatchSourceGV178(x.key));
+            if (watchRows.length) return maxByValue(watchRows);
+            const iphoneRows = entries.filter(x => isIphoneSourceGV178(x.key));
+            if (iphoneRows.length) return maxByValue(iphoneRows);
+            return maxByValue(entries);
+        }
+
+        function finalizeStepImportGV178() {
+            const detailAll = {};
+            Object.entries(stepSourceDailyGV178 || {}).forEach(([date, sourceTotals]) => {
+                const selected = pickStepSourceGV178(sourceTotals);
+                if (!selected) return;
+                const simpleSumSteps = Object.values(sourceTotals || {}).reduce((s,v)=>s+(Number(v)||0),0);
+                const selectedSteps = Math.round(selected.value);
+                healthData.steps[date] = selectedSteps;
+                const duplicationSuspected = Object.keys(sourceTotals || {}).length > 1 && simpleSumSteps >= selectedSteps * 1.5;
+                const roundedSourceTotals = {};
+                Object.entries(sourceTotals || {}).forEach(([k,v]) => { roundedSourceTotals[k] = Math.round(Number(v) || 0); });
+                detailAll[date] = {
+                    selectedSourceKey: selected.key,
+                    selectedSteps,
+                    sourceTotals: roundedSourceTotals,
+                    simpleSumSteps: Math.round(simpleSumSteps),
+                    duplicationSuspected
+                };
+            });
+            const allDates = Object.keys(detailAll).sort();
+            const last30 = allDates.slice(-30);
+            const days = {};
+            last30.forEach(d => { days[d] = detailAll[d]; });
+            stepImportDiagnosticsGV178 = {
+                method: 'source_priority_normalized_device_no_simple_sum',
+                generatedAt: new Date().toISOString(),
+                totalDays: allDates.length,
+                diagnosticDays: last30.length,
+                suspectedDays: allDates.filter(d => detailAll[d]?.duplicationSuspected).length,
+                days
+            };
+            healthData.stepImportDiagnostics = stepImportDiagnosticsGV178;
+        }
+
+        function processHrvRecordGV178(chunk, dateKey, val) {
+            if (!Number.isFinite(val)) return;
+            if (!hrvDailyValuesGV178[dateKey]) hrvDailyValuesGV178[dateKey] = [];
+            hrvDailyValuesGV178[dateKey].push(val);
+        }
+
+        function dateRangeStringsGV178(endDate, days) {
+            if (!endDate) return [];
+            const end = new Date(`${endDate}T00:00:00`);
+            if (!Number.isFinite(end.getTime())) return [];
+            const rows = [];
+            for (let i = days - 1; i >= 0; i--) {
+                const d = new Date(end.getTime() - i * 86400000);
+                rows.push(d.toISOString().substring(0,10));
+            }
+            return rows;
+        }
+
+        function getLatestDateAcrossDataGV178() {
+            const dates = [
+                ...Object.keys(healthData.weight || {}),
+                ...Object.keys(healthData.steps || {}),
+                ...Object.keys(healthData.sleep || {}),
+                ...Object.keys(healthData.heartRate || {}),
+                ...Object.keys(healthData.hrv || {})
+            ].filter(Boolean).sort();
+            return dates.length ? dates[dates.length - 1] : null;
+        }
+
+        function finalizeHrvImportGV178() {
+            const dates = Object.keys(hrvDailyValuesGV178 || {}).sort();
+            let totalRecords = 0;
+            dates.forEach(date => {
+                const values = (hrvDailyValuesGV178[date] || []).map(Number).filter(Number.isFinite);
+                totalRecords += values.length;
+                if (values.length) healthData.hrv[date] = Math.round((values.reduce((a,b)=>a+b,0) / values.length) * 10) / 10;
+            });
+            const firstDate = dates[0] || null;
+            const lastDate = dates[dates.length - 1] || null;
+            const latestDataDate = getLatestDateAcrossDataGV178() || lastDate;
+            const last7Dates = dateRangeStringsGV178(latestDataDate, 7);
+            const last30Dates = dateRangeStringsGV178(latestDataDate, 30);
+            const last7DaysWithHrv = last7Dates.filter(d => healthData.hrv?.[d] != null).length;
+            const last30DaysWithHrv = last30Dates.filter(d => healthData.hrv?.[d] != null).length;
+            const recentMissingDates = last7Dates.filter(d => healthData.hrv?.[d] == null);
+            hrvImportDiagnosticsGV178 = {
+                totalRecords,
+                firstDate,
+                lastDate,
+                latestDataDate,
+                last7DaysWithHrv,
+                last30DaysWithHrv,
+                recentMissingDates,
+                parseMethod: 'record_start_tag_self_closing_and_paired'
+            };
+            healthData.hrvImportDiagnostics = hrvImportDiagnosticsGV178;
+        }
+
+        function avgObjectValuesGV178(obj, dates) {
+            const vals = (dates || []).map(d => obj?.[d]).map(Number).filter(Number.isFinite);
+            return vals.length ? vals.reduce((a,b)=>a+b,0)/vals.length : null;
+        }
+
+        function buildMetricReliabilityGV178() {
+            const stepDiag = stepImportDiagnosticsGV178 || healthData.stepImportDiagnostics || null;
+            const hrvDiag = hrvImportDiagnosticsGV178 || healthData.hrvImportDiagnostics || null;
+            const stepDates = Object.keys(healthData.steps || {}).sort();
+            const latest = getLatestDateAcrossDataGV178();
+            const last7 = dateRangeStringsGV178(latest, 7);
+            const last30 = dateRangeStringsGV178(latest, 30);
+            const stepAvg7 = avgObjectValuesGV178(healthData.steps, last7);
+            const stepAvg30 = avgObjectValuesGV178(healthData.steps, last30);
+            const hasDup = !!Object.values(stepDiag?.days || {}).some(x => x?.duplicationSuspected);
+            const stepSpike = stepAvg7 != null && stepAvg30 != null && stepAvg30 > 0 && stepAvg7 >= stepAvg30 * 1.8;
+            const stepStatus = !stepDates.length ? 'missing' : (hasDup || stepSpike ? 'duplication_suspected' : 'ok');
+            const hrvLast7 = Number(hrvDiag?.last7DaysWithHrv || 0);
+            const hrvStatus = !Object.keys(healthData.hrv || {}).length ? 'missing' : (hrvLast7 < 3 ? 'recent_missing' : 'ok');
+            return {
+                steps: {
+                    status: stepStatus,
+                    method: 'source_priority_normalized_device_no_simple_sum',
+                    last7Average: stepAvg7 != null ? Math.round(stepAvg7) : null,
+                    last30Average: stepAvg30 != null ? Math.round(stepAvg30) : null,
+                    comment: 'Apple Watch/iPhoneの二重計上を避けるため、日別ソース優先で集計'
+                },
+                hrv: {
+                    status: hrvStatus,
+                    lastDate: hrvDiag?.lastDate || null,
+                    last7DaysWithData: hrvLast7,
+                    last30DaysWithData: Number(hrvDiag?.last30DaysWithHrv || 0),
+                    comment: 'HRVは直近7日のデータ数に応じて評価信頼度を調整'
+                }
+            };
+        }
+
+        function buildImportWarningsGV178() {
+            const warnings = [];
+            const stepDiag = stepImportDiagnosticsGV178 || healthData.stepImportDiagnostics || null;
+            Object.entries(stepDiag?.days || {}).forEach(([date, d]) => {
+                if (Number(d.selectedSteps || 0) > 50000) warnings.push({ type: 'STEP_EXTREME_VALUE', date, message: '1日50,000歩を超えています。歩数取り込みまたは特殊活動を確認してください。', selectedSteps: d.selectedSteps });
+                if (d.duplicationSuspected) warnings.push({ type: 'STEP_DUPLICATION_SUSPECTED', date, message: '複数ソースの歩数合算により二重計上の可能性があります', selectedSteps: d.selectedSteps, simpleSumSteps: d.simpleSumSteps });
+            });
+            const latest = getLatestDateAcrossDataGV178();
+            const avg7 = avgObjectValuesGV178(healthData.steps, dateRangeStringsGV178(latest, 7));
+            const avg30 = avgObjectValuesGV178(healthData.steps, dateRangeStringsGV178(latest, 30));
+            if (avg7 != null && avg30 != null && avg30 > 0 && avg7 >= avg30 * 1.8) {
+                warnings.push({ type: 'STEP_7DAY_SPIKE', message: '直近7日平均歩数が直近30日平均の1.8倍以上です。歩数ソースの重複または特殊活動を確認してください。', last7Average: Math.round(avg7), last30Average: Math.round(avg30) });
+            }
+            const hrvDiag = hrvImportDiagnosticsGV178 || healthData.hrvImportDiagnostics || null;
+            if (hrvDiag && Number(hrvDiag.last7DaysWithHrv || 0) < 3) {
+                warnings.push({ type: 'HRV_RECENT_DATA_MISSING', message: '直近7日のHRVが不足しています。Apple Health取り込みまたはApple Watch装着状況を確認してください。', lastHrvDate: hrvDiag.lastDate || null, last7DaysWithHrv: Number(hrvDiag.last7DaysWithHrv || 0) });
+            }
+            return warnings;
+        }
+
+
+        function buildImportWarningSummaryGV178(importWarnings) {
+            const list = Array.isArray(importWarnings) ? importWarnings : [];
+            const byType = {};
+            list.forEach(w => { const t = w?.type || 'UNKNOWN'; byType[t] = (byType[t] || 0) + 1; });
+            const stepDup = list.filter(w => w?.type === 'STEP_DUPLICATION_SUSPECTED');
+            const stepExtreme = list.filter(w => w?.type === 'STEP_EXTREME_VALUE');
+            const stepSpike = list.filter(w => w?.type === 'STEP_7DAY_SPIKE');
+            const hrvMissing = list.filter(w => w?.type === 'HRV_RECENT_DATA_MISSING');
+            const dates = stepDup.map(w => w.date).filter(Boolean).sort();
+            const avg = arr => arr.length ? Math.round(arr.reduce((a,b)=>a+Number(b || 0),0) / arr.length) : null;
+            return {
+                totalCount: list.length,
+                byType,
+                stepDuplication: {
+                    count: stepDup.length,
+                    firstDate: dates[0] || null,
+                    lastDate: dates[dates.length - 1] || null,
+                    averageSelectedSteps: avg(stepDup.map(w => w.selectedSteps)),
+                    averageSimpleSumSteps: avg(stepDup.map(w => w.simpleSumSteps)),
+                    comment: stepDup.length
+                        ? `歩数の二重計上疑いは${stepDup.length}日ありますが、healthData.stepsにはソース優先で補正したselectedStepsを採用済みです。`
+                        : '歩数二重計上疑いはありません。'
+                },
+                stepExtreme: { count: stepExtreme.length },
+                stepSpike: { count: stepSpike.length, latest: stepSpike[stepSpike.length - 1] || null },
+                hrvRecentMissing: { count: hrvMissing.length, latest: hrvMissing[hrvMissing.length - 1] || null }
+            };
+        }
+
+        function buildImportWarningMessagesGV178(importWarnings) {
+            const summary = buildImportWarningSummaryGV178(importWarnings);
+            const messages = [];
+            if (summary.stepDuplication.count > 0) {
+                const range = summary.stepDuplication.firstDate && summary.stepDuplication.lastDate
+                    ? `${summary.stepDuplication.firstDate}〜${summary.stepDuplication.lastDate}`
+                    : '対象期間';
+                messages.push(`${range}のうち${summary.stepDuplication.count}日で歩数二重計上疑いがあります。ただし、歩数値は単純合算ではなくApple Watch/iPhoneソース優先で補正済みです。`);
+            }
+            if (summary.stepExtreme.count > 0) messages.push(`1日50,000歩超えの歩数異常日が${summary.stepExtreme.count}日あります。`);
+            if (summary.stepSpike.count > 0) messages.push('直近7日平均歩数が直近30日平均より大きく上振れしています。歩数ソースまたは特殊活動を確認してください。');
+            if (summary.hrvRecentMissing.count > 0) messages.push('直近7日のHRVが不足しています。これは体調悪化ではなく評価精度低下として扱います。');
+            return messages;
+        }
 
         function parseGpxDetailed(xml, filename) {
             const points = []; const times = [];
@@ -3138,30 +3521,211 @@
             document.getElementById('activity-report-advice').innerText = advice;
         }
 
+        function clampScore(value) {
+            return Math.max(0, Math.min(100, Math.round(Number(value) || 0)));
+        }
+
+        function avgValuesFromObjectByDates(obj, dates) {
+            const vals = (dates || []).map(d => obj?.[d]).filter(v => v != null && !isNaN(v));
+            return vals.length ? vals.reduce((a,b)=>a+Number(b),0) / vals.length : null;
+        }
+
+        function getPrevDates(keys, date, days = 30) {
+            const idx = keys.indexOf(date);
+            if (idx <= 0) return [];
+            return keys.slice(Math.max(0, idx - days), idx);
+        }
+
+        function asLogArrayGV177(value) {
+            if (Array.isArray(value)) return value;
+            if (!value) return [];
+            if (typeof value === 'object') return Object.values(value).flatMap(v => Array.isArray(v) ? v : (v ? [v] : []));
+            return [];
+        }
+
+        function getDailyFoodRiskMetrics(date) {
+            const rawFoods = asLogArrayGV177(healthData.foodLogs?.[date] || healthData.manualLogs?.[date]);
+            const foods = rawFoods.map(x => (typeof normalizeFoodLogItemGV156 === 'function' ? normalizeFoodLogItemGV156(x) : x)).filter(Boolean);
+            const alcohols = asLogArrayGV177(healthData.alcoholLogs?.[date]);
+            const events = asLogArrayGV177(healthData.eventLogs?.[date]);
+            const riskFoodCount = foods.filter(x => Number(x.severity || 0) >= 1 || ['注意','要注意','重大リスク'].includes(x.evaluation)).length;
+            const heavyFoodCount = foods.filter(x => Number(x.estimatedCalories ?? x.kcal ?? 0) >= 500 || Number(x.severity || 0) >= 2 || ['要注意','重大リスク'].includes(x.evaluation)).length;
+            const lateNightFoodCount = foods.filter(x => Number(String(x.localTime || '').slice(0,2)) >= 21).length;
+            const alcoholCups = alcohols.reduce((s,x)=>s+(Number(x?.cups)||0),0);
+            const outsideFoodCount = foods.filter(x => x.category === 'outsideFood' || x.group === 'outsideFood' || (typeof OUTSIDE_MEAL_PLACE_CODES_GV156 !== 'undefined' && OUTSIDE_MEAL_PLACE_CODES_GV156.has(x.mealPlaceCode))).length;
+            const eventLoadCount = events.filter(x => ['outside_meal','business_trip','travel','late_work'].includes(x?.eventCode || x?.id || x?.kind)).length;
+            return { foodCount: foods.length, riskFoodCount, heavyFoodCount, lateNightFoodCount, alcoholCups, outsideFoodCount, eventLoadCount };
+        }
+
+        function buildDailyHealthMetrics(date, hrvKeys) {
+            const heightM = (healthData.summary?.heightCm || 150) / 100;
+            const sl = healthData.sleep?.[date];
+            const st = healthData.steps?.[date];
+            const hr = healthData.heartRate?.[date];
+            const hrv = healthData.hrv?.[date];
+            const w = healthData.weight?.[date];
+            const dayDist = (healthData.gpsSummaries || []).filter(r => r.date === date).reduce((a,b)=>a+(Number(b.distance)||0), 0);
+            const prevHrvDates = getPrevDates(hrvKeys, date, 30);
+            const hrvBase = avgValuesFromObjectByDates(healthData.hrv, prevHrvDates);
+            const hrKeys = Object.keys(healthData.heartRate || {}).sort();
+            const hrBase = avgValuesFromObjectByDates(healthData.heartRate, getPrevDates(hrKeys, date, 30));
+            const foodRisk = getDailyFoodRiskMetrics(date);
+            const metricReliability = healthData.metricReliability || metricReliabilityGV178 || null;
+            const stepReliabilityStatus = metricReliability?.steps?.status || 'ok';
+            const hrvReliabilityStatus = metricReliability?.hrv?.status || 'ok';
+
+            let performance = 100;
+            if (sl != null) { if (sl < 5.5) performance -= 24; else if (sl < 6.5) performance -= 14; else if (sl > 9.5) performance -= 4; } else performance -= 6;
+            if (st != null) { if (st < 4000) performance -= 12; else if (st < 7000) performance -= 6; else if (st >= 8000 && st <= 18000 && stepReliabilityStatus !== 'duplication_suspected') performance += 3; }
+            if (stepReliabilityStatus === 'duplication_suspected' && st != null && st >= 18000) performance -= 4;
+            if (hr != null) { if (hr > 85) performance -= 16; else if (hr > 75) performance -= 8; }
+            if (hr != null && hrBase != null && hr - hrBase >= 8) performance -= 10;
+            if (hrv != null && hrvBase != null) { const ratio = hrv / hrvBase; if (ratio < 0.65) performance -= 22; else if (ratio < 0.8) performance -= 10; else if (ratio >= 1.05) performance += 4; }
+            if (dayDist > 300) performance -= 16; else if (dayDist > 80) performance -= 8;
+            performance = clampScore(performance);
+
+            let fatigueRisk = 0;
+            if (sl != null) { if (sl < 5.5) fatigueRisk += 34; else if (sl < 6.5) fatigueRisk += 18; } else fatigueRisk += 8;
+            if (hr != null) { if (hr > 85) fatigueRisk += 22; else if (hr > 75) fatigueRisk += 10; }
+            if (hr != null && hrBase != null && hr - hrBase >= 8) fatigueRisk += 14;
+            if (hrv != null && hrvBase != null) { const ratio = hrv / hrvBase; if (ratio < 0.65) fatigueRisk += 28; else if (ratio < 0.8) fatigueRisk += 14; }
+            if (dayDist > 300) fatigueRisk += 28; else if (dayDist > 80) fatigueRisk += 14;
+            fatigueRisk = clampScore(fatigueRisk);
+
+            let diseaseRisk = 0;
+            if (w != null && heightM > 0) {
+                const bmi = w / (heightM * heightM);
+                if (bmi >= 30) diseaseRisk += 30;
+                else if (bmi >= 25) diseaseRisk += 22;
+                else if (bmi >= 23) diseaseRisk += 10;
+                else if (bmi < 18.5) diseaseRisk += 10;
+                const wKeys = Object.keys(healthData.weight || {}).filter(k => k <= date).sort();
+                const currentIdx = wKeys.indexOf(date);
+                const baseDate = currentIdx >= 30 ? wKeys[currentIdx - 30] : wKeys[0];
+                const baseW = baseDate ? healthData.weight[baseDate] : null;
+                if (baseW != null && w - baseW >= 2) diseaseRisk += 10;
+            } else diseaseRisk += 6;
+            if (st != null && st < 5000) diseaseRisk += 8;
+            if (sl != null && sl < 6) diseaseRisk += 8;
+            if (hr != null && hr > 85) diseaseRisk += 8;
+            diseaseRisk += Math.min(18, foodRisk.riskFoodCount * 6);
+            diseaseRisk += Math.min(16, foodRisk.heavyFoodCount * 8);
+            diseaseRisk += Math.min(10, foodRisk.lateNightFoodCount * 5);
+            diseaseRisk += Math.min(14, Math.max(0, foodRisk.alcoholCups - 1) * 5);
+            diseaseRisk += Math.min(10, foodRisk.outsideFoodCount * 3);
+            diseaseRisk = clampScore(diseaseRisk);
+
+            const score = clampScore((performance * 0.50) + ((100 - fatigueRisk) * 0.30) + ((100 - diseaseRisk) * 0.20));
+            return { date, score, performance, fatigueRisk, diseaseRisk, dayDist, foodRisk, stepReliabilityStatus, hrvReliabilityStatus };
+        }
+
         function calcDailyHealthScores() {
             const dates = Array.from(new Set([
                 ...Object.keys(healthData.steps || {}),
                 ...Object.keys(healthData.sleep || {}),
                 ...Object.keys(healthData.heartRate || {}),
                 ...Object.keys(healthData.hrv || {}),
-                ...Object.keys(healthData.weight || {})
+                ...Object.keys(healthData.weight || {}),
+                ...Object.keys(healthData.foodLogs || {}),
+                ...Object.keys(healthData.manualLogs || {}),
+                ...Object.keys(healthData.alcoholLogs || {})
             ])).sort();
             const hrvKeys = Object.keys(healthData.hrv || {}).sort();
-            return dates.map(d => {
-                let score = 100;
-                const sl = healthData.sleep[d], st = healthData.steps[d], hr = healthData.heartRate[d], hrv = healthData.hrv[d], w = healthData.weight[d];
-                if (sl != null) { if (sl < 5.5) score -= 18; else if (sl < 6.5) score -= 10; else if (sl > 9.5) score -= 4; } else score -= 4;
-                if (st != null) { if (st < 4000) score -= 10; else if (st < 7000) score -= 5; }
-                if (hr != null) { if (hr > 85) score -= 12; else if (hr > 75) score -= 6; }
-                if (hrv != null) { const base = hrvKeys.slice(Math.max(0, hrvKeys.indexOf(d)-30), hrvKeys.indexOf(d)).reduce((a,k)=>a+healthData.hrv[k],0)/30; if (base && hrv < base*0.7) score -= 18; }
-                if (w != null) { const bmi = w / Math.pow((healthData.summary.heightCm/100),2); if (bmi >= 25) score -= 5; }
-                const dayDist = (healthData.gpsSummaries || []).filter(r => r.date === d).reduce((a,b)=>a+(b.distance||0), 0);
-                if (dayDist > 300) score -= 12; else if (dayDist > 80) score -= 6;
-                return { date: d, score: Math.max(0, Math.min(100, Math.round(score))) };
-            });
+            return dates.map(d => buildDailyHealthMetrics(d, hrvKeys));
+        }
+
+        function getScoreBand(score, highIsGood = true) {
+            if (score == null || isNaN(score)) return { label: '--', className: 'text-slate-300' };
+            if (highIsGood) {
+                if (score >= 80) return { label: '良好', className: 'text-emerald-300' };
+                if (score >= 65) return { label: '普通', className: 'text-cyan-200' };
+                if (score >= 50) return { label: '注意', className: 'text-amber-300' };
+                return { label: '低下', className: 'text-rose-300' };
+            }
+            if (score < 25) return { label: '低い', className: 'text-emerald-300' };
+            if (score < 50) return { label: '中程度', className: 'text-amber-300' };
+            if (score < 75) return { label: '高め', className: 'text-orange-300' };
+            return { label: '高い', className: 'text-rose-300' };
+        }
+
+
+        function calcAverageMetric(rows, startIdx, endIdx, key) {
+            const vals = rows.slice(Math.max(0, startIdx), Math.max(0, endIdx)).map(r => r?.[key]).filter(v => v != null && !isNaN(v));
+            return vals.length ? vals.reduce((a,b)=>a+Number(b),0) / vals.length : null;
+        }
+
+        function formatIndexTrendDiff(current, base, higherIsBetter = true) {
+            if (current == null || base == null || isNaN(current) || isNaN(base)) return '--';
+            const diff = Math.round(Number(current) - Number(base));
+            if (Math.abs(diff) < 1) return '横ばい';
+            const direction = higherIsBetter ? (diff > 0 ? '改善' : '低下') : (diff > 0 ? '悪化' : '改善');
+            return `${direction} ${diff > 0 ? '+' : ''}${diff}`;
+        }
+
+        function setSubIndexTrendText(targetId, rows, latestIdx, key, higherIsBetter = true) {
+            const latest = rows?.[latestIdx];
+            const el = document.getElementById(targetId);
+            if (!el || !latest) return;
+            const prevVal = latestIdx > 0 ? rows[latestIdx - 1]?.[key] : null;
+            const weekAvg = calcAverageMetric(rows, latestIdx - 7, latestIdx, key);
+            const monthAvg = calcAverageMetric(rows, latestIdx - 30, latestIdx, key);
+            el.innerText = `前日比 ${formatIndexTrendDiff(latest[key], prevVal, higherIsBetter)} / 7日平均比 ${formatIndexTrendDiff(latest[key], weekAvg, higherIsBetter)} / 30日平均比 ${formatIndexTrendDiff(latest[key], monthAvg, higherIsBetter)}`;
+        }
+
+        function setSubIndexCard(scoreId, labelId, commentId, score, label, comment, highIsGood = true) {
+            safeSetText(scoreId, score == null || isNaN(score) ? '--' : Math.round(score));
+            const labelEl = document.getElementById(labelId);
+            const band = getScoreBand(score, highIsGood);
+            if (labelEl) {
+                labelEl.innerText = label || band.label;
+                labelEl.className = `health-index-label ${band.className}`;
+            }
+            safeSetText(commentId, comment || '');
+        }
+
+        function buildSubIndexComments(metrics) {
+            if (!metrics) return { performance: '', fatigue: '', disease: '' };
+            const p = metrics.performance, f = metrics.fatigueRisk, d = metrics.diseaseRisk;
+            const reliabilityNote = [];
+            if (metrics.stepReliabilityStatus === 'duplication_suspected') reliabilityNote.push('歩数は二重計上疑いがあるため活動量評価の信頼度を下げています。');
+            if (metrics.hrvReliabilityStatus === 'recent_missing') reliabilityNote.push('HRV直近欠損のため、体調悪化ではなく評価精度低下として扱います。');
+            const reliabilityText = reliabilityNote.length ? ' ' + reliabilityNote.join(' ') : '';
+            const performance = p >= 80 ? '睡眠・心拍・HRVのバランスは良好。通常の活動に耐えやすい状態です。'
+                : p >= 65 ? '大きな問題はありませんが、睡眠・HRV・心拍のどれかに弱さがあります。'
+                : p >= 50 ? 'パフォーマンスは低下気味。集中作業や高負荷運動は効率が落ちる可能性があります。'
+                : 'パフォーマンス低下が強い状態。回復優先の判断が妥当です。';
+            const fatigue = f < 25 ? '疲労リスクは低め。睡眠不足・HRV低下・心拍上昇の強いサインは限定的です。'
+                : f < 50 ? '疲労リスクは中程度。睡眠または移動負荷を確認してください。'
+                : f < 75 ? '疲労リスクは高め。無理に活動量を増やす判断は避けるべきです。'
+                : '疲労リスクが高い状態。睡眠確保と移動・運動負荷の抑制を優先してください。';
+            const disease = d < 25 ? '生活習慣リスクは低め。体重・食事・飲酒・活動量に強い悪化サインは少ないです。'
+                : d < 50 ? '生活習慣リスクは中程度。体重、外食、高カロリー、飲酒のいずれかを確認してください。'
+                : d < 75 ? '生活習慣リスクは高め。体重管理と食事ログの見直しが必要です。'
+                : '生活習慣リスクが高い状態。短期の体重増、食事負荷、飲酒、低活動を優先的に潰してください。';
+            return { performance: performance + reliabilityText, fatigue: fatigue + reliabilityText, disease: disease + reliabilityText };
         }
 
         function signed(n) { return (n == null || isNaN(n)) ? '--' : (Math.round(n) >= 0 ? '+' : '') + Math.round(n); }
+
+
+        function updateImportDiagnosticsPanelGV178() {
+            const reliability = healthData.metricReliability || metricReliabilityGV178 || buildMetricReliabilityGV178();
+            const stepDiag = healthData.stepImportDiagnostics || stepImportDiagnosticsGV178 || null;
+            const hrvDiag = healthData.hrvImportDiagnostics || hrvImportDiagnosticsGV178 || null;
+            const stepStatus = reliability?.steps?.status || '--';
+            const hrvStatus = reliability?.hrv?.status || '--';
+            safeSetText('diag-step-method', reliability?.steps?.method === 'source_priority_normalized_device_no_simple_sum' ? 'ソース優先 / 合算なし' : '--');
+            safeSetText('diag-step-status', stepStatus === 'duplication_suspected' ? 'あり' : (stepStatus === 'ok' ? 'なし' : '未判定'));
+            safeSetText('diag-hrv-last-date', reliability?.hrv?.lastDate || hrvDiag?.lastDate || '--');
+            safeSetText('diag-hrv-last7', (reliability?.hrv?.last7DaysWithData ?? hrvDiag?.last7DaysWithHrv ?? '--') + (reliability?.hrv?.last7DaysWithData != null || hrvDiag?.last7DaysWithHrv != null ? '日 / 7日' : ''));
+            const commentEl = document.getElementById('diag-reliability-comment');
+            if (commentEl) {
+                const stepAvg = reliability?.steps?.last7Average != null ? `直近7日平均歩数: ${Number(reliability.steps.last7Average).toLocaleString()}歩。` : '';
+                const stepComment = stepStatus === 'duplication_suspected' ? '歩数は二重計上疑いがあるため、活動量の高評価には慎重に扱います。' : (stepStatus === 'ok' ? '歩数はソース優先方式で集計されています。' : '歩数データが不足しています。');
+                const hrvComment = hrvStatus === 'recent_missing' ? 'HRVは直近欠損があるため、体調悪化ではなく評価精度低下として扱います。' : (hrvStatus === 'ok' ? 'HRVは直近評価に利用できます。' : 'HRVデータが不足しています。');
+                commentEl.innerText = `${stepAvg}${stepComment} ${hrvComment}`;
+            }
+        }
 
         function updateDashboard(targetDate) {
             if (!targetDate) targetDate = getLatestDateAcrossData() || new Date().toISOString().substring(0, 10);
@@ -3238,16 +3802,30 @@
                     const commentEl = document.getElementById('overall-health-comment');
                     const trendComment = buildWeightComparisonComment(latest.date || targetDate);
                     let baseComment = '';
-                    if (latest.score < 55) baseComment = '疲労が強く出ています。睡眠を優先してください。'; 
-                    else if (latest.score < 75) baseComment = 'やや疲労傾向。移動負荷と睡眠を確認しましょう。'; 
-                    else baseComment = '概ね良好です。現在のリズムを維持しましょう。';
+                    if (latest.score < 55) baseComment = '総合状態は低下しています。疲労リスクと生活習慣リスクの内訳を確認してください。'; 
+                    else if (latest.score < 75) baseComment = '総合状態は注意水準です。パフォーマンス低下・疲労・生活習慣リスクのどれが主因か確認してください。'; 
+                    else baseComment = '総合状態は概ね良好です。内訳指標も確認して偏りがないか見てください。';
                     commentEl.innerText = trendComment ? `${trendComment} ${baseComment}` : baseComment;
+
+                    const subComments = buildSubIndexComments(latest);
+                    setSubIndexCard('performance-score', 'performance-label', 'performance-comment', latest.performance, null, subComments.performance, true);
+                    setSubIndexCard('fatigue-risk-score', 'fatigue-risk-label', 'fatigue-risk-comment', latest.fatigueRisk, null, subComments.fatigue, false);
+                    setSubIndexCard('disease-risk-score', 'disease-risk-label', 'disease-risk-comment', latest.diseaseRisk, null, subComments.disease, false);
+                    setSubIndexTrendText('performance-trend', rows, latestIdx, 'performance', true);
+                    setSubIndexTrendText('fatigue-risk-trend', rows, latestIdx, 'fatigueRisk', false);
+                    setSubIndexTrendText('disease-risk-trend', rows, latestIdx, 'diseaseRisk', false);
                 } else {
                     safeSetText('overall-health-score', '--');
                     safeSetText('score-vs-yesterday', '--'); safeSetText('score-vs-week', '--'); safeSetText('score-vs-month', '--');
+                    safeSetText('performance-score', '--'); safeSetText('fatigue-risk-score', '--'); safeSetText('disease-risk-score', '--');
+                    safeSetText('performance-label', '--'); safeSetText('fatigue-risk-label', '--'); safeSetText('disease-risk-label', '--');
+                    safeSetText('performance-trend', '前日比 -- / 7日平均比 -- / 30日平均比 --');
+                    safeSetText('fatigue-risk-trend', '前日比 -- / 7日平均比 -- / 30日平均比 --');
+                    safeSetText('disease-risk-trend', '前日比 -- / 7日平均比 -- / 30日平均比 --');
                     document.getElementById('overall-health-comment').innerText = 'スコアを算出できません。';
                 }
             }
+            updateImportDiagnosticsPanelGV178();
         }
 
         function updateAlerts() {
@@ -3286,10 +3864,110 @@
             safeSetText('act-low-streak', maxStreak + ' days');
         }
 
+        const JP_WEEKDAYS_GV1782 = ['日','月','火','水','木','金','土'];
+        function parseDateKeyLocalGV1782(dateKey) {
+            if (!dateKey || typeof dateKey !== 'string' || dateKey.length < 10) return null;
+            const y = Number(dateKey.slice(0,4));
+            const m = Number(dateKey.slice(5,7));
+            const d = Number(dateKey.slice(8,10));
+            if (!y || !m || !d) return null;
+            return new Date(y, m - 1, d);
+        }
+        function getWeekdayIndexGV1782(dateKey) {
+            const dt = parseDateKeyLocalGV1782(dateKey);
+            return dt ? dt.getDay() : null;
+        }
+        function formatAxisDateLabelGV1782(dateKey) {
+            if (!dateKey || dateKey.length < 10) return dateKey || '';
+            return `${Number(dateKey.slice(5,7))}/${Number(dateKey.slice(8,10))}`;
+        }
+        function formatTooltipDateLabelGV1782(dateKey) {
+            if (!dateKey || dateKey.length < 10) return dateKey || '';
+            const dow = getWeekdayIndexGV1782(dateKey);
+            const w = dow == null ? '' : `（${JP_WEEKDAYS_GV1782[dow]}）`;
+            return `${dateKey}${w}`;
+        }
+        function getWeekendAxisColorGV1782(dateKey) {
+            const dow = getWeekdayIndexGV1782(dateKey);
+            if (dow === 0) return '#fb7185';
+            if (dow === 6) return '#60a5fa';
+            return '#94a3b8';
+        }
+        function shouldShowAxisTickGV1782(index, count) {
+            if (count <= 0) return true;
+            const w = window.innerWidth || 1024;
+            const maxTicks = w <= 420 ? 5 : (w <= 768 ? 7 : (w <= 1200 ? 10 : 14));
+            if (count <= maxTicks) return true;
+            const step = Math.ceil(count / maxTicks);
+            return index === 0 || index === count - 1 || index % step === 0;
+        }
+        const WEEKEND_BACKGROUND_PLUGIN_GV1782 = {
+            id: 'weekendBackgroundGV1782',
+            beforeDatasetsDraw(chart) {
+                const keys = chart.data?.datasets?.[0]?.dateKeys || [];
+                if (!keys.length || !chart.chartArea || !chart.scales?.x) return;
+                const xScale = chart.scales.x;
+                const { top, bottom, left: areaLeft, right: areaRight } = chart.chartArea;
+                const ctx = chart.ctx;
+                ctx.save();
+                keys.forEach((dateKey, i) => {
+                    const dow = getWeekdayIndexGV1782(dateKey);
+                    if (dow !== 0 && dow !== 6) return;
+                    const x = xScale.getPixelForValue(i);
+                    const prevX = i > 0 ? xScale.getPixelForValue(i - 1) : null;
+                    const nextX = i < keys.length - 1 ? xScale.getPixelForValue(i + 1) : null;
+                    let l = prevX == null ? x - ((nextX ?? x) - x) / 2 : (prevX + x) / 2;
+                    let r = nextX == null ? x + (x - (prevX ?? x)) / 2 : (x + nextX) / 2;
+                    l = Math.max(areaLeft, l); r = Math.min(areaRight, r);
+                    if (r <= l) return;
+                    ctx.fillStyle = dow === 0 ? 'rgba(244, 63, 94, 0.075)' : 'rgba(59, 130, 246, 0.075)';
+                    ctx.fillRect(l, top, r - l, bottom - top);
+                });
+                ctx.restore();
+            }
+        };
+        if (window.Chart && !window.__weekendBackgroundPluginRegisteredGV1782) {
+            Chart.register(WEEKEND_BACKGROUND_PLUGIN_GV1782);
+            window.__weekendBackgroundPluginRegisteredGV1782 = true;
+        }
+        function applyDateAxisOptionsGV1782(options, dateKeys) {
+            if (!options.scales) options.scales = {};
+            if (!options.scales.x) options.scales.x = {};
+            if (!options.scales.x.ticks) options.scales.x.ticks = {};
+            options.scales.x.ticks.autoSkip = false;
+            options.scales.x.ticks.maxRotation = 0;
+            options.scales.x.ticks.minRotation = 0;
+            options.scales.x.ticks.font = function(ctx) {
+                const count = dateKeys?.length || 0;
+                const size = (window.innerWidth || 1024) <= 420 && count > 7 ? 9 : 10;
+                return { size, weight: '800' };
+            };
+            options.scales.x.ticks.callback = function(value, index) {
+                const keys = this.chart?.data?.datasets?.[0]?.dateKeys || dateKeys || [];
+                if (!shouldShowAxisTickGV1782(index, keys.length)) return '';
+                return formatAxisDateLabelGV1782(keys[index]);
+            };
+            options.scales.x.ticks.color = function(ctx) {
+                const keys = ctx.chart?.data?.datasets?.[0]?.dateKeys || dateKeys || [];
+                return getWeekendAxisColorGV1782(keys[ctx.index]);
+            };
+            const callbacks = options.plugins?.tooltip?.callbacks || {};
+            options.plugins.tooltip.callbacks = {
+                ...callbacks,
+                title: function(items) {
+                    if (!items || !items.length) return '';
+                    const chart = items[0].chart;
+                    const keys = chart?.data?.datasets?.[0]?.dateKeys || dateKeys || [];
+                    const idx = items[0].dataIndex;
+                    return formatTooltipDateLabelGV1782(keys[idx] || items[0].label);
+                }
+            };
+        }
+
         function getDefaultChartOptions() {
             return {
                 responsive: true, maintainAspectRatio: false,
-                plugins: { legend: { display: true, position: 'top', labels: { color: '#94a3b8', boxWidth: 12, font: { size: 10 } } }, tooltip: { mode: 'index', intersect: false } },
+                plugins: { legend: { display: true, position: 'top', labels: { color: '#94a3b8', boxWidth: 12, font: { size: 10 } } }, tooltip: { mode: 'index', intersect: false, callbacks: {} } },
                 scales: { x: { ticks: { color: '#94a3b8', maxTicksLimit: 14 }, grid: { display: false } }, y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } } }
             };
         }
@@ -3311,70 +3989,162 @@
             return { label, data: labels.map(() => value), type: 'line', borderDash: options.borderDash || [5, 5], borderWidth: options.borderWidth || 2, borderColor: options.borderColor || 'rgba(255,255,255,0.5)', pointRadius: 0, fill: false, ...options };
         }
 
-        function applySmartYAxis(options, values, extraValues = []) {
-            const allVals = [...values, ...extraValues].filter(v => v != null && !isNaN(v));
-            if (allVals.length > 0) { const minVal = Math.min(...allVals); const maxVal = Math.max(...allVals); const pad = (maxVal - minVal) * 0.1 || 1; options.scales.y.suggestedMin = Math.floor(minVal - pad); options.scales.y.suggestedMax = Math.ceil(maxVal + pad); }
+        function applySmartYAxis(options, ...seriesLists) {
+            const allVals = seriesLists
+                .flatMap(v => Array.isArray(v) ? v : [v])
+                .filter(v => v != null && Number.isFinite(Number(v)))
+                .map(Number);
+            if (allVals.length > 0) {
+                const minVal = Math.min(...allVals);
+                const maxVal = Math.max(...allVals);
+                const pad = Math.max((maxVal - minVal) * 0.12, 1);
+                options.scales.y.suggestedMin = Math.max(0, Math.floor(minVal - pad));
+                options.scales.y.suggestedMax = Math.ceil(maxVal + pad);
+            }
         }
 
         function renderWeightTrendChart(canvasId) {
             if(charts[canvasId]) charts[canvasId].destroy(); const el = document.getElementById(canvasId); if(!el) return;
             const keys = Object.keys(healthData.weight).sort(); const range = chartRanges[canvasId] === 'all' ? keys.length : chartRanges[canvasId]; const targetKeys = keys.slice(Math.max(0, keys.length - range));
             if(targetKeys.length === 0) { drawEmptyChart(el); return; }
-            const labels = targetKeys.map(k => k.substring(5)); const actualData = targetKeys.map(k => healthData.weight[k]);
+            const labels = targetKeys.map(formatAxisDateLabelGV1782); const actualData = targetKeys.map(k => healthData.weight[k]);
             const extendedKeys = keys.slice(Math.max(0, keys.length - range - 6)); const extendedData = extendedKeys.map(k => healthData.weight[k]);
             const maDataExtended = movingAverage(extendedData, 7); const movingAverageData = maDataExtended.slice(maDataExtended.length - targetKeys.length);
             const targetWeight = healthData.summary.targetWeight || 50;
             const pointColors = targetKeys.map(k => k === dashboardSelectedDate ? '#3b82f6' : 'rgba(59,130,246,0.5)'); const pointRadii = targetKeys.map(k => k === dashboardSelectedDate ? 5 : 3);
-            const options = getDefaultChartOptions(); applySmartYAxis(options, actualData, [targetWeight]);
-            charts[canvasId] = new Chart(el, { type: 'line', data: { labels: labels, datasets: [ { label: '体重', data: actualData, type: 'line', borderColor: '#3b82f6', backgroundColor: '#3b82f6', tension: 0.3, pointRadius: pointRadii, pointBackgroundColor: pointColors, fill: false }, { label: '7日平均', data: movingAverageData, type: 'line', borderColor: 'rgba(148, 163, 184, 0.6)', borderWidth: 3, pointRadius: 0, fill: false }, buildHorizontalLineDataset('目標', targetWeight, labels, { borderColor: 'rgba(16, 185, 129, 0.6)' }) ] }, options: options });
+            const options = getDefaultChartOptions(); applySmartYAxis(options, actualData, [targetWeight]); applyDateAxisOptionsGV1782(options, targetKeys);
+            charts[canvasId] = new Chart(el, { type: 'line', data: { labels: labels, datasets: [ { label: '体重', data: actualData, dateKeys: targetKeys, type: 'line', borderColor: '#3b82f6', backgroundColor: '#3b82f6', tension: 0.3, pointRadius: pointRadii, pointBackgroundColor: pointColors, fill: false }, { label: '7日平均', data: movingAverageData, type: 'line', borderColor: 'rgba(148, 163, 184, 0.6)', borderWidth: 3, pointRadius: 0, fill: false }, buildHorizontalLineDataset('目標', targetWeight, labels, { borderColor: 'rgba(16, 185, 129, 0.6)' }) ] }, options: options });
         }
 
         function renderStepsTrendChart(canvasId) {
             if(charts[canvasId]) charts[canvasId].destroy(); const el = document.getElementById(canvasId); if(!el) return;
             const keys = Object.keys(healthData.steps).sort(); const range = chartRanges[canvasId] === 'all' ? keys.length : chartRanges[canvasId]; const targetKeys = keys.slice(Math.max(0, keys.length - range));
             if(targetKeys.length === 0) { drawEmptyChart(el); return; }
-            const labels = targetKeys.map(k => k.substring(5)); const actualData = targetKeys.map(k => healthData.steps[k]);
+            const labels = targetKeys.map(formatAxisDateLabelGV1782); const actualData = targetKeys.map(k => healthData.steps[k]);
             const extendedKeys = keys.slice(Math.max(0, keys.length - range - 6)); const extendedData = extendedKeys.map(k => healthData.steps[k]);
             const maDataExtended = movingAverage(extendedData, 7); const movingAverageData = maDataExtended.slice(maDataExtended.length - targetKeys.length);
             const bgColors = targetKeys.map(k => k === dashboardSelectedDate ? '#60a5fa' : '#334155'); const borderColors = targetKeys.map(k => k === dashboardSelectedDate ? '#93c5fd' : '#475569');
-            const options = getDefaultChartOptions(); options.scales.y.beginAtZero = true;
-            charts[canvasId] = new Chart(el, { type: 'bar', data: { labels: labels, datasets: [ { label: '歩数', data: actualData, backgroundColor: bgColors, borderColor: borderColors, borderWidth: 1 }, { label: '7日平均', data: movingAverageData, type: 'line', borderColor: 'rgba(148, 163, 184, 0.8)', borderWidth: 3, pointRadius: 0, fill: false, tension: 0.3 }, buildHorizontalLineDataset('10k(目標)', 10000, labels, { borderColor: 'rgba(16, 185, 129, 0.6)' }), buildHorizontalLineDataset('8k(良好)', 8000, labels, { borderColor: 'rgba(56, 189, 248, 0.6)' }) ] }, options: options });
+            const options = getDefaultChartOptions(); options.scales.y.beginAtZero = true; applyDateAxisOptionsGV1782(options, targetKeys);
+            charts[canvasId] = new Chart(el, { type: 'bar', data: { labels: labels, datasets: [ { label: '歩数', data: actualData, dateKeys: targetKeys, backgroundColor: bgColors, borderColor: borderColors, borderWidth: 1 }, { label: '7日平均', data: movingAverageData, type: 'line', borderColor: 'rgba(148, 163, 184, 0.8)', borderWidth: 3, pointRadius: 0, fill: false, tension: 0.3 }, buildHorizontalLineDataset('10k(目標)', 10000, labels, { borderColor: 'rgba(16, 185, 129, 0.6)' }), buildHorizontalLineDataset('8k(良好)', 8000, labels, { borderColor: 'rgba(56, 189, 248, 0.6)' }) ] }, options: options });
         }
 
         function renderSleepTrendChart(canvasId) {
             if(charts[canvasId]) charts[canvasId].destroy(); const el = document.getElementById(canvasId); if(!el) return;
             const keys = Object.keys(healthData.sleep).sort(); const range = chartRanges[canvasId] === 'all' ? keys.length : chartRanges[canvasId]; const targetKeys = keys.slice(Math.max(0, keys.length - range));
             if(targetKeys.length === 0) { drawEmptyChart(el); return; }
-            const labels = targetKeys.map(k => k.substring(5)); const actualData = targetKeys.map(k => healthData.sleep[k]);
+            const labels = targetKeys.map(formatAxisDateLabelGV1782); const actualData = targetKeys.map(k => healthData.sleep[k]);
             const extendedKeys = keys.slice(Math.max(0, keys.length - range - 6)); const extendedData = extendedKeys.map(k => healthData.sleep[k]);
             const maDataExtended = movingAverage(extendedData, 7); const movingAverageData = maDataExtended.slice(maDataExtended.length - targetKeys.length);
             const bgColors = targetKeys.map(k => { const v = healthData.sleep[k]; let color = v >= 7 ? 'rgba(34, 197, 94, 0.8)' : v >= 5.5 ? 'rgba(59, 130, 246, 0.8)' : 'rgba(234, 179, 8, 0.8)'; if (k === dashboardSelectedDate) color = v >= 7 ? 'rgba(74, 222, 128, 1)' : v >= 5.5 ? 'rgba(96, 165, 250, 1)' : 'rgba(250, 204, 21, 1)'; return color; });
-            const options = getDefaultChartOptions(); options.scales.y.beginAtZero = true;
-            charts[canvasId] = new Chart(el, { type: 'bar', data: { labels: labels, datasets: [ { label: '睡眠', data: actualData, backgroundColor: bgColors, borderRadius: 4 }, { label: '7日平均', data: movingAverageData, type: 'line', borderColor: 'rgba(148, 163, 184, 0.8)', borderWidth: 3, pointRadius: 0, fill: false, tension: 0.3 }, buildHorizontalLineDataset('7h(良好)', 7, labels, { borderColor: 'rgba(34, 197, 94, 0.6)' }), buildHorizontalLineDataset('5.5h(不足)', 5.5, labels, { borderColor: 'rgba(234, 179, 8, 0.6)' }) ] }, options: options });
+            const options = getDefaultChartOptions(); options.scales.y.beginAtZero = true; applyDateAxisOptionsGV1782(options, targetKeys);
+            charts[canvasId] = new Chart(el, { type: 'bar', data: { labels: labels, datasets: [ { label: '睡眠', data: actualData, dateKeys: targetKeys, backgroundColor: bgColors, borderRadius: 4 }, { label: '7日平均', data: movingAverageData, type: 'line', borderColor: 'rgba(148, 163, 184, 0.8)', borderWidth: 3, pointRadius: 0, fill: false, tension: 0.3 }, buildHorizontalLineDataset('7h(良好)', 7, labels, { borderColor: 'rgba(34, 197, 94, 0.6)' }), buildHorizontalLineDataset('5.5h(不足)', 5.5, labels, { borderColor: 'rgba(234, 179, 8, 0.6)' }) ] }, options: options });
         }
 
         function renderHeartTrendChart(canvasId) {
             if(charts[canvasId]) charts[canvasId].destroy(); const el = document.getElementById(canvasId); if(!el) return;
             const keys = Object.keys(healthData.heartRate).sort(); const range = chartRanges[canvasId] === 'all' ? keys.length : chartRanges[canvasId]; const targetKeys = keys.slice(Math.max(0, keys.length - range));
             if(targetKeys.length === 0) { drawEmptyChart(el); return; }
-            const labels = targetKeys.map(k => k.substring(5)); const actualData = targetKeys.map(k => healthData.heartRate[k]);
+            const labels = targetKeys.map(formatAxisDateLabelGV1782); const actualData = targetKeys.map(k => healthData.heartRate[k]);
             const ext7Keys = keys.slice(Math.max(0, keys.length - range - 6)); const ma7Data = movingAverage(ext7Keys.map(k => healthData.heartRate[k]), 7).slice(-targetKeys.length);
             const ext30Keys = keys.slice(Math.max(0, keys.length - range - 29)); const ma30Data = movingAverage(ext30Keys.map(k => healthData.heartRate[k]), 30).slice(-targetKeys.length);
             const bgColors = targetKeys.map(k => k === dashboardSelectedDate ? '#fb7185' : '#e11d48');
-            const options = getDefaultChartOptions(); applySmartYAxis(options, actualData, [85, ...ma30Data]);
-            charts[canvasId] = new Chart(el, { type: 'bar', data: { labels: labels, datasets: [ { label: '心拍', data: actualData, backgroundColor: bgColors }, { label: '7日平均', data: ma7Data, type: 'line', borderColor: 'rgba(148, 163, 184, 0.8)', borderWidth: 3, pointRadius: 0, fill: false, tension: 0.3 }, { label: '30日平均', data: ma30Data, type: 'line', borderColor: 'rgba(96, 165, 250, 0.6)', borderWidth: 2, borderDash: [5,5], pointRadius: 0, fill: false, tension: 0.3 }, buildHorizontalLineDataset('85bpm(注意)', 85, labels, { borderColor: 'rgba(244, 63, 94, 0.6)' }) ] }, options: options });
+            const options = getDefaultChartOptions(); applySmartYAxis(options, actualData, [85, ...ma30Data]); applyDateAxisOptionsGV1782(options, targetKeys);
+            charts[canvasId] = new Chart(el, { type: 'bar', data: { labels: labels, datasets: [ { label: '心拍', data: actualData, dateKeys: targetKeys, backgroundColor: bgColors }, { label: '7日平均', data: ma7Data, type: 'line', borderColor: 'rgba(148, 163, 184, 0.8)', borderWidth: 3, pointRadius: 0, fill: false, tension: 0.3 }, { label: '30日平均', data: ma30Data, type: 'line', borderColor: 'rgba(96, 165, 250, 0.6)', borderWidth: 2, borderDash: [5,5], pointRadius: 0, fill: false, tension: 0.3 }, buildHorizontalLineDataset('85bpm(注意)', 85, labels, { borderColor: 'rgba(244, 63, 94, 0.6)' }) ] }, options: options });
+        }
+
+
+        function getSubIndexChartColorsGV178(metricKey) {
+            if (metricKey === 'performance') {
+                return {
+                    line: '#34d399',
+                    fill: 'rgba(52, 211, 153, .10)',
+                    point: '#6ee7b7',
+                    pointDim: 'rgba(52, 211, 153, .45)',
+                    ma7: 'rgba(16, 185, 129, .85)',
+                    ma30: 'rgba(59, 130, 246, .70)'
+                };
+            }
+            if (metricKey === 'fatigueRisk') {
+                return {
+                    line: '#f59e0b',
+                    fill: 'rgba(245, 158, 11, .10)',
+                    point: '#fbbf24',
+                    pointDim: 'rgba(245, 158, 11, .45)',
+                    ma7: 'rgba(251, 191, 36, .85)',
+                    ma30: 'rgba(96, 165, 250, .70)'
+                };
+            }
+            return {
+                line: '#fb7185',
+                fill: 'rgba(251, 113, 133, .10)',
+                point: '#fda4af',
+                pointDim: 'rgba(251, 113, 133, .45)',
+                ma7: 'rgba(244, 63, 94, .85)',
+                ma30: 'rgba(96, 165, 250, .70)'
+            };
+        }
+
+        function renderSingleIndexTrendChartGV178(canvasId, metricKey, label, isPositiveMetric) {
+            if (charts[canvasId]) charts[canvasId].destroy();
+            const el = document.getElementById(canvasId); if (!el) return;
+            const allScores = calcDailyHealthScores();
+            if (allScores.length === 0) { drawEmptyChart(el); return; }
+            const range = chartRanges[canvasId] === 'all' ? allScores.length : chartRanges[canvasId];
+            const targetScores = allScores.slice(Math.max(0, allScores.length - range));
+            const targetDateKeys = targetScores.map(s => s.date);
+            const labels = targetDateKeys.map(formatAxisDateLabelGV1782);
+            const data = targetScores.map(s => s[metricKey]);
+            const ext7Scores = allScores.slice(Math.max(0, allScores.length - range - 6));
+            const ma7Data = movingAverage(ext7Scores.map(s => s[metricKey]), 7).slice(-targetScores.length);
+            const ext30Scores = allScores.slice(Math.max(0, allScores.length - range - 29));
+            const ma30Data = movingAverage(ext30Scores.map(s => s[metricKey]), 30).slice(-targetScores.length);
+            const colors = getSubIndexChartColorsGV178(metricKey);
+            const pointColors = targetScores.map(s => s.date === dashboardSelectedDate ? colors.point : colors.pointDim);
+            const pointRadii = targetScores.map(s => s.date === dashboardSelectedDate ? 5 : 2);
+            const options = getDefaultChartOptions();
+            applySmartYAxis(options, data, ma7Data, ma30Data);
+            options.plugins.tooltip.callbacks = { ...(options.plugins.tooltip.callbacks || {}), afterLabel: () => isPositiveMetric ? '高いほど良好' : '高いほど注意' };
+            applyDateAxisOptionsGV1782(options, targetDateKeys);
+            charts[canvasId] = new Chart(el, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [
+                        { label, data, dateKeys: targetDateKeys, borderColor: colors.line, backgroundColor: colors.fill, fill: true, tension: .3, pointBackgroundColor: pointColors, pointRadius: pointRadii, borderWidth: 2 },
+                        { label: '7日平均', data: ma7Data, type: 'line', borderColor: colors.ma7, borderWidth: 3, pointRadius: 0, fill: false, tension: .3 },
+                        { label: '30日平均', data: ma30Data, type: 'line', borderColor: colors.ma30, borderWidth: 2, borderDash: [5,5], pointRadius: 0, fill: false, tension: .3 }
+                    ]
+                },
+                options
+            });
+            const commentId = canvasId.replace('chart-', '').replace('-trend', '-trend-comment');
+            const commentEl = document.getElementById(commentId);
+            if (commentEl && targetScores.length) {
+                const latestIdx = allScores.length - 1;
+                const latest = allScores[latestIdx];
+                const avg30 = calcAverageMetric(allScores, latestIdx - 30, latestIdx, metricKey);
+                const text = formatIndexTrendDiff(latest[metricKey], avg30, isPositiveMetric);
+                const direction = isPositiveMetric ? '高いほど良好' : '高いほど注意';
+                commentEl.innerHTML = `30日平均比：${text}。${direction}です。縦軸は表示期間の値に合わせて自動調整しています。`;
+            }
+        }
+
+        function renderSubIndexTrendChart() {
+            renderSingleIndexTrendChartGV178('chart-performance-trend', 'performance', 'パフォーマンス指数', true);
+            renderSingleIndexTrendChartGV178('chart-fatigue-risk-trend', 'fatigueRisk', '疲労リスク', false);
+            renderSingleIndexTrendChartGV178('chart-disease-risk-trend', 'diseaseRisk', '生活習慣リスク', false);
         }
 
         function renderHealthScoreTrendChart() {
             const canvasId = 'chart-health-score-trend'; if(charts[canvasId]) charts[canvasId].destroy(); const el = document.getElementById(canvasId); if(!el) return;
             const allScores = calcDailyHealthScores(); if(allScores.length === 0) { drawEmptyChart(el); return; }
             const range = chartRanges[canvasId] === 'all' ? allScores.length : chartRanges[canvasId]; const targetScores = allScores.slice(Math.max(0, allScores.length - range));
-            const labels = targetScores.map(s => s.date.substring(5)); const data = targetScores.map(s => s.score);
+            const targetDateKeys = targetScores.map(s => s.date); const labels = targetDateKeys.map(formatAxisDateLabelGV1782); const data = targetScores.map(s => s.score);
             const ext7Scores = allScores.slice(Math.max(0, allScores.length - range - 6)); const ma7Data = movingAverage(ext7Scores.map(s => s.score), 7).slice(-targetScores.length);
             const ext30Scores = allScores.slice(Math.max(0, allScores.length - range - 29)); const ma30Data = movingAverage(ext30Scores.map(s => s.score), 30).slice(-targetScores.length);
             const pointColors = targetScores.map(s => s.date === dashboardSelectedDate ? '#22d3ee' : 'rgba(34, 211, 238, 0.4)'); const pointRadii = targetScores.map(s => s.date === dashboardSelectedDate ? 5 : 2);
-            const options = getDefaultChartOptions(); options.scales.y.min = 0; options.scales.y.max = 100;
-            charts[canvasId] = new Chart(el, { type: 'line', data: { labels: labels, datasets: [ { label: 'スコア', data: data, borderColor: '#22d3ee', backgroundColor: 'rgba(34, 211, 238, 0.1)', fill: true, tension: 0.3, pointBackgroundColor: pointColors, pointRadius: pointRadii, borderWidth: 2 }, { label: '7日平均', data: ma7Data, type: 'line', borderColor: 'rgba(148, 163, 184, 0.8)', borderWidth: 3, pointRadius: 0, fill: false, tension: 0.3 }, { label: '30日平均', data: ma30Data, type: 'line', borderColor: 'rgba(96, 165, 250, 0.6)', borderWidth: 2, borderDash: [5,5], pointRadius: 0, fill: false, tension: 0.3 }, buildHorizontalLineDataset('80点(良好)', 80, labels, { borderColor: 'rgba(52, 211, 153, 0.6)' }), buildHorizontalLineDataset('70点(注意)', 70, labels, { borderColor: 'rgba(250, 204, 21, 0.6)' }) ] }, options: options });
+            const options = getDefaultChartOptions(); applySmartYAxis(options, data, ma7Data, ma30Data); applyDateAxisOptionsGV1782(options, targetDateKeys);
+            charts[canvasId] = new Chart(el, { type: 'line', data: { labels: labels, datasets: [ { label: 'スコア', data: data, dateKeys: targetDateKeys, borderColor: '#22d3ee', backgroundColor: 'rgba(34, 211, 238, 0.1)', fill: true, tension: 0.3, pointBackgroundColor: pointColors, pointRadius: pointRadii, borderWidth: 2 }, { label: '7日平均', data: ma7Data, type: 'line', borderColor: 'rgba(148, 163, 184, 0.8)', borderWidth: 3, pointRadius: 0, fill: false, tension: 0.3 }, { label: '30日平均', data: ma30Data, type: 'line', borderColor: 'rgba(96, 165, 250, 0.6)', borderWidth: 2, borderDash: [5,5], pointRadius: 0, fill: false, tension: 0.3 }, buildHorizontalLineDataset('80点(良好)', 80, labels, { borderColor: 'rgba(52, 211, 153, 0.6)' }), buildHorizontalLineDataset('70点(注意)', 70, labels, { borderColor: 'rgba(250, 204, 21, 0.6)' }) ] }, options: options });
             
             const commentEl = document.getElementById('health-score-trend-comment');
             if(commentEl) {
@@ -3392,6 +4162,7 @@
 
         function updateAllCharts() {
             renderHealthScoreTrendChart();
+            renderSubIndexTrendChart();
             renderWeightTrendChart('chart-weight-dash');
             renderWeightTrendChart('chart-weight-full');
             renderStepsTrendChart('chart-steps-dash');
@@ -4160,7 +4931,7 @@
                     logId,
                     date,
                     kind,
-                    appVersion: 'gv1.76',
+                    appVersion: 'gv1.78.3',
                     updatedAt: new Date().toISOString(),
                     source: 'browser'
                 }, { merge: true });
@@ -5377,6 +6148,9 @@
 
             const healthDataValidation = buildHealthDataValidation(rawFoodLogs, analyzedFoodLogs, alcoholLogs, eventLogs);
             healthDataValidation.warnings.forEach(w => warnings.push(w.message || String(w)));
+            const importWarnings = healthData.importWarnings || importWarningsGV178 || buildImportWarningsGV178();
+            const importWarningSummary = buildImportWarningSummaryGV178(importWarnings);
+            buildImportWarningMessagesGV178(importWarnings).forEach(msg => warnings.push(msg));
 
             const hasTestLogs = Object.values(rawFoodLogs).flat().some(x => x.isTest === true || x.suspectedTestData === true);
 
@@ -5393,9 +6167,16 @@
                     excludeTestLogsFromAnalysis: true,
                     excludeSuspectedTestLogsFromAnalysis: true,
                     dailySummaryCanonical: 'dailySummaries.analyzed',
-                    caloriesAreEstimated: true
+                    caloriesAreEstimated: true,
+                    stepAggregationMethod: 'source_priority_normalized_device_no_simple_sum',
+                    hrvMissingMeansReliabilityLossNotHealthDeterioration: true
                 },
-                hrvStatus: sourceSummary.hrvDays > 0 ? 'available' : 'not_available',
+                hrvStatus: (healthData.metricReliability?.hrv?.status || (sourceSummary.hrvDays > 0 ? 'available' : 'not_available')),
+                metricReliability: healthData.metricReliability || metricReliabilityGV178 || buildMetricReliabilityGV178(),
+                stepImportDiagnostics: healthData.stepImportDiagnostics || stepImportDiagnosticsGV178 || null,
+                hrvImportDiagnostics: healthData.hrvImportDiagnostics || hrvImportDiagnosticsGV178 || null,
+                importWarnings,
+                importWarningSummary,
                 unknownFoodItems,
                 eventConsistencyWarnings,
                 duplicateFoodWarnings,
@@ -5418,7 +6199,9 @@
                     hasInvalidAlcoholType: invalidAlcoholTypes > 0,
                     suspectedTestData: testDetection.suspectedTestData,
                     hasRegression: regressionWarnings.length > 0,
-                    hasHealthDataValidationWarnings: healthDataValidation.warningCount > 0
+                    hasHealthDataValidationWarnings: healthDataValidation.warningCount > 0,
+                    hasStepDuplicationSuspected: (healthData.metricReliability?.steps?.status === 'duplication_suspected'),
+                    hasHrvRecentMissing: (healthData.metricReliability?.hrv?.status === 'recent_missing')
                 },
                 warnings
             };
@@ -5463,7 +6246,7 @@
             const generatedParts = getJstParts(new Date());
             const dataToExport = {
                 schemaVersion: "1.3",
-                appVersion: "gv1.76",
+                appVersion: "gv1.78.3",
                 generatedAt: generatedParts.timestampUtc,
                 generatedAtLocal: generatedParts.localDateTime,
                 timezone: "Asia/Tokyo",
@@ -5472,6 +6255,11 @@
                 dataQuality,
                 dataCompleteness,
                 aiAnalysisPolicy,
+                stepImportDiagnostics: healthData.stepImportDiagnostics || stepImportDiagnosticsGV178 || null,
+                hrvImportDiagnostics: healthData.hrvImportDiagnostics || hrvImportDiagnosticsGV178 || null,
+                metricReliability: healthData.metricReliability || metricReliabilityGV178 || buildMetricReliabilityGV178(),
+                importWarnings: healthData.importWarnings || importWarningsGV178 || buildImportWarningsGV178(),
+                importWarningSummary: buildImportWarningSummaryGV178(healthData.importWarnings || importWarningsGV178 || buildImportWarningsGV178()),
                 manualLogPersistencePolicy: {
                     storage: "localStorage + lightweight JSON export + optional Firestore",
                     localStorageKey: "health-manual-logs-v1",
@@ -5494,12 +6282,17 @@
                 },
                 dailySummaries,
                 healthData: {
-                    summary: { ...(healthData.summary || {}), version: "gv1.76", heightCm: 150, targetWeight: 50, targetWeightKg: 50 },
+                    summary: { ...(healthData.summary || {}), version: "gv1.78.3", heightCm: 150, targetWeight: 50, targetWeightKg: 50 },
                     weight: healthData.weight || {},
                     steps: healthData.steps || {},
                     sleep: healthData.sleep || {},
                     heartRate: healthData.heartRate || {},
                     hrv: healthData.hrv || {},
+                    stepImportDiagnostics: healthData.stepImportDiagnostics || stepImportDiagnosticsGV178 || null,
+                    hrvImportDiagnostics: healthData.hrvImportDiagnostics || hrvImportDiagnosticsGV178 || null,
+                    metricReliability: healthData.metricReliability || metricReliabilityGV178 || buildMetricReliabilityGV178(),
+                    importWarnings: healthData.importWarnings || importWarningsGV178 || buildImportWarningsGV178(),
+                    importWarningSummary: buildImportWarningSummaryGV178(healthData.importWarnings || importWarningsGV178 || buildImportWarningsGV178()),
                     foodLogs: analyzedFoodLogs,
                     rawFoodLogs,
                     eventLogs,
@@ -5532,6 +6325,9 @@
             updateDataSourceChip();
             
             buildRangeControl('chart-health-score-trend');
+            buildRangeControl('chart-performance-trend');
+            buildRangeControl('chart-fatigue-risk-trend');
+            buildRangeControl('chart-disease-risk-trend');
             buildRangeControl('chart-weight-dash'); 
             buildRangeControl('chart-steps-dash'); 
             buildRangeControl('chart-weight-full'); 

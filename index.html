@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Health Activity Manager gv1.78.3</title>
-    <!-- gv1.78.3 restores weekend-aware date axis labels and weekday tooltips + gv1.78.1 step source normalization and trend rendering fix. Existing UI preserved. -->
+    <title>Health Activity Manager gv1.79.1</title>
+    <!-- gv1.79.1 sleep abnormal count split + weight bar chart alignment + gv1.79 sleep interval merge diagnostics fix. Existing UI preserved. -->
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
     <meta name="apple-mobile-web-app-title" content="HealthManager">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -350,7 +350,7 @@
                 <h1 onclick="goHomeStartup()" class="text-xl font-bold text-blue-500 flex items-center tracking-tight cursor-pointer hover:text-blue-400 transition" title="スタート画面へ戻る">
                     <i class="fas fa-heartbeat mr-2 text-2xl"></i>HealthManager
                 </h1>
-                <p class="text-[10px] text-slate-500 font-mono mt-1 uppercase tracking-widest">gv1.78.3 OS PRO</p>
+                <p class="text-[10px] text-slate-500 font-mono mt-1 uppercase tracking-widest">gv1.79.1 OS PRO</p>
             </div>
             <nav class="flex-1 px-4 space-y-1 overflow-y-auto custom-scrollbar">
                 <button onclick="switchTab('dashboard')" class="nav-btn w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl transition" data-tab="dashboard">
@@ -559,13 +559,17 @@
                     <section id="import-diagnostics-mini" class="glass-card p-4 md:p-5 mt-6 border border-slate-700/50 bg-slate-900/25">
                         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-3">
                             <h3 class="text-sm md:text-base font-black text-slate-200"><i class="fas fa-database text-cyan-300 mr-2"></i>取込・評価信頼度</h3>
-                            <div class="text-[10px] text-slate-500 font-bold uppercase">gv1.78.3 diagnostics</div>
+                            <div class="text-[10px] text-slate-500 font-bold uppercase">gv1.79.1 diagnostics</div>
                         </div>
-                        <div class="grid grid-cols-1 md:grid-cols-4 gap-3 text-xs">
+                        <div class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-8 gap-3 text-xs">
                             <div class="report-metric-box"><div class="text-[10px] text-slate-400 font-bold uppercase mb-1">歩数集計</div><div id="diag-step-method" class="font-black text-white">--</div></div>
                             <div class="report-metric-box"><div class="text-[10px] text-slate-400 font-bold uppercase mb-1">歩数二重計上疑い</div><div id="diag-step-status" class="font-black text-white">--</div></div>
                             <div class="report-metric-box"><div class="text-[10px] text-slate-400 font-bold uppercase mb-1">HRV最終取得日</div><div id="diag-hrv-last-date" class="font-black text-white">--</div></div>
                             <div class="report-metric-box"><div class="text-[10px] text-slate-400 font-bold uppercase mb-1">直近7日HRV</div><div id="diag-hrv-last7" class="font-black text-white">--</div></div>
+                            <div class="report-metric-box"><div class="text-[10px] text-slate-400 font-bold uppercase mb-1">睡眠集計</div><div id="diag-sleep-method" class="font-black text-white">--</div></div>
+                            <div class="report-metric-box"><div class="text-[10px] text-slate-400 font-bold uppercase mb-1">睡眠信頼性</div><div id="diag-sleep-status" class="font-black text-white">--</div></div>
+                            <div class="report-metric-box"><div class="text-[10px] text-slate-400 font-bold uppercase mb-1">直近7日睡眠</div><div id="diag-sleep-last7" class="font-black text-white">--</div></div>
+                            <div class="report-metric-box"><div class="text-[10px] text-slate-400 font-bold uppercase mb-1">直近30日異常睡眠</div><div id="diag-sleep-abnormal-recent" class="font-black text-white">--</div></div>
                         </div>
                         <div id="diag-reliability-comment" class="text-xs text-slate-300 leading-relaxed mt-3">データ取込後に歩数・HRVの評価信頼度を表示します。</div>
                     </section>
@@ -1358,16 +1362,18 @@
     <script>
         // --- Global Variables Setup ---
         let healthData = {
-            summary: { version: "gv1.78.3", isSample: false, updatedAt: null, heightCm: 150, targetWeight: 50 },
+            summary: { version: "gv1.79.1", isSample: false, updatedAt: null, heightCm: 150, targetWeight: 50 },
             weight: {}, steps: {}, sleep: {}, heartRate: {}, hrv: {},
             gpsSummaries: [], manualLogs: {}, foodLogs: {}, eventLogs: {}, alcoholLogs: {},
-            stepImportDiagnostics: null, hrvImportDiagnostics: null, metricReliability: null, importWarnings: []
+            stepImportDiagnostics: null, hrvImportDiagnostics: null, sleepImportDiagnostics: null, metricReliability: null, importWarnings: []
         };
 
         let stepSourceDailyGV178 = {};
         let hrvDailyValuesGV178 = {};
         let stepImportDiagnosticsGV178 = null;
         let hrvImportDiagnosticsGV178 = null;
+        let sleepDailyRecordsGV179 = {};
+        let sleepImportDiagnosticsGV179 = null;
         let metricReliabilityGV178 = null;
         let importWarningsGV178 = [];
 
@@ -1420,9 +1426,18 @@
         let currentPlaybackRouteKey = null;
 
         const ASLEEP_CATEGORIES = [
-            "HKCategoryValueSleepAnalysisAsleep", "HKCategoryValueSleepAnalysisAsleepCore",
-            "HKCategoryValueSleepAnalysisAsleepDeep", "HKCategoryValueSleepAnalysisAsleepREM",
-            "HKCategoryValueSleepAnalysisAsleepUnspecified"
+            "HKCategoryValueSleepAnalysisAsleep", "HKCategoryValueSleepAnalysisAsleepUnspecified",
+            "HKCategoryValueSleepAnalysisAsleepCore", "HKCategoryValueSleepAnalysisAsleepDeep",
+            "HKCategoryValueSleepAnalysisAsleepREM"
+        ];
+        const SLEEP_DETAILED_STAGE_VALUES = [
+            "HKCategoryValueSleepAnalysisAsleepCore",
+            "HKCategoryValueSleepAnalysisAsleepDeep",
+            "HKCategoryValueSleepAnalysisAsleepREM"
+        ];
+        const NON_SLEEP_CATEGORIES = [
+            "HKCategoryValueSleepAnalysisInBed",
+            "HKCategoryValueSleepAnalysisAwake"
         ];
 
         const ROUTE_COLORS = {
@@ -1830,7 +1845,7 @@
             const previousSourceSummary = data.sourceSummary || targetData.sourceSummary || targetData.summary?.previousSourceSummary || current.summary?.previousSourceSummary || null;
 
             const defSummary = {
-                version: "gv1.78.3",
+                version: "gv1.79.1",
                 heightCm: lockedHeight,
                 targetWeight: lockedTarget,
                 targetWeightKg: lockedTarget,
@@ -1856,6 +1871,7 @@
                 alcoholLogs: targetData.alcoholLogs || current.alcoholLogs || {},
                 stepImportDiagnostics: data.stepImportDiagnostics || targetData.stepImportDiagnostics || current.stepImportDiagnostics || null,
                 hrvImportDiagnostics: data.hrvImportDiagnostics || targetData.hrvImportDiagnostics || current.hrvImportDiagnostics || null,
+                sleepImportDiagnostics: data.sleepImportDiagnostics || targetData.sleepImportDiagnostics || current.sleepImportDiagnostics || null,
                 metricReliability: data.metricReliability || targetData.metricReliability || current.metricReliability || null,
                 importWarnings: data.importWarnings || targetData.importWarnings || current.importWarnings || []
             };
@@ -2141,12 +2157,15 @@
             // gv1.78: StepCountは複数ソースを単純合算しない。HRVは自己完結/子要素付きRecord双方を開始タグで拾う。
             stepSourceDailyGV178 = {};
             hrvDailyValuesGV178 = {};
+            sleepDailyRecordsGV179 = {};
             stepImportDiagnosticsGV178 = null;
             hrvImportDiagnosticsGV178 = null;
+            sleepImportDiagnosticsGV179 = null;
             metricReliabilityGV178 = null;
             importWarningsGV178 = [];
             healthData.steps = {};
             healthData.hrv = {};
+            healthData.sleep = {};
 
             for (let offset = 0; offset < bytes.length; offset += chunkSize) {
                 const slice = bytes.subarray(offset, offset + chunkSize);
@@ -2161,6 +2180,7 @@
                 if (count % 50000 === 0) updateLoader(30 + Math.min(25, (offset / bytes.length) * 25), `Export.xml 処理中... (${count})`);
             }
             if (buffer.trim() && buffer.includes('>')) { count += parseHealthXmlRecordsPart(buffer); }
+            finalizeSleepImportGV179();
             finalizeStepImportGV178();
             finalizeHrvImportGV178();
             metricReliabilityGV178 = buildMetricReliabilityGV178();
@@ -2193,12 +2213,7 @@
             }
 
             if (type.includes('SleepAnalysis')) {
-                const valueCode = getXmlAttr(chunk, 'value');
-                if (valueCode && ASLEEP_CATEGORIES.some(c => valueCode.includes(c))) {
-                    const endStr = getXmlAttr(chunk, 'endDate');
-                    const duration = (new Date(endStr) - new Date(startStr)) / 3600000;
-                    if (Number.isFinite(duration) && duration > 0 && duration < 24) healthData.sleep[dateKey] = (healthData.sleep[dateKey] || 0) + duration;
-                }
+                processSleepRecordGV179(chunk, startStr);
             }
             if (type.includes('RestingHeartRate') && !isNaN(val)) healthData.heartRate[dateKey] = val;
 
@@ -2302,6 +2317,200 @@
             healthData.stepImportDiagnostics = stepImportDiagnosticsGV178;
         }
 
+        function parseAppleHealthLocalMillisGV179(value) {
+            if (!value) return null;
+            const normalized = String(value).trim().replace(' ', 'T').replace(/ ([+-]\d{2})(\d{2})$/, '$1:$2');
+            const t = new Date(normalized).getTime();
+            return Number.isFinite(t) ? t : null;
+        }
+
+        function getSleepValueKindGV179(valueCode) {
+            const value = String(valueCode || '');
+            if (SLEEP_DETAILED_STAGE_VALUES.some(v => value.includes(v))) return 'detailed_asleep';
+            if (value.includes('HKCategoryValueSleepAnalysisAsleep') || value.includes('AsleepUnspecified')) return 'asleep_unspecified';
+            if (value.includes('HKCategoryValueSleepAnalysisInBed')) return 'in_bed';
+            if (value.includes('HKCategoryValueSleepAnalysisAwake')) return 'awake';
+            return 'other';
+        }
+
+        function getSleepShortValueGV179(valueCode) {
+            const value = String(valueCode || '');
+            if (value.includes('AsleepCore')) return 'asleepCoreHours';
+            if (value.includes('AsleepDeep')) return 'asleepDeepHours';
+            if (value.includes('AsleepREM')) return 'asleepRemHours';
+            if (value.includes('AsleepUnspecified')) return 'asleepUnspecifiedHours';
+            if (value.includes('SleepAnalysisAsleep')) return 'asleepHours';
+            if (value.includes('InBed')) return 'inBedHours';
+            if (value.includes('Awake')) return 'awakeHours';
+            return 'otherHours';
+        }
+
+        function isSleepAsleepValueGV179(valueCode) {
+            const value = String(valueCode || '');
+            return ASLEEP_CATEGORIES.some(c => value.includes(c));
+        }
+
+        function isSleepDetailedStageGV179(valueCode) {
+            const value = String(valueCode || '');
+            return SLEEP_DETAILED_STAGE_VALUES.some(c => value.includes(c));
+        }
+
+        function processSleepRecordGV179(chunk, startStr) {
+            const endStr = getXmlAttr(chunk, 'endDate');
+            const valueCode = getXmlAttr(chunk, 'value') || '';
+            const startMs = parseAppleHealthLocalMillisGV179(startStr);
+            const endMs = parseAppleHealthLocalMillisGV179(endStr);
+            if (!startStr || !endStr || !Number.isFinite(startMs) || !Number.isFinite(endMs) || endMs <= startMs) return;
+            const dateKey = String(endStr).substring(0, 10); // 睡眠は終了日ベース。toISOStringは使わない。
+            const sourceName = getXmlAttr(chunk, 'sourceName') || 'unknown-source';
+            const sourceVersion = getXmlAttr(chunk, 'sourceVersion') || '';
+            const device = normalizeHealthDeviceGV178(getXmlAttr(chunk, 'device') || '');
+            const sourceKey = buildSourceKeyGV178(sourceName, sourceVersion, device);
+            if (!sleepDailyRecordsGV179[dateKey]) sleepDailyRecordsGV179[dateKey] = [];
+            sleepDailyRecordsGV179[dateKey].push({
+                dateKey,
+                start: startStr,
+                end: endStr,
+                startMs,
+                endMs,
+                value: valueCode,
+                kind: getSleepValueKindGV179(valueCode),
+                sourceName,
+                sourceVersion,
+                device,
+                sourceKey,
+                durationHours: (endMs - startMs) / 3600000
+            });
+        }
+
+        function mergeSleepIntervalsGV179(intervals) {
+            const rows = (intervals || [])
+                .filter(x => Number.isFinite(x.startMs) && Number.isFinite(x.endMs) && x.endMs > x.startMs)
+                .map(x => ({ startMs: x.startMs, endMs: x.endMs }))
+                .sort((a,b) => a.startMs - b.startMs || a.endMs - b.endMs);
+            const merged = [];
+            rows.forEach(row => {
+                const last = merged[merged.length - 1];
+                if (!last || row.startMs > last.endMs) merged.push({ ...row });
+                else last.endMs = Math.max(last.endMs, row.endMs);
+            });
+            return merged;
+        }
+
+        function sumIntervalHoursGV179(intervals) {
+            return (intervals || []).reduce((s,x) => s + Math.max(0, (Number(x.endMs) || 0) - (Number(x.startMs) || 0)) / 3600000, 0);
+        }
+
+        function roundHoursGV179(value) {
+            return Math.round((Number(value) || 0) * 100) / 100;
+        }
+
+        function addSleepSourceMetricGV179(summary, sourceName, field, hours) {
+            const key = sourceName || 'unknown-source';
+            if (!summary[key]) summary[key] = { asleepHours: 0, asleepUnspecifiedHours: 0, asleepCoreHours: 0, asleepDeepHours: 0, asleepRemHours: 0, awakeHours: 0, inBedHours: 0, otherHours: 0 };
+            summary[key][field] = roundHoursGV179((summary[key][field] || 0) + (Number(hours) || 0));
+        }
+
+        function finalizeSleepImportGV179() {
+            const detailAll = {};
+            const abnormalAll = [];
+            const dates = Object.keys(sleepDailyRecordsGV179 || {}).sort();
+            let totalRecords = 0;
+            dates.forEach(date => {
+                const records = sleepDailyRecordsGV179[date] || [];
+                totalRecords += records.length;
+                const sourceSummary = {};
+                const usedValueSet = new Set();
+                const excludedValueSet = new Set();
+                records.forEach(r => {
+                    addSleepSourceMetricGV179(sourceSummary, r.sourceName, getSleepShortValueGV179(r.value), r.durationHours);
+                    if (!isSleepAsleepValueGV179(r.value)) excludedValueSet.add(r.value);
+                });
+
+                const hasWatchDetailed = records.some(r => isAppleWatchSourceGV178(r.sourceKey) && isSleepDetailedStageGV179(r.value));
+                let candidateRecords = records.filter(r => isSleepAsleepValueGV179(r.value));
+                if (hasWatchDetailed) {
+                    candidateRecords = candidateRecords.filter(r => isAppleWatchSourceGV178(r.sourceKey) && isSleepDetailedStageGV179(r.value));
+                    records.forEach(r => {
+                        if (isSleepAsleepValueGV179(r.value) && !candidateRecords.includes(r)) excludedValueSet.add(r.value);
+                    });
+                }
+                candidateRecords.forEach(r => usedValueSet.add(r.value));
+                const simpleSumHours = candidateRecords.reduce((s,r) => s + (Number(r.durationHours) || 0), 0);
+                const merged = mergeSleepIntervalsGV179(candidateRecords);
+                const mergedSleepHours = sumIntervalHoursGV179(merged);
+                const hasOverlapReduction = simpleSumHours > 0 && mergedSleepHours > 0 && simpleSumHours >= mergedSleepHours * 1.5;
+                const abnormalReasons = [];
+                if (mergedSleepHours > 12) abnormalReasons.push('over_12h');
+                if (mergedSleepHours > 0 && mergedSleepHours < 0.5) abnormalReasons.push('under_0_5h');
+                if (hasOverlapReduction) abnormalReasons.push('simple_sum_too_large');
+                if (candidateRecords.length >= 12 && hasOverlapReduction) abnormalReasons.push('many_overlapping_intervals');
+
+                const selectedSleepHours = roundHoursGV179(mergedSleepHours);
+                if (selectedSleepHours >= 0.5 && selectedSleepHours <= 12) {
+                    healthData.sleep[date] = selectedSleepHours;
+                }
+                if (abnormalReasons.length) {
+                    abnormalAll.push({ date, simpleSumHours: roundHoursGV179(simpleSumHours), mergedSleepHours: selectedSleepHours, reason: abnormalReasons.join(',') });
+                }
+                detailAll[date] = {
+                    selectedSleepHours,
+                    simpleSumHours: roundHoursGV179(simpleSumHours),
+                    mergedIntervalCount: merged.length,
+                    sourceSummary,
+                    usedValues: Array.from(usedValueSet).sort(),
+                    excludedValues: Array.from(excludedValueSet).sort(),
+                    abnormal: abnormalReasons.length > 0,
+                    reason: abnormalReasons.join(',') || null,
+                    watchDetailedPreferred: hasWatchDetailed
+                };
+            });
+            const firstDate = dates[0] || null;
+            const lastDate = dates[dates.length - 1] || null;
+            const latestDataDate = getLatestDateAcrossDataGV178() || lastDate;
+            const last7Dates = dateRangeStringsGV178(latestDataDate, 7);
+            const last30Dates = dateRangeStringsGV178(latestDataDate, 30);
+            const last7DaysWithSleep = last7Dates.filter(d => healthData.sleep?.[d] != null).length;
+            const last30DaysWithSleep = last30Dates.filter(d => healthData.sleep?.[d] != null).length;
+            const recentDays = {};
+            last30Dates.forEach(d => { if (detailAll[d]) recentDays[d] = detailAll[d]; });
+            const abnormalRecent30 = last30Dates
+                .map(d => detailAll[d])
+                .filter(x => x && x.abnormal).length;
+            sleepImportDiagnosticsGV179 = {
+                method: 'asleep_only_interval_merge_end_date_based',
+                totalRecords,
+                firstDate,
+                lastDate,
+                latestDataDate,
+                last7DaysWithSleep,
+                last30DaysWithSleep,
+                abnormalDayCount: abnormalRecent30,
+                abnormalDayCountRecent30: abnormalRecent30,
+                abnormalDayCountAllTime: abnormalAll.length,
+                abnormalDays: abnormalAll.slice(-30),
+                abnormalRecent30Days: last30Dates
+                    .filter(d => detailAll[d]?.abnormal)
+                    .map(d => ({ date: d, simpleSumHours: detailAll[d].simpleSumHours, mergedSleepHours: detailAll[d].selectedSleepHours, reason: detailAll[d].reason })),
+                recentDays
+            };
+            healthData.sleepImportDiagnostics = sleepImportDiagnosticsGV179;
+        }
+
+        function scoreSleepGV179(hours) {
+            if (hours == null || !Number.isFinite(Number(hours))) return null;
+            const h = Number(hours);
+            if (h > 12) return null;
+            if (h < 3) return 30;
+            if (h < 4) return 45;
+            if (h < 5) return 60;
+            if (h < 6) return 75;
+            if (h < 7) return 90;
+            if (h <= 8.5) return 100;
+            if (h <= 10) return 85;
+            return 60;
+        }
+
         function processHrvRecordGV178(chunk, dateKey, val) {
             if (!Number.isFinite(val)) return;
             if (!hrvDailyValuesGV178[dateKey]) hrvDailyValuesGV178[dateKey] = [];
@@ -2368,17 +2577,24 @@
         function buildMetricReliabilityGV178() {
             const stepDiag = stepImportDiagnosticsGV178 || healthData.stepImportDiagnostics || null;
             const hrvDiag = hrvImportDiagnosticsGV178 || healthData.hrvImportDiagnostics || null;
+            const sleepDiag = sleepImportDiagnosticsGV179 || healthData.sleepImportDiagnostics || null;
             const stepDates = Object.keys(healthData.steps || {}).sort();
             const latest = getLatestDateAcrossDataGV178();
             const last7 = dateRangeStringsGV178(latest, 7);
             const last30 = dateRangeStringsGV178(latest, 30);
             const stepAvg7 = avgObjectValuesGV178(healthData.steps, last7);
             const stepAvg30 = avgObjectValuesGV178(healthData.steps, last30);
+            const sleepAvg7 = avgObjectValuesGV178(healthData.sleep, last7);
+            const sleepAvg30 = avgObjectValuesGV178(healthData.sleep, last30);
+            const recentSleepRows = Object.values(sleepDiag?.recentDays || {});
+            const sleepAbnormalRecent = recentSleepRows.filter(x => x?.abnormal).length;
+            const sleepDupRecent = recentSleepRows.some(x => Number(x?.simpleSumHours || 0) >= Number(x?.selectedSleepHours || 0) * 1.5 && Number(x?.selectedSleepHours || 0) > 0);
             const hasDup = !!Object.values(stepDiag?.days || {}).some(x => x?.duplicationSuspected);
             const stepSpike = stepAvg7 != null && stepAvg30 != null && stepAvg30 > 0 && stepAvg7 >= stepAvg30 * 1.8;
             const stepStatus = !stepDates.length ? 'missing' : (hasDup || stepSpike ? 'duplication_suspected' : 'ok');
             const hrvLast7 = Number(hrvDiag?.last7DaysWithHrv || 0);
             const hrvStatus = !Object.keys(healthData.hrv || {}).length ? 'missing' : (hrvLast7 < 3 ? 'recent_missing' : 'ok');
+            const sleepStatus = !Object.keys(healthData.sleep || {}).length ? 'missing' : (sleepAbnormalRecent > 0 ? 'abnormal_values' : (sleepDupRecent ? 'duplication_suspected' : 'ok'));
             return {
                 steps: {
                     status: stepStatus,
@@ -2393,6 +2609,18 @@
                     last7DaysWithData: hrvLast7,
                     last30DaysWithData: Number(hrvDiag?.last30DaysWithHrv || 0),
                     comment: 'HRVは直近7日のデータ数に応じて評価信頼度を調整'
+                },
+                sleep: {
+                    status: sleepStatus,
+                    method: 'asleep_only_interval_merge_end_date_based',
+                    last7Average: sleepAvg7 != null ? Math.round(sleepAvg7 * 100) / 100 : null,
+                    last30Average: sleepAvg30 != null ? Math.round(sleepAvg30 * 100) / 100 : null,
+                    last7DaysWithData: Number(sleepDiag?.last7DaysWithSleep || 0),
+                    last30DaysWithData: Number(sleepDiag?.last30DaysWithSleep || 0),
+                    abnormalDayCount: Number(sleepDiag?.abnormalDayCountRecent30 ?? sleepAbnormalRecent ?? 0),
+                    abnormalDayCountRecent30: Number(sleepDiag?.abnormalDayCountRecent30 ?? sleepAbnormalRecent ?? 0),
+                    abnormalDayCountAllTime: Number(sleepDiag?.abnormalDayCountAllTime ?? sleepDiag?.abnormalDayCount ?? 0),
+                    comment: '睡眠時間はInBed/Awakeを除外し、Asleep系区間を重複排除して集計'
                 }
             };
         }
@@ -2414,6 +2642,13 @@
             if (hrvDiag && Number(hrvDiag.last7DaysWithHrv || 0) < 3) {
                 warnings.push({ type: 'HRV_RECENT_DATA_MISSING', message: '直近7日のHRVが不足しています。Apple Health取り込みまたはApple Watch装着状況を確認してください。', lastHrvDate: hrvDiag.lastDate || null, last7DaysWithHrv: Number(hrvDiag.last7DaysWithHrv || 0) });
             }
+            const sleepDiag = sleepImportDiagnosticsGV179 || healthData.sleepImportDiagnostics || null;
+            Object.entries(sleepDiag?.recentDays || {}).forEach(([date, d]) => {
+                if (!d) return;
+                if (Number(d.selectedSleepHours || 0) > 12 || String(d.reason || '').includes('over_12h')) warnings.push({ type: 'SLEEP_ABNORMAL_VALUE', date, message: '1日の睡眠時間が12時間を超えています。睡眠集計値は評価から除外してください。', selectedSleepHours: d.selectedSleepHours, simpleSumHours: d.simpleSumHours });
+                if (Number(d.selectedSleepHours || 0) > 0 && Number(d.selectedSleepHours || 0) < 0.5) warnings.push({ type: 'SLEEP_ABNORMAL_VALUE', date, message: '1日の睡眠時間が0.5時間未満です。睡眠データの取り込み状態を確認してください。', selectedSleepHours: d.selectedSleepHours });
+                if (Number(d.simpleSumHours || 0) > 0 && Number(d.selectedSleepHours || 0) > 0 && Number(d.simpleSumHours) >= Number(d.selectedSleepHours) * 1.5) warnings.push({ type: 'SLEEP_DUPLICATION_SUSPECTED', date, message: '睡眠ステージまたは複数ソースの単純合算により、睡眠時間が過大になっている可能性があります', simpleSumHours: d.simpleSumHours, mergedSleepHours: d.selectedSleepHours });
+            });
             return warnings;
         }
 
@@ -2426,6 +2661,8 @@
             const stepExtreme = list.filter(w => w?.type === 'STEP_EXTREME_VALUE');
             const stepSpike = list.filter(w => w?.type === 'STEP_7DAY_SPIKE');
             const hrvMissing = list.filter(w => w?.type === 'HRV_RECENT_DATA_MISSING');
+            const sleepDup = list.filter(w => w?.type === 'SLEEP_DUPLICATION_SUSPECTED');
+            const sleepAbnormal = list.filter(w => w?.type === 'SLEEP_ABNORMAL_VALUE');
             const dates = stepDup.map(w => w.date).filter(Boolean).sort();
             const avg = arr => arr.length ? Math.round(arr.reduce((a,b)=>a+Number(b || 0),0) / arr.length) : null;
             return {
@@ -2443,7 +2680,9 @@
                 },
                 stepExtreme: { count: stepExtreme.length },
                 stepSpike: { count: stepSpike.length, latest: stepSpike[stepSpike.length - 1] || null },
-                hrvRecentMissing: { count: hrvMissing.length, latest: hrvMissing[hrvMissing.length - 1] || null }
+                hrvRecentMissing: { count: hrvMissing.length, latest: hrvMissing[hrvMissing.length - 1] || null },
+                sleepDuplication: { count: sleepDup.length, latest: sleepDup[sleepDup.length - 1] || null },
+                sleepAbnormal: { count: sleepAbnormal.length, latest: sleepAbnormal[sleepAbnormal.length - 1] || null }
             };
         }
 
@@ -2459,6 +2698,8 @@
             if (summary.stepExtreme.count > 0) messages.push(`1日50,000歩超えの歩数異常日が${summary.stepExtreme.count}日あります。`);
             if (summary.stepSpike.count > 0) messages.push('直近7日平均歩数が直近30日平均より大きく上振れしています。歩数ソースまたは特殊活動を確認してください。');
             if (summary.hrvRecentMissing.count > 0) messages.push('直近7日のHRVが不足しています。これは体調悪化ではなく評価精度低下として扱います。');
+            if (summary.sleepDuplication.count > 0) messages.push(`直近30日内に睡眠区間の重複疑いが${summary.sleepDuplication.count}日あります。ただし、睡眠時間はAsleep系のみを区間マージして補正済みです。`);
+            if (summary.sleepAbnormal.count > 0) messages.push(`直近30日内に睡眠異常値が${summary.sleepAbnormal.count}日あります。体調悪化ではなく、まず睡眠データ信頼性低下として扱います。`);
             return messages;
         }
 
@@ -3573,9 +3814,12 @@
             const metricReliability = healthData.metricReliability || metricReliabilityGV178 || null;
             const stepReliabilityStatus = metricReliability?.steps?.status || 'ok';
             const hrvReliabilityStatus = metricReliability?.hrv?.status || 'ok';
+            const sleepReliabilityStatus = metricReliability?.sleep?.status || 'ok';
+            const sleepForEval = (sleepReliabilityStatus === 'ok' && sl != null && Number(sl) >= 0.5 && Number(sl) <= 12) ? Number(sl) : null;
+            const sleepScore = scoreSleepGV179(sleepForEval);
 
             let performance = 100;
-            if (sl != null) { if (sl < 5.5) performance -= 24; else if (sl < 6.5) performance -= 14; else if (sl > 9.5) performance -= 4; } else performance -= 6;
+            if (sleepForEval != null) { if (sleepScore < 60) performance -= 24; else if (sleepScore < 75) performance -= 14; else if (sleepScore < 90) performance -= 6; else if (sleepForEval > 9.5) performance -= 4; } else performance -= (sleepReliabilityStatus === 'ok' ? 6 : 3);
             if (st != null) { if (st < 4000) performance -= 12; else if (st < 7000) performance -= 6; else if (st >= 8000 && st <= 18000 && stepReliabilityStatus !== 'duplication_suspected') performance += 3; }
             if (stepReliabilityStatus === 'duplication_suspected' && st != null && st >= 18000) performance -= 4;
             if (hr != null) { if (hr > 85) performance -= 16; else if (hr > 75) performance -= 8; }
@@ -3585,7 +3829,7 @@
             performance = clampScore(performance);
 
             let fatigueRisk = 0;
-            if (sl != null) { if (sl < 5.5) fatigueRisk += 34; else if (sl < 6.5) fatigueRisk += 18; } else fatigueRisk += 8;
+            if (sleepForEval != null) { if (sleepForEval < 5.5) fatigueRisk += 34; else if (sleepForEval < 6.5) fatigueRisk += 18; } else fatigueRisk += (sleepReliabilityStatus === 'ok' ? 8 : 3);
             if (hr != null) { if (hr > 85) fatigueRisk += 22; else if (hr > 75) fatigueRisk += 10; }
             if (hr != null && hrBase != null && hr - hrBase >= 8) fatigueRisk += 14;
             if (hrv != null && hrvBase != null) { const ratio = hrv / hrvBase; if (ratio < 0.65) fatigueRisk += 28; else if (ratio < 0.8) fatigueRisk += 14; }
@@ -3606,7 +3850,7 @@
                 if (baseW != null && w - baseW >= 2) diseaseRisk += 10;
             } else diseaseRisk += 6;
             if (st != null && st < 5000) diseaseRisk += 8;
-            if (sl != null && sl < 6) diseaseRisk += 8;
+            if (sleepForEval != null && sleepForEval < 6) diseaseRisk += 8;
             if (hr != null && hr > 85) diseaseRisk += 8;
             diseaseRisk += Math.min(18, foodRisk.riskFoodCount * 6);
             diseaseRisk += Math.min(16, foodRisk.heavyFoodCount * 8);
@@ -3616,7 +3860,7 @@
             diseaseRisk = clampScore(diseaseRisk);
 
             const score = clampScore((performance * 0.50) + ((100 - fatigueRisk) * 0.30) + ((100 - diseaseRisk) * 0.20));
-            return { date, score, performance, fatigueRisk, diseaseRisk, dayDist, foodRisk, stepReliabilityStatus, hrvReliabilityStatus };
+            return { date, score, performance, fatigueRisk, diseaseRisk, dayDist, foodRisk, stepReliabilityStatus, hrvReliabilityStatus, sleepReliabilityStatus };
         }
 
         function calcDailyHealthScores() {
@@ -3689,6 +3933,7 @@
             const reliabilityNote = [];
             if (metrics.stepReliabilityStatus === 'duplication_suspected') reliabilityNote.push('歩数は二重計上疑いがあるため活動量評価の信頼度を下げています。');
             if (metrics.hrvReliabilityStatus === 'recent_missing') reliabilityNote.push('HRV直近欠損のため、体調悪化ではなく評価精度低下として扱います。');
+            if (metrics.sleepReliabilityStatus && metrics.sleepReliabilityStatus !== 'ok') reliabilityNote.push('睡眠データは要確認のため、睡眠不足ではなく評価精度低下として扱います。');
             const reliabilityText = reliabilityNote.length ? ' ' + reliabilityNote.join(' ') : '';
             const performance = p >= 80 ? '睡眠・心拍・HRVのバランスは良好。通常の活動に耐えやすい状態です。'
                 : p >= 65 ? '大きな問題はありませんが、睡眠・HRV・心拍のどれかに弱さがあります。'
@@ -3712,18 +3957,26 @@
             const reliability = healthData.metricReliability || metricReliabilityGV178 || buildMetricReliabilityGV178();
             const stepDiag = healthData.stepImportDiagnostics || stepImportDiagnosticsGV178 || null;
             const hrvDiag = healthData.hrvImportDiagnostics || hrvImportDiagnosticsGV178 || null;
+            const sleepDiag = healthData.sleepImportDiagnostics || sleepImportDiagnosticsGV179 || null;
             const stepStatus = reliability?.steps?.status || '--';
             const hrvStatus = reliability?.hrv?.status || '--';
+            const sleepStatus = reliability?.sleep?.status || '--';
             safeSetText('diag-step-method', reliability?.steps?.method === 'source_priority_normalized_device_no_simple_sum' ? 'ソース優先 / 合算なし' : '--');
             safeSetText('diag-step-status', stepStatus === 'duplication_suspected' ? 'あり' : (stepStatus === 'ok' ? 'なし' : '未判定'));
             safeSetText('diag-hrv-last-date', reliability?.hrv?.lastDate || hrvDiag?.lastDate || '--');
             safeSetText('diag-hrv-last7', (reliability?.hrv?.last7DaysWithData ?? hrvDiag?.last7DaysWithHrv ?? '--') + (reliability?.hrv?.last7DaysWithData != null || hrvDiag?.last7DaysWithHrv != null ? '日 / 7日' : ''));
+            safeSetText('diag-sleep-method', reliability?.sleep?.method === 'asleep_only_interval_merge_end_date_based' ? 'Asleepのみ / InBed除外' : '--');
+            safeSetText('diag-sleep-status', sleepStatus === 'ok' ? 'OK' : (sleepStatus === 'duplication_suspected' || sleepStatus === 'abnormal_values' ? '要確認' : '未判定'));
+            safeSetText('diag-sleep-last7', (reliability?.sleep?.last7DaysWithData ?? sleepDiag?.last7DaysWithSleep ?? '--') + (reliability?.sleep?.last7DaysWithData != null || sleepDiag?.last7DaysWithSleep != null ? '日 / 7日' : ''));
+            safeSetText('diag-sleep-abnormal-recent', (reliability?.sleep?.abnormalDayCountRecent30 ?? sleepDiag?.abnormalDayCountRecent30 ?? '--') + (reliability?.sleep?.abnormalDayCountRecent30 != null || sleepDiag?.abnormalDayCountRecent30 != null ? '日 / 30日' : ''));
             const commentEl = document.getElementById('diag-reliability-comment');
             if (commentEl) {
                 const stepAvg = reliability?.steps?.last7Average != null ? `直近7日平均歩数: ${Number(reliability.steps.last7Average).toLocaleString()}歩。` : '';
                 const stepComment = stepStatus === 'duplication_suspected' ? '歩数は二重計上疑いがあるため、活動量の高評価には慎重に扱います。' : (stepStatus === 'ok' ? '歩数はソース優先方式で集計されています。' : '歩数データが不足しています。');
                 const hrvComment = hrvStatus === 'recent_missing' ? 'HRVは直近欠損があるため、体調悪化ではなく評価精度低下として扱います。' : (hrvStatus === 'ok' ? 'HRVは直近評価に利用できます。' : 'HRVデータが不足しています。');
-                commentEl.innerText = `${stepAvg}${stepComment} ${hrvComment}`;
+                const sleepInfo = reliability?.sleep?.last7Average != null ? ` 睡眠7日平均: ${reliability.sleep.last7Average}h。直近30日異常睡眠: ${reliability?.sleep?.abnormalDayCountRecent30 ?? sleepDiag?.abnormalDayCountRecent30 ?? 0}日。` : '';
+                const sleepComment = sleepStatus === 'ok' ? '睡眠はAsleep系のみを重複排除して評価できます。' : (sleepStatus === 'missing' ? '睡眠データが不足しています。' : '睡眠データは要確認のため、体調悪化ではなく評価精度低下として扱います。');
+                commentEl.innerText = `${stepAvg}${stepComment} ${hrvComment}${sleepInfo} ${sleepComment}`;
             }
         }
 
@@ -4011,9 +4264,10 @@
             const extendedKeys = keys.slice(Math.max(0, keys.length - range - 6)); const extendedData = extendedKeys.map(k => healthData.weight[k]);
             const maDataExtended = movingAverage(extendedData, 7); const movingAverageData = maDataExtended.slice(maDataExtended.length - targetKeys.length);
             const targetWeight = healthData.summary.targetWeight || 50;
-            const pointColors = targetKeys.map(k => k === dashboardSelectedDate ? '#3b82f6' : 'rgba(59,130,246,0.5)'); const pointRadii = targetKeys.map(k => k === dashboardSelectedDate ? 5 : 3);
-            const options = getDefaultChartOptions(); applySmartYAxis(options, actualData, [targetWeight]); applyDateAxisOptionsGV1782(options, targetKeys);
-            charts[canvasId] = new Chart(el, { type: 'line', data: { labels: labels, datasets: [ { label: '体重', data: actualData, dateKeys: targetKeys, type: 'line', borderColor: '#3b82f6', backgroundColor: '#3b82f6', tension: 0.3, pointRadius: pointRadii, pointBackgroundColor: pointColors, fill: false }, { label: '7日平均', data: movingAverageData, type: 'line', borderColor: 'rgba(148, 163, 184, 0.6)', borderWidth: 3, pointRadius: 0, fill: false }, buildHorizontalLineDataset('目標', targetWeight, labels, { borderColor: 'rgba(16, 185, 129, 0.6)' }) ] }, options: options });
+            const bgColors = targetKeys.map(k => k === dashboardSelectedDate ? 'rgba(96, 165, 250, 1)' : 'rgba(59, 130, 246, 0.72)');
+            const borderColors = targetKeys.map(k => k === dashboardSelectedDate ? 'rgba(191, 219, 254, 1)' : 'rgba(96, 165, 250, 0.9)');
+            const options = getDefaultChartOptions(); applySmartYAxis(options, actualData, [targetWeight, ...movingAverageData]); applyDateAxisOptionsGV1782(options, targetKeys);
+            charts[canvasId] = new Chart(el, { type: 'bar', data: { labels: labels, datasets: [ { label: '体重', data: actualData, dateKeys: targetKeys, backgroundColor: bgColors, borderColor: borderColors, borderWidth: 1, borderRadius: 4 }, { label: '7日平均', data: movingAverageData, type: 'line', borderColor: 'rgba(148, 163, 184, 0.8)', borderWidth: 3, pointRadius: 0, fill: false, tension: 0.3 }, buildHorizontalLineDataset('目標', targetWeight, labels, { borderColor: 'rgba(16, 185, 129, 0.6)' }) ] }, options: options });
         }
 
         function renderStepsTrendChart(canvasId) {
@@ -4931,7 +5185,7 @@
                     logId,
                     date,
                     kind,
-                    appVersion: 'gv1.78.3',
+                    appVersion: 'gv1.79.1',
                     updatedAt: new Date().toISOString(),
                     source: 'browser'
                 }, { merge: true });
@@ -6169,12 +6423,15 @@
                     dailySummaryCanonical: 'dailySummaries.analyzed',
                     caloriesAreEstimated: true,
                     stepAggregationMethod: 'source_priority_normalized_device_no_simple_sum',
-                    hrvMissingMeansReliabilityLossNotHealthDeterioration: true
+                    hrvMissingMeansReliabilityLossNotHealthDeterioration: true,
+                    sleepAggregationMethod: 'asleep_only_interval_merge_end_date_based',
+                    sleepAbnormalMeansReliabilityLossNotHealthDeterioration: true
                 },
                 hrvStatus: (healthData.metricReliability?.hrv?.status || (sourceSummary.hrvDays > 0 ? 'available' : 'not_available')),
                 metricReliability: healthData.metricReliability || metricReliabilityGV178 || buildMetricReliabilityGV178(),
                 stepImportDiagnostics: healthData.stepImportDiagnostics || stepImportDiagnosticsGV178 || null,
                 hrvImportDiagnostics: healthData.hrvImportDiagnostics || hrvImportDiagnosticsGV178 || null,
+                sleepImportDiagnostics: healthData.sleepImportDiagnostics || sleepImportDiagnosticsGV179 || null,
                 importWarnings,
                 importWarningSummary,
                 unknownFoodItems,
@@ -6201,7 +6458,8 @@
                     hasRegression: regressionWarnings.length > 0,
                     hasHealthDataValidationWarnings: healthDataValidation.warningCount > 0,
                     hasStepDuplicationSuspected: (healthData.metricReliability?.steps?.status === 'duplication_suspected'),
-                    hasHrvRecentMissing: (healthData.metricReliability?.hrv?.status === 'recent_missing')
+                    hasHrvRecentMissing: (healthData.metricReliability?.hrv?.status === 'recent_missing'),
+                    hasSleepReliabilityIssue: (healthData.metricReliability?.sleep?.status && healthData.metricReliability.sleep.status !== 'ok')
                 },
                 warnings
             };
@@ -6246,7 +6504,7 @@
             const generatedParts = getJstParts(new Date());
             const dataToExport = {
                 schemaVersion: "1.3",
-                appVersion: "gv1.78.3",
+                appVersion: "gv1.79.1",
                 generatedAt: generatedParts.timestampUtc,
                 generatedAtLocal: generatedParts.localDateTime,
                 timezone: "Asia/Tokyo",
@@ -6257,6 +6515,7 @@
                 aiAnalysisPolicy,
                 stepImportDiagnostics: healthData.stepImportDiagnostics || stepImportDiagnosticsGV178 || null,
                 hrvImportDiagnostics: healthData.hrvImportDiagnostics || hrvImportDiagnosticsGV178 || null,
+                sleepImportDiagnostics: healthData.sleepImportDiagnostics || sleepImportDiagnosticsGV179 || null,
                 metricReliability: healthData.metricReliability || metricReliabilityGV178 || buildMetricReliabilityGV178(),
                 importWarnings: healthData.importWarnings || importWarningsGV178 || buildImportWarningsGV178(),
                 importWarningSummary: buildImportWarningSummaryGV178(healthData.importWarnings || importWarningsGV178 || buildImportWarningsGV178()),
@@ -6282,7 +6541,7 @@
                 },
                 dailySummaries,
                 healthData: {
-                    summary: { ...(healthData.summary || {}), version: "gv1.78.3", heightCm: 150, targetWeight: 50, targetWeightKg: 50 },
+                    summary: { ...(healthData.summary || {}), version: "gv1.79.1", heightCm: 150, targetWeight: 50, targetWeightKg: 50 },
                     weight: healthData.weight || {},
                     steps: healthData.steps || {},
                     sleep: healthData.sleep || {},
@@ -6290,6 +6549,7 @@
                     hrv: healthData.hrv || {},
                     stepImportDiagnostics: healthData.stepImportDiagnostics || stepImportDiagnosticsGV178 || null,
                     hrvImportDiagnostics: healthData.hrvImportDiagnostics || hrvImportDiagnosticsGV178 || null,
+                    sleepImportDiagnostics: healthData.sleepImportDiagnostics || sleepImportDiagnosticsGV179 || null,
                     metricReliability: healthData.metricReliability || metricReliabilityGV178 || buildMetricReliabilityGV178(),
                     importWarnings: healthData.importWarnings || importWarningsGV178 || buildImportWarningsGV178(),
                     importWarningSummary: buildImportWarningSummaryGV178(healthData.importWarnings || importWarningsGV178 || buildImportWarningsGV178()),

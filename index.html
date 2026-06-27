@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Health Activity Manager gv1.79.1</title>
-    <!-- gv1.79.1 sleep abnormal count split + weight bar chart alignment + gv1.79 sleep interval merge diagnostics fix. Existing UI preserved. -->
+    <title>Health Activity Manager gv1.80.0</title>
+    <!-- gv1.80.0 diet food update: Oikos default is sweetened P10g, added diet foods, and keeps gv1.79.9 food edit input sync fix. -->
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
     <meta name="apple-mobile-web-app-title" content="HealthManager">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -350,7 +350,7 @@
                 <h1 onclick="goHomeStartup()" class="text-xl font-bold text-blue-500 flex items-center tracking-tight cursor-pointer hover:text-blue-400 transition" title="スタート画面へ戻る">
                     <i class="fas fa-heartbeat mr-2 text-2xl"></i>HealthManager
                 </h1>
-                <p class="text-[10px] text-slate-500 font-mono mt-1 uppercase tracking-widest">gv1.79.1 OS PRO</p>
+                <p class="text-[10px] text-slate-500 font-mono mt-1 uppercase tracking-widest">gv1.80.0 OS PRO</p>
             </div>
             <nav class="flex-1 px-4 space-y-1 overflow-y-auto custom-scrollbar">
                 <button onclick="switchTab('dashboard')" class="nav-btn w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl transition" data-tab="dashboard">
@@ -559,7 +559,7 @@
                     <section id="import-diagnostics-mini" class="glass-card p-4 md:p-5 mt-6 border border-slate-700/50 bg-slate-900/25">
                         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-3">
                             <h3 class="text-sm md:text-base font-black text-slate-200"><i class="fas fa-database text-cyan-300 mr-2"></i>取込・評価信頼度</h3>
-                            <div class="text-[10px] text-slate-500 font-bold uppercase">gv1.79.1 diagnostics</div>
+                            <div class="text-[10px] text-slate-500 font-bold uppercase">gv1.80.0 diagnostics</div>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-8 gap-3 text-xs">
                             <div class="report-metric-box"><div class="text-[10px] text-slate-400 font-bold uppercase mb-1">歩数集計</div><div id="diag-step-method" class="font-black text-white">--</div></div>
@@ -1342,6 +1342,29 @@
                 <div class="manual-detail-label">登録日時</div>
                 <input type="datetime-local" id="manual-detail-datetime" class="w-full bg-slate-950 border border-slate-700 text-white px-3 py-2 rounded-xl text-sm focus:outline-none focus:border-teal-500 min-h-[44px]">
             </div>
+            <div id="manual-detail-edit-fields" class="hidden space-y-3 mb-3">
+                <div>
+                    <div class="manual-detail-label">食品</div>
+                    <select id="manual-detail-food-select" onchange="handleManualDetailFoodChange(this.value)" class="w-full bg-slate-950 border border-slate-700 text-white px-3 py-2 rounded-xl text-sm focus:outline-none focus:border-teal-500 min-h-[44px]"></select>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                        <div class="manual-detail-label">タンパク質 g</div>
+                        <input type="number" inputmode="decimal" step="0.1" id="manual-detail-protein" oninput="markManualDetailOverride('protein')" class="w-full bg-slate-950 border border-slate-700 text-white px-3 py-2 rounded-xl text-sm focus:outline-none focus:border-teal-500 min-h-[44px]">
+                    </div>
+                    <div>
+                        <div class="manual-detail-label">kcal</div>
+                        <input type="number" inputmode="numeric" step="1" id="manual-detail-kcal" oninput="markManualDetailOverride('kcal')" class="w-full bg-slate-950 border border-slate-700 text-white px-3 py-2 rounded-xl text-sm focus:outline-none focus:border-teal-500 min-h-[44px]">
+                    </div>
+                    <div>
+                        <div class="manual-detail-label">ナッツ g</div>
+                        <input type="number" inputmode="numeric" step="1" id="manual-detail-nuts" oninput="markManualDetailOverride('nuts')" class="w-full bg-slate-950 border border-slate-700 text-white px-3 py-2 rounded-xl text-sm focus:outline-none focus:border-teal-500 min-h-[44px]" placeholder="該当時のみ">
+                    </div>
+                </div>
+                <div class="text-[11px] text-slate-400 leading-relaxed bg-slate-800/40 border border-slate-700/50 rounded-xl p-3">
+                    今日の食事タイムラインの修正用です。食品名、日時、タンパク質、kcalを直接変更できます。
+                </div>
+            </div>
             <div id="manual-detail-options" class="space-y-3"></div>
             <div class="grid grid-cols-2 gap-3 mt-5">
                 <button onclick="closeFoodDetailModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-3 rounded-xl font-black min-h-[46px]">キャンセル</button>
@@ -1362,9 +1385,9 @@
     <script>
         // --- Global Variables Setup ---
         let healthData = {
-            summary: { version: "gv1.79.1", isSample: false, updatedAt: null, heightCm: 150, targetWeight: 50 },
+            summary: { version: "gv1.80.0", isSample: false, updatedAt: null, heightCm: 150, targetWeight: 50 },
             weight: {}, steps: {}, sleep: {}, heartRate: {}, hrv: {},
-            gpsSummaries: [], manualLogs: {}, foodLogs: {}, eventLogs: {}, alcoholLogs: {},
+            gpsSummaries: [], manualLogs: {}, foodLogs: {}, eventLogs: {}, alcoholLogs: {}, deletedFoodLogIds: {},
             stepImportDiagnostics: null, hrvImportDiagnostics: null, sleepImportDiagnostics: null, metricReliability: null, importWarnings: []
         };
 
@@ -1382,7 +1405,7 @@
         // Firebase Consoleで取得したWebアプリ設定をここに貼り付けると、食事・飲酒・イベントログだけをFirestoreに保存します。
         // Apple Health / GPS / 体重 / 睡眠 / 心拍の詳細データはFirestoreへ保存しません。
         const FIRESTORE_MANUAL_LOG_SYNC = {
-            enabled: true,
+            enabled: false, // gv1.79.6: 編集/削除復旧のため、食事ログFirestore自動同期を停止
             userId: 'mineo',
             collectionRoot: 'healthActivityManagerUsers',
             firebaseConfig: {
@@ -1845,7 +1868,7 @@
             const previousSourceSummary = data.sourceSummary || targetData.sourceSummary || targetData.summary?.previousSourceSummary || current.summary?.previousSourceSummary || null;
 
             const defSummary = {
-                version: "gv1.79.1",
+                version: "gv1.80.0",
                 heightCm: lockedHeight,
                 targetWeight: lockedTarget,
                 targetWeightKg: lockedTarget,
@@ -1869,6 +1892,7 @@
                 foodLogs: targetData.foodLogs || current.foodLogs || {},
                 eventLogs: targetData.eventLogs || current.eventLogs || {},
                 alcoholLogs: targetData.alcoholLogs || current.alcoholLogs || {},
+                deletedFoodLogIds: { ...(current.deletedFoodLogIds || {}), ...(targetData.deletedFoodLogIds || data.deletedFoodLogIds || {}) },
                 stepImportDiagnostics: data.stepImportDiagnostics || targetData.stepImportDiagnostics || current.stepImportDiagnostics || null,
                 hrvImportDiagnostics: data.hrvImportDiagnostics || targetData.hrvImportDiagnostics || current.hrvImportDiagnostics || null,
                 sleepImportDiagnostics: data.sleepImportDiagnostics || targetData.sleepImportDiagnostics || current.sleepImportDiagnostics || null,
@@ -3087,13 +3111,8 @@
             const sampleBadge = document.getElementById('sample-badge'); if (sampleBadge) sampleBadge.classList.toggle('hidden', !healthData.summary.isSample);
             updateDataSourceChip();
             loadManualLogsFromStorage();
-            loadManualLogsFromFirestore().then((loaded) => {
-                if (loaded) {
-                    renderManualLogUI();
-                    updateManualDashboardSummary();
-                    console.info('[FIRESTORE_MANUAL_LOG] UI refreshed after cloud merge');
-                }
-            });
+            // gv1.79.6: Firestoreの古い食事ログがローカル編集・削除を上書きするため、自動読込を停止。
+            // 必要なら後で明示同期方式に戻す。
             renderManualLogUI();
             updateManualDashboardSummary();
             const ind = document.getElementById('status-indicator'); if (ind) ind.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 mr-2 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span> Active`;
@@ -4179,8 +4198,8 @@
                 ctx.restore();
             }
         };
-        if (window.Chart && !window.__weekendBackgroundPluginRegisteredGV1782) {
-            Chart.register(WEEKEND_BACKGROUND_PLUGIN_GV1782);
+        if (window.Chart && typeof window.Chart.register === 'function' && !window.__weekendBackgroundPluginRegisteredGV1782) {
+            window.Chart.register(WEEKEND_BACKGROUND_PLUGIN_GV1782);
             window.__weekendBackgroundPluginRegisteredGV1782 = true;
         }
         function applyDateAxisOptionsGV1782(options, dateKeys) {
@@ -4956,7 +4975,7 @@
             // 体重変動要因の分析価値が高いものだけを記録対象にする。水・お茶・コーヒー・常用サプリは日々のログから除外。
             { id:'salad_chicken', name:'サラダチキン', protein:25, kcal:120, group:'highProtein', comment:'ダイエット最強クラス' },
             { id:'natto', name:'納豆', protein:7, kcal:90, group:'highProtein', comment:'発酵食品＋高タンパク' },
-            { id:'greek_yogurt', name:'ギリシャヨーグルト', protein:12, kcal:100, group:'highProtein', comment:'間食に最適' },
+            { id:'greek_yogurt', name:'オイコス/ギリシャヨーグルト', protein:10, kcal:130, group:'highProtein', comment:'いつもの加糖P10gをデフォルト' },
             { id:'tofu_bar', name:'豆腐バー', protein:12, kcal:120, group:'highProtein', comment:'腹持ち良好' },
             { id:'hiyayakko', name:'冷奴', protein:8, kcal:100, group:'highProtein', comment:'夜に使いやすい' },
             { id:'boiled_egg', name:'ゆで卵', protein:6, kcal:80, group:'highProtein', comment:'手軽な補給' },
@@ -4971,6 +4990,13 @@
             { id:'miso_soup', name:'味噌汁', protein:4, kcal:60, group:'homeCooking', comment:'塩分はあるが食事の安定要素' },
             { id:'okara', name:'おから', protein:6, kcal:120, group:'homeCooking', comment:'食物繊維も期待' },
             { id:'hijiki', name:'ひじき', protein:3, kcal:90, group:'homeCooking', comment:'副菜として良い' },
+
+            { id:'tokoroten', name:'ところてん', protein:0, kcal:20, group:'dietFood', comment:'低カロリー。空腹対策に有効' },
+            { id:'mozuku', name:'もずく酢', protein:1, kcal:20, group:'dietFood', comment:'低カロリーの海藻系' },
+            { id:'konjac', name:'こんにゃく/しらたき', protein:0, kcal:20, group:'dietFood', comment:'かさ増し・空腹対策' },
+            { id:'mushrooms', name:'きのこ類', protein:3, kcal:40, group:'dietFood', comment:'低カロリーで食物繊維寄り' },
+            { id:'cabbage', name:'キャベツ/千切り野菜', protein:1, kcal:40, group:'dietFood', comment:'食前のかさ増し向き' },
+            { id:'vegetable_soup', name:'野菜スープ', protein:3, kcal:80, group:'dietFood', comment:'夜の軽食・空腹対策' },
 
             { id:'rice', name:'ご飯', protein:4, kcal:250, group:'staple', comment:'量の把握が重要' },
             { id:'onigiri', name:'おにぎり', protein:4, kcal:180, group:'staple', comment:'移動時の主食' },
@@ -5002,14 +5028,15 @@
         const FOOD_GROUPS = {
             highProtein: { label:'🟢 高タンパク食品', cls:'group-recommended', score:5 },
             homeCooking: { label:'🟢 家庭料理・健康寄り', cls:'group-recommended', score:5 },
+            dietFood: { label:'🟢 ダイエット食・低カロリー', cls:'group-recommended', score:5 },
             staple: { label:'🟡 主食', cls:'group-ok', score:3 },
             outsideFood: { label:'🔴 外食・高カロリー注意', cls:'group-caution', score:1 },
             snack: { label:'🟡 間食・甘いもの', cls:'group-ok', score:2 }
         };
         const FOOD_DETAIL_OPTIONS = {
             greek_yogurt: [
-                { key:'sweetness', label:'種類', choices:['無糖','加糖'], default:'無糖' },
-                { key:'proteinChoice', label:'タンパク質', choices:['10g','12g','15g','20g'], default:'12g' }
+                { key:'sweetness', label:'種類', choices:['無糖','加糖'], default:'加糖' },
+                { key:'proteinChoice', label:'タンパク質', choices:['10g','12g','15g','20g'], default:'10g' }
             ],
             salad_chicken: [
                 { key:'size', label:'量', choices:['通常','小さめ','大きめ'], default:'通常' },
@@ -5018,6 +5045,15 @@
             protein_drink: [{ key:'proteinChoice', label:'タンパク質', choices:['15g','20g','25g'], default:'20g' }],
             tofu_bar: [{ key:'proteinChoice', label:'タンパク質', choices:['10g','12g','15g'], default:'12g' }],
             natto: [{ key:'packs', label:'量', choices:['1パック','2パック'], default:'1パック' }],
+            tokoroten: [
+                { key:'packs', label:'量', choices:['1パック','2パック'], default:'1パック' },
+                { key:'sauce', label:'味', choices:['三杯酢','黒蜜なし'], default:'三杯酢' }
+            ],
+            mozuku: [{ key:'cups', label:'量', choices:['1カップ','2カップ'], default:'1カップ' }],
+            konjac: [{ key:'amount', label:'量', choices:['小鉢','多め'], default:'小鉢' }],
+            mushrooms: [{ key:'amount', label:'量', choices:['小鉢','多め'], default:'小鉢' }],
+            cabbage: [{ key:'amount', label:'量', choices:['小鉢','多め'], default:'小鉢' }],
+            vegetable_soup: [{ key:'amount', label:'量', choices:['普通','多め'], default:'普通' }],
             hiyayakko: [{ key:'portion', label:'量', choices:['半丁','1丁'], default:'半丁' }],
             boiled_egg: [{ key:'pieces', label:'個数', choices:['1個','2個'], default:'1個' }],
             nuts: [{ key:'amount', label:'量', choices:['30g','60g','100g','150g','250g以上'], default:'30g' }],
@@ -5053,6 +5089,106 @@
             healthData.foodLogs = healthData.foodLogs || {};
             healthData.eventLogs = healthData.eventLogs || {};
             healthData.alcoholLogs = healthData.alcoholLogs || {};
+            // gv1.79.6: 削除済み食事ログの墓標。軽量JSON/Firestoreから古いログが再流入するのを防ぐ。
+            healthData.deletedFoodLogIds = healthData.deletedFoodLogIds || {};
+        }
+        function parseFoodLogTimestampMs(value) {
+            if (!value) return 0;
+            const t = new Date(value).getTime();
+            return Number.isFinite(t) ? t : 0;
+        }
+        function getFoodLogVersionMs(log) {
+            if (!log) return 0;
+            return Math.max(
+                parseFoodLogTimestampMs(log.updatedAt),
+                parseFoodLogTimestampMs(log.modifiedAt),
+                parseFoodLogTimestampMs(log.createdAt),
+                parseFoodLogTimestampMs(log.timestampUtc),
+                parseFoodLogTimestampMs(log.time),
+                parseFoodLogTimestampMs(log.localDateTime)
+            );
+        }
+        function getDeletedFoodLogVersionMs(logId) {
+            ensureManualStores();
+            return parseFoodLogTimestampMs(healthData.deletedFoodLogIds?.[String(logId)]);
+        }
+        function findFoodLogByKeyAcrossDates(logId) {
+            ensureManualStores();
+            if (!logId) return null;
+            for (const date of Object.keys(healthData.foodLogs || {})) {
+                const arr = healthData.foodLogs[date] || [];
+                const idx = arr.findIndex(x => getFoodLogKey(x) === logId);
+                if (idx >= 0) return { date, arr, idx, log: arr[idx] };
+            }
+            return null;
+        }
+        function recordFoodLogDeletion(logId, deletedAt = new Date().toISOString()) {
+            ensureManualStores();
+            if (!logId) return;
+            const key = String(logId);
+            const existingMs = parseFoodLogTimestampMs(healthData.deletedFoodLogIds[key]);
+            const nextMs = parseFoodLogTimestampMs(deletedAt);
+            if (!existingMs || nextMs >= existingMs) healthData.deletedFoodLogIds[key] = deletedAt;
+        }
+        function markFoodLogDeleted(logId) { recordFoodLogDeletion(logId); }
+        function isFoodLogDeleted(logId) {
+            ensureManualStores();
+            return !!(logId && healthData.deletedFoodLogIds && healthData.deletedFoodLogIds[String(logId)]);
+        }
+        function removeFoodLogByKeyFromAllDates(logId) {
+            ensureManualStores();
+            if (!logId) return;
+            Object.keys(healthData.foodLogs || {}).forEach(d => {
+                healthData.foodLogs[d] = (healthData.foodLogs[d] || []).filter(x => getFoodLogKey(x) !== logId);
+                if (!healthData.foodLogs[d].length) delete healthData.foodLogs[d];
+            });
+        }
+        function pruneDeletedFoodLogs() {
+            ensureManualStores();
+            Object.keys(healthData.deletedFoodLogIds || {}).forEach(logId => removeFoodLogByKeyFromAllDates(logId));
+        }
+        function normalizeFoodLogDate(date, log) {
+            return date || log?.localDate || (log?.time ? String(log.time).substring(0, 10) : null) || (log?.timestampUtc ? String(log.timestampUtc).substring(0, 10) : null);
+        }
+        function upsertFoodLogLocal(date, log, options = {}) {
+            ensureManualStores();
+            const key = getFoodLogKey(log);
+            const targetDate = normalizeFoodLogDate(date, log);
+            if (!targetDate || !log || !key) return false;
+
+            const incomingMs = getFoodLogVersionMs(log);
+            const deletedMs = getDeletedFoodLogVersionMs(key);
+            if (deletedMs && (!incomingMs || incomingMs <= deletedMs)) {
+                console.info(`[MANUAL_LOG_MERGE] skip deleted foodLog ${key}`);
+                return false;
+            }
+
+            const existing = findFoodLogByKeyAcrossDates(key);
+            if (existing && options.prefer !== 'incoming') {
+                const existingMs = getFoodLogVersionMs(existing.log);
+                if (existingMs && incomingMs && existingMs > incomingMs) {
+                    console.info(`[MANUAL_LOG_MERGE] keep newer local foodLog ${key}`);
+                    return false;
+                }
+            }
+
+            removeFoodLogByKeyFromAllDates(key);
+            healthData.foodLogs[targetDate] = healthData.foodLogs[targetDate] || [];
+            healthData.foodLogs[targetDate].push(log);
+            return true;
+        }
+        function mergeFoodLogsByLogId(foodLogsMap, options = {}) {
+            Object.entries(foodLogsMap || {}).forEach(([date, logs]) => {
+                (Array.isArray(logs) ? logs : []).forEach(log => upsertFoodLogLocal(date, log, options));
+            });
+        }
+        function mergeDatedObjectLogs(preferred, fallback) {
+            const result = {};
+            [...Object.keys(fallback || {}), ...Object.keys(preferred || {})].forEach(date => {
+                if (typeof (fallback || {})[date] === 'object' && !Array.isArray((fallback || {})[date])) result[date] = { ...(fallback || {})[date] };
+                if (typeof (preferred || {})[date] === 'object' && !Array.isArray((preferred || {})[date])) result[date] = { ...(result[date] || {}), ...(preferred || {})[date] };
+            });
+            return result;
         }
         function cloneManualStoresForPreserve() {
             ensureManualStores();
@@ -5060,26 +5196,34 @@
                 manualLogs: JSON.parse(JSON.stringify(healthData.manualLogs || {})),
                 foodLogs: JSON.parse(JSON.stringify(healthData.foodLogs || {})),
                 eventLogs: JSON.parse(JSON.stringify(healthData.eventLogs || {})),
-                alcoholLogs: JSON.parse(JSON.stringify(healthData.alcoholLogs || {}))
+                alcoholLogs: JSON.parse(JSON.stringify(healthData.alcoholLogs || {})),
+                deletedFoodLogIds: JSON.parse(JSON.stringify(healthData.deletedFoodLogIds || {}))
             };
         }
         function restoreManualStoresAfterDataRefresh(snapshot, options = {}) {
-            // gv1.75: Apple Health ZIP / location-history.json の再読込は健康・GPSデータ更新であり、食事ログを消してはいけない。
-            // 軽量JSONを明示的に読み込んだ場合のみ、JSON側ログを正本にしつつlocalStorage分を後でマージする。
+            // 食事ログは date 単位の単純spreadではなく、logId単位でマージする。
+            // これをしないと編集済みログと軽量JSON/Firestore由来の古い同一ログが併存・復活する。
             if (!snapshot) return;
             ensureManualStores();
             const mode = options.mode || 'merge';
+            const currentFoodLogs = JSON.parse(JSON.stringify(healthData.foodLogs || {}));
+            const currentDeleted = JSON.parse(JSON.stringify(healthData.deletedFoodLogIds || {}));
+            healthData.deletedFoodLogIds = { ...(snapshot.deletedFoodLogIds || {}), ...currentDeleted };
+            healthData.foodLogs = {};
             if (mode === 'preserve-current') {
+                mergeFoodLogsByLogId(currentFoodLogs);
+                mergeFoodLogsByLogId(snapshot.foodLogs || {});
                 healthData.manualLogs = { ...(healthData.manualLogs || {}), ...(snapshot.manualLogs || {}) };
-                healthData.foodLogs = { ...(healthData.foodLogs || {}), ...(snapshot.foodLogs || {}) };
-                healthData.eventLogs = { ...(healthData.eventLogs || {}), ...(snapshot.eventLogs || {}) };
-                healthData.alcoholLogs = { ...(healthData.alcoholLogs || {}), ...(snapshot.alcoholLogs || {}) };
+                healthData.eventLogs = mergeDatedObjectLogs(snapshot.eventLogs || {}, healthData.eventLogs || {});
+                healthData.alcoholLogs = mergeDatedObjectLogs(snapshot.alcoholLogs || {}, healthData.alcoholLogs || {});
             } else {
+                mergeFoodLogsByLogId(snapshot.foodLogs || {});
+                mergeFoodLogsByLogId(currentFoodLogs);
                 healthData.manualLogs = { ...(snapshot.manualLogs || {}), ...(healthData.manualLogs || {}) };
-                healthData.foodLogs = { ...(snapshot.foodLogs || {}), ...(healthData.foodLogs || {}) };
-                healthData.eventLogs = { ...(snapshot.eventLogs || {}), ...(healthData.eventLogs || {}) };
-                healthData.alcoholLogs = { ...(snapshot.alcoholLogs || {}), ...(healthData.alcoholLogs || {}) };
+                healthData.eventLogs = mergeDatedObjectLogs(healthData.eventLogs || {}, snapshot.eventLogs || {});
+                healthData.alcoholLogs = mergeDatedObjectLogs(healthData.alcoholLogs || {}, snapshot.alcoholLogs || {});
             }
+            pruneDeletedFoodLogs();
             saveManualLogsToStorage();
         }
         function toLocalDateTimeValue(d = new Date()) {
@@ -5130,15 +5274,29 @@
                 const raw = localStorage.getItem('health-manual-logs-v1');
                 if (!raw) return;
                 const saved = JSON.parse(raw);
+                healthData.deletedFoodLogIds = { ...(healthData.deletedFoodLogIds || {}), ...(saved.deletedFoodLogIds || {}) };
                 healthData.manualLogs = { ...(healthData.manualLogs || {}), ...(saved.manualLogs || {}) };
-                healthData.foodLogs = { ...(healthData.foodLogs || {}), ...(saved.foodLogs || {}) };
                 healthData.eventLogs = { ...(healthData.eventLogs || {}), ...(saved.eventLogs || {}) };
                 healthData.alcoholLogs = { ...(healthData.alcoholLogs || {}), ...(saved.alcoholLogs || {}) };
+
+                // 保存済みfoodLogsはlogId単位で正本扱いにし、既存JSON/クラウド由来の古い同一logIdを全日付から除去してから反映する。
+                Object.entries(saved.foodLogs || {}).forEach(([date, logs]) => {
+                    (logs || []).forEach(log => upsertFoodLogLocal(date, log));
+                });
+
+                // 削除済みlogIdは、軽量JSON・Firestoreから復活したものも画面表示前に除去する。
+                Object.keys(healthData.deletedFoodLogIds || {}).forEach(logId => removeFoodLogByKeyFromAllDates(logId));
             } catch(e) { console.warn('manual log restore failed', e); }
         }
         function saveManualLogsToStorage() {
             ensureManualStores();
-            localStorage.setItem('health-manual-logs-v1', JSON.stringify({ manualLogs: healthData.manualLogs, foodLogs: healthData.foodLogs, eventLogs: healthData.eventLogs, alcoholLogs: healthData.alcoholLogs }));
+            localStorage.setItem('health-manual-logs-v1', JSON.stringify({
+                manualLogs: healthData.manualLogs,
+                foodLogs: healthData.foodLogs,
+                eventLogs: healthData.eventLogs,
+                alcoholLogs: healthData.alcoholLogs,
+                deletedFoodLogIds: healthData.deletedFoodLogIds
+            }));
         }
 
         function isFirestoreManualLogSyncConfigured() {
@@ -5185,7 +5343,7 @@
                     logId,
                     date,
                     kind,
-                    appVersion: 'gv1.79.1',
+                    appVersion: 'gv1.80.0',
                     updatedAt: new Date().toISOString(),
                     source: 'browser'
                 }, { merge: true });
@@ -5212,12 +5370,49 @@
             }
         }
 
+        function firestoreSafeDocId(value) {
+            return encodeURIComponent(String(value || '')).replace(/\//g, '%2F');
+        }
+
+        async function saveDeletedFoodLogToFirestore(logId) {
+            const db = await initFirestoreManualLogDb();
+            if (!db || !firestoreManualLogModules || !logId) return false;
+            try {
+                const fs = firestoreManualLogModules;
+                const docRef = fs.doc(db, getFirestoreManualLogPath('deletedFoodLogIds'), firestoreSafeDocId(logId));
+                await fs.setDoc(docRef, {
+                    logId: String(logId),
+                    deletedAt: healthData.deletedFoodLogIds?.[String(logId)] || new Date().toISOString(),
+                    kind: 'deletedFoodLogIds',
+                    appVersion: 'gv1.80.0',
+                    source: 'browser'
+                }, { merge: true });
+                console.info(`[FIRESTORE_MANUAL_LOG] tombstone saved foodLogs/${logId}`);
+                return true;
+            } catch (e) {
+                console.warn(`[FIRESTORE_MANUAL_LOG] tombstone save failed: ${logId}`, e);
+                return false;
+            }
+        }
+
         async function loadManualLogsFromFirestore() {
             const db = await initFirestoreManualLogDb();
             if (!db || !firestoreManualLogModules) return false;
             const fs = firestoreManualLogModules;
             try {
                 ensureManualStores();
+                // 先に削除済みIDを読む。これより後にfoodLogsを読むため、古いFirestore文書が残っていても復活しない。
+                try {
+                    const deletedSnap = await fs.getDocs(fs.collection(db, getFirestoreManualLogPath('deletedFoodLogIds')));
+                    deletedSnap.forEach(docSnap => {
+                        const tomb = docSnap.data() || {};
+                        const rawId = tomb.logId || decodeURIComponent(docSnap.id || '');
+                        if (rawId) recordFoodLogDeletion(rawId, tomb.deletedAt || tomb.updatedAt || new Date().toISOString());
+                    });
+                    pruneDeletedFoodLogs();
+                } catch (e) {
+                    console.warn('[FIRESTORE_MANUAL_LOG] deleted tombstone load failed. Continue with local tombstones.', e);
+                }
                 const kinds = ['foodLogs', 'alcoholLogs', 'eventLogs'];
                 for (const kind of kinds) {
                     const snap = await fs.getDocs(fs.collection(db, getFirestoreManualLogPath(kind)));
@@ -5226,9 +5421,11 @@
                         const date = log.date || (log.time ? String(log.time).substring(0, 10) : null);
                         if (!date) return;
                         if (kind === 'foodLogs') {
-                            healthData.foodLogs[date] = healthData.foodLogs[date] || [];
-                            const exists = healthData.foodLogs[date].some(x => (x.logId || '') === (log.logId || docSnap.id));
-                            if (!exists) healthData.foodLogs[date].push({ ...log, logId: log.logId || docSnap.id });
+                            const logId = log.logId || docSnap.id;
+                            if (isFoodLogDeleted(logId)) return;
+                            // gv1.79.6: 同一logIdは「存在したらスキップ」ではなく、Firestore側の最新値で上書きする。
+                            // これをしないと、軽量JSON内の古いログが勝ち、変更・削除が効いていないように見える。
+                            upsertFoodLogLocal(date, { ...log, logId }, { prefer: 'newer' });
                         } else if (kind === 'alcoholLogs') {
                             healthData.alcoholLogs[date] = { ...(healthData.alcoholLogs[date] || {}), ...(log.values || log.alcoholValues || {}) };
                             if (log.alcoholType && log.cups != null) {
@@ -5244,6 +5441,7 @@
                         }
                     });
                 }
+                pruneDeletedFoodLogs();
                 saveManualLogsToStorage();
                 console.info('[FIRESTORE_MANUAL_LOG] loaded and merged');
                 return true;
@@ -5264,9 +5462,16 @@
         function jsArg(value) { return JSON.stringify(String(value ?? '')); }
         function findFoodLogEntry(date, logId) {
             ensureManualStores();
-            const arr = healthData.foodLogs[date] || [];
-            const idx = arr.findIndex(x => getFoodLogKey(x) === logId);
-            return { arr, idx, log: idx >= 0 ? arr[idx] : null };
+            const key = String(logId || '');
+            const dates = [];
+            if (date) dates.push(String(date));
+            Object.keys(healthData.foodLogs || {}).forEach(d => { if (!dates.includes(d)) dates.push(d); });
+            for (const d of dates) {
+                const arr = healthData.foodLogs[d] || [];
+                const idx = arr.findIndex(x => getFoodLogKey(x) === key || String(x?.logId || '') === key);
+                if (idx >= 0) return { date: d, arr, idx, log: arr[idx] };
+            }
+            return { date, arr: [], idx: -1, log: null };
         }
         function inferFoodIdFromLog(log) {
             if (!log) return null;
@@ -5294,9 +5499,110 @@
             if (id === 'salad_chicken' && log?.protein) selections.proteinChoice = `${Number(log.protein)}g`;
             if ((id === 'protein_drink' || id === 'tofu_bar') && log?.protein) selections.proteinChoice = `${Number(log.protein)}g`;
             if (id === 'natto' && Number(log?.protein || 0) >= 14) selections.packs = '2パック';
+            if (id === 'tokoroten' && Number(log?.kcal || 0) >= 40) selections.packs = '2パック';
+            if (id === 'mozuku' && Number(log?.kcal || 0) >= 35) selections.cups = '2カップ';
+            if (['konjac','mushrooms','cabbage'].includes(id) && String(log?.displayName || log?.name || '').includes('多め')) selections.amount = '多め';
+            if (id === 'vegetable_soup' && Number(log?.kcal || 0) >= 120) selections.amount = '多め';
             if (id === 'hiyayakko' && Number(log?.protein || 0) >= 16) selections.portion = '1丁';
             if (id === 'boiled_egg' && Number(log?.protein || 0) >= 12) selections.pieces = '2個';
             return selections;
+        }
+        function setManualDetailInputValue(id, value) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.value = (value === null || value === undefined || Number.isNaN(Number(value))) ? '' : String(value);
+        }
+        function numberOrNull(value) {
+            if (value === null || value === undefined || String(value).trim() === '') return null;
+            const n = Number(value);
+            return Number.isFinite(n) ? n : null;
+        }
+        function resetManualDetailOverrideTouched() {
+            if (!manualDetailState) return;
+            manualDetailState.overrideTouched = { protein:false, kcal:false, nuts:false };
+        }
+        function markManualDetailOverride(field) {
+            if (!manualDetailState) return;
+            manualDetailState.overrideTouched = manualDetailState.overrideTouched || { protein:false, kcal:false, nuts:false };
+            manualDetailState.overrideTouched[field] = true;
+        }
+        function previewManualDetailLogFromSelections() {
+            if (!manualDetailState) return null;
+            const item = FOOD_MASTER.find(x => x.id === manualDetailState.foodId);
+            if (!item) return null;
+            return buildFoodLogFromSelection(item, manualDetailState.selections || {});
+        }
+        function refreshManualDetailNutrientInputsFromSelections() {
+            if (!manualDetailState || manualDetailState.mode !== 'edit') return;
+            const preview = previewManualDetailLogFromSelections();
+            if (!preview) return;
+            const touched = manualDetailState.overrideTouched || {};
+            if (!touched.protein) setManualDetailInputValue('manual-detail-protein', preview.protein ?? 0);
+            if (!touched.kcal) setManualDetailInputValue('manual-detail-kcal', preview.kcal ?? 0);
+            if (!touched.nuts) setManualDetailInputValue('manual-detail-nuts', preview.nuts ?? (manualDetailState.foodId === 'nuts' ? 30 : ''));
+        }
+        function populateManualDetailEditFields(log, foodId) {
+            const box = document.getElementById('manual-detail-edit-fields');
+            const select = document.getElementById('manual-detail-food-select');
+            if (!box || !select) return;
+            const editMode = manualDetailState?.mode === 'edit';
+            box.classList.toggle('hidden', !editMode);
+            if (!editMode) {
+                select.innerHTML = '';
+                setManualDetailInputValue('manual-detail-protein', '');
+                setManualDetailInputValue('manual-detail-kcal', '');
+                setManualDetailInputValue('manual-detail-nuts', '');
+                return;
+            }
+            select.innerHTML = FOOD_MASTER.map(x => `<option value="${x.id}" ${x.id === foodId ? 'selected' : ''}>${x.name}</option>`).join('');
+            const master = FOOD_MASTER.find(x => x.id === foodId) || {};
+            setManualDetailInputValue('manual-detail-protein', log?.protein ?? master.protein ?? 0);
+            setManualDetailInputValue('manual-detail-kcal', log?.kcal ?? master.kcal ?? 0);
+            setManualDetailInputValue('manual-detail-nuts', log?.nuts ?? (foodId === 'nuts' ? (master.nuts ?? 30) : ''));
+        }
+        function handleManualDetailFoodChange(nextFoodId) {
+            if (!manualDetailState || !nextFoodId) return;
+            const item = FOOD_MASTER.find(x => x.id === nextFoodId);
+            if (!item) return;
+            manualDetailState.foodId = nextFoodId;
+            manualDetailState.selections = getDefaultFoodSelections(nextFoodId);
+            resetManualDetailOverrideTouched();
+            document.getElementById('manual-detail-title').textContent = manualDetailState.mode === 'edit' ? `${item.name}を修正` : item.name;
+            document.getElementById('manual-detail-comment').textContent = manualDetailState.mode === 'edit' ? '今日の食事タイムラインの内容を変更できます。' : (item.comment || '体重変動の原因分析に必要な粒度だけ選択します。');
+
+            // gv1.79.9: 食品変更時は、マスタ基本値ではなく初期選択状態を反映した計算値を編集欄へ同期する。
+            const tempLog = buildFoodLogFromSelection(item, manualDetailState.selections);
+            populateManualDetailEditFields(tempLog, nextFoodId);
+
+            renderFoodDetailOptions();
+        }
+        function getManualDetailOverrides() {
+            // gv1.79.8: 編集欄の値は「ユーザーが直接入力した時だけ」上書き値として使う。
+            // 詳細選択を変えた場合は、選択から再計算したタンパク質/kcalを保存する。
+            if (!manualDetailState || manualDetailState.mode !== 'edit') {
+                return { protein: null, kcal: null, nuts: null };
+            }
+            const touched = manualDetailState.overrideTouched || {};
+            return {
+                protein: touched.protein ? numberOrNull(document.getElementById('manual-detail-protein')?.value) : null,
+                kcal: touched.kcal ? numberOrNull(document.getElementById('manual-detail-kcal')?.value) : null,
+                nuts: touched.nuts ? numberOrNull(document.getElementById('manual-detail-nuts')?.value) : null
+            };
+        }
+        function syncFoodLogDisplayNameWithNutrients(log, item) {
+            if (!log || !item) return log;
+            const protein = Number(log.protein || 0);
+            const detail = log.detail || {};
+            if (item.id === 'greek_yogurt') {
+                log.displayName = `オイコス（${detail.sweetness || '加糖'}・P${protein}g）`;
+            } else if (item.id === 'salad_chicken') {
+                log.displayName = `サラダチキン（${detail.size || '通常'}・P${protein}g）`;
+            } else if (item.id === 'protein_drink' || item.id === 'tofu_bar') {
+                log.displayName = `${item.name}（P${protein}g）`;
+            } else if (item.id === 'nuts' && log.nuts != null) {
+                log.displayName = `ナッツ（${Number(log.nuts) || 0}g）`;
+            }
+            return log;
         }
         function openFoodDetailModal(id, editContext = null) {
             const item = FOOD_MASTER.find(x => x.id === id); if (!item) return;
@@ -5307,14 +5613,16 @@
                 mode: editContext ? 'edit' : 'add',
                 originalDate: editContext?.date || null,
                 originalLogId: editContext?.logId || null,
-                existingLog
+                existingLog,
+                overrideTouched: { protein:false, kcal:false, nuts:false }
             };
             document.getElementById('manual-detail-title').textContent = editContext ? `${item.name}を修正` : item.name;
-            document.getElementById('manual-detail-comment').textContent = editContext ? '内容・量・登録日時を変更できます。' : (item.comment || '体重変動の原因分析に必要な粒度だけ選択します。');
+            document.getElementById('manual-detail-comment').textContent = editContext ? '今日の食事タイムラインの内容を変更できます。' : (item.comment || '体重変動の原因分析に必要な粒度だけ選択します。');
             const dt = document.getElementById('manual-detail-datetime');
             if (dt) dt.value = toLocalDateTimeValue(existingLog ? new Date(existingLog.time || existingLog.timestampUtc || existingLog.localDateTime) : getManualLogDateTime());
             const confirmBtn = document.getElementById('manual-detail-confirm-btn');
             if (confirmBtn) confirmBtn.innerHTML = editContext ? '<i class="fas fa-save mr-1"></i>変更を保存' : '<i class="fas fa-plus mr-1"></i>登録';
+            populateManualDetailEditFields(existingLog, id);
             renderFoodDetailOptions();
             document.body.classList.add('manual-modal-open');
             const modal = document.getElementById('manual-detail-modal'); if (modal) modal.classList.add('active');
@@ -5324,11 +5632,30 @@
             document.body.classList.remove('manual-modal-open');
             const confirmBtn = document.getElementById('manual-detail-confirm-btn');
             if (confirmBtn) confirmBtn.innerHTML = '<i class="fas fa-plus mr-1"></i>登録';
+            const editFields = document.getElementById('manual-detail-edit-fields'); if (editFields) editFields.classList.add('hidden');
+            setManualDetailInputValue('manual-detail-protein', '');
+            setManualDetailInputValue('manual-detail-kcal', '');
+            setManualDetailInputValue('manual-detail-nuts', '');
             const modal = document.getElementById('manual-detail-modal'); if (modal) modal.classList.remove('active');
         }
         function setFoodDetailChoice(key, value) {
             if (!manualDetailState) return;
             manualDetailState.selections[key] = value;
+
+            // gv1.79.9: 詳細選択ボタンを押した時点で、編集欄の数値も選択後の計算値へ同期する。
+            // ここで同期しないと、保存時に古い manual-detail-protein / kcal が overrides として勝つ。
+            if (manualDetailState.mode === 'edit') {
+                const foodId = document.getElementById('manual-detail-food-select')?.value || manualDetailState.foodId;
+                const item = FOOD_MASTER.find(x => x.id === foodId);
+                if (item) {
+                    const tempLog = buildFoodLogFromSelection(item, manualDetailState.selections);
+                    setManualDetailInputValue('manual-detail-protein', tempLog.protein);
+                    setManualDetailInputValue('manual-detail-kcal', tempLog.kcal);
+                    setManualDetailInputValue('manual-detail-nuts', tempLog.nuts !== undefined ? tempLog.nuts : '');
+                    resetManualDetailOverrideTouched();
+                }
+            }
+
             renderFoodDetailOptions();
         }
         function renderFoodDetailOptions() {
@@ -5340,10 +5667,12 @@
             if (!manualDetailState) return;
             const dtEl = document.getElementById('manual-detail-datetime');
             const dt = dtEl && dtEl.value ? new Date(dtEl.value) : getManualLogDateTime();
+            const foodId = document.getElementById('manual-detail-food-select')?.value || manualDetailState.foodId;
+            const options = { selections: { ...manualDetailState.selections }, datetime: dt, overrides: getManualDetailOverrides() };
             if (manualDetailState.mode === 'edit') {
-                updateFoodLog(manualDetailState.originalDate, manualDetailState.originalLogId, manualDetailState.foodId, { selections: { ...manualDetailState.selections }, datetime: dt });
+                updateFoodLog(manualDetailState.originalDate, manualDetailState.originalLogId, foodId, options);
             } else {
-                addFoodLog(manualDetailState.foodId, { selections: { ...manualDetailState.selections }, datetime: dt });
+                addFoodLog(foodId, options);
             }
             closeFoodDetailModal();
         }
@@ -5356,7 +5685,7 @@
             const proteinChoice = selections.proteinChoice ? parseNumberFromChoice(selections.proteinChoice, item.protein) : null;
             if (proteinChoice !== null) log.protein = proteinChoice;
             if (item.id === 'greek_yogurt') {
-                log.displayName = `ギリシャヨーグルト（${selections.sweetness || '無糖'}・P${log.protein}g）`;
+                log.displayName = `オイコス（${selections.sweetness || '加糖'}・P${log.protein}g）`;
                 log.kcal = selections.sweetness === '加糖' ? 130 : 100;
                 log.evaluation = selections.sweetness === '加糖' && log.protein <= 10 ? '普通〜良好' : '良好';
             } else if (item.id === 'salad_chicken') {
@@ -5367,6 +5696,18 @@
                 log.displayName = `${item.name}（P${log.protein}g）`; log.evaluation = '良好';
             } else if (item.id === 'natto') {
                 const n = selections.packs === '2パック' ? 2 : 1; log.protein = 7*n; log.kcal = 90*n; log.displayName = `納豆（${selections.packs || '1パック'}）`; log.evaluation = '良好';
+            } else if (item.id === 'tokoroten') {
+                const n = selections.packs === '2パック' ? 2 : 1; log.protein = 0; log.kcal = 20*n; log.displayName = `ところてん（${selections.packs || '1パック'}・${selections.sauce || '三杯酢'}）`; log.evaluation = '良好'; log.group = 'dietFood';
+            } else if (item.id === 'mozuku') {
+                const n = selections.cups === '2カップ' ? 2 : 1; log.protein = n; log.kcal = 20*n; log.displayName = `もずく酢（${selections.cups || '1カップ'}）`; log.evaluation = '良好'; log.group = 'dietFood';
+            } else if (item.id === 'konjac') {
+                const more = selections.amount === '多め'; log.protein = 0; log.kcal = more ? 35 : 20; log.displayName = `こんにゃく/しらたき（${selections.amount || '小鉢'}）`; log.evaluation = '良好'; log.group = 'dietFood';
+            } else if (item.id === 'mushrooms') {
+                const more = selections.amount === '多め'; log.protein = more ? 5 : 3; log.kcal = more ? 70 : 40; log.displayName = `きのこ類（${selections.amount || '小鉢'}）`; log.evaluation = '良好'; log.group = 'dietFood';
+            } else if (item.id === 'cabbage') {
+                const more = selections.amount === '多め'; log.protein = more ? 2 : 1; log.kcal = more ? 80 : 40; log.displayName = `キャベツ/千切り野菜（${selections.amount || '小鉢'}）`; log.evaluation = '良好'; log.group = 'dietFood';
+            } else if (item.id === 'vegetable_soup') {
+                const more = selections.amount === '多め'; log.protein = more ? 5 : 3; log.kcal = more ? 130 : 80; log.displayName = `野菜スープ（${selections.amount || '普通'}）`; log.evaluation = '良好'; log.group = 'dietFood';
             } else if (item.id === 'hiyayakko') {
                 const full = selections.portion === '1丁'; log.protein = full ? 16 : 8; log.kcal = full ? 200 : 100; log.displayName = `冷奴（${selections.portion || '半丁'}）`; log.evaluation = '良好';
             } else if (item.id === 'boiled_egg') {
@@ -5395,6 +5736,16 @@
             const dt = detailOptions.datetime || getManualLogDateTime();
             const date = dateKeyFromDate(dt);
             const log = buildFoodLogFromSelection(item, detailOptions.selections || {});
+            const overrides = detailOptions.overrides || {};
+            if (overrides.protein !== null && overrides.protein !== undefined) log.protein = overrides.protein;
+            if (overrides.kcal !== null && overrides.kcal !== undefined) log.kcal = overrides.kcal;
+            if (overrides.nuts !== null && overrides.nuts !== undefined) {
+                log.nuts = overrides.nuts;
+                if (item.id === 'nuts') log.displayName = `ナッツ（${overrides.nuts}g）`;
+            } else if (item.id !== 'nuts') {
+                delete log.nuts;
+            }
+            syncFoodLogDisplayNameWithNutrients(log, item);
             return {
                 date,
                 log: enrichLogTime({
@@ -5411,33 +5762,37 @@
             const built = buildEnrichedFoodLog(id, detailOptions);
             if (!built) return;
             const { date, log } = built;
-            const arr = healthData.foodLogs[date] || [];
-            arr.push(log);
-            healthData.foodLogs[date] = arr;
-            saveManualLogToFirestore('foodLogs', date, log);
+            const nowIso = new Date().toISOString();
+            const localFoodLog = { ...log, createdAt: log.createdAt || nowIso, updatedAt: nowIso };
+            upsertFoodLogLocal(date, localFoodLog, { prefer: 'incoming' });
+            saveManualLogToFirestore('foodLogs', date, localFoodLog);
             const dateEl = document.getElementById('manual-log-date'); if (dateEl) dateEl.value = date;
             const dtEl = document.getElementById('manual-log-datetime'); if (dtEl) dtEl.value = toLocalDateTimeValue(new Date());
             saveManualLogsToStorage(); renderManualLogUI(); updateManualDashboardSummary();
         }
         function editFoodLog(date, logId) {
             const entry = findFoodLogEntry(date, logId);
-            if (!entry.log) { alert('修正対象の食事ログが見つかりません。'); return; }
-            const id = inferFoodIdFromLog(entry.log);
-            if (!id || !FOOD_MASTER.some(x => x.id === id)) { alert('この食事ログは食品マスタにないため修正できません。削除して再登録してください。'); return; }
-            return openFoodDetailModal(id, { date, logId, log: entry.log });
+            if (!entry.log) { alert('修正対象の食事ログが見つかりません。画面を更新しても同じ場合は、その行を削除して再登録してください。'); return; }
+            let id = inferFoodIdFromLog(entry.log);
+            if (!id || !FOOD_MASTER.some(x => x.id === id)) {
+                const fallback = FOOD_MASTER.find(x => x.name === entry.log.name || x.name === entry.log.displayName) || FOOD_MASTER.find(x => x.id === 'rice') || FOOD_MASTER[0];
+                id = fallback?.id;
+            }
+            if (!id) { alert('食品マスタを特定できないため修正できません。'); return; }
+            return openFoodDetailModal(id, { date: entry.date || date, logId: getFoodLogKey(entry.log), log: entry.log });
         }
         function updateFoodLog(originalDate, originalLogId, id, detailOptions = {}) {
             ensureManualStores();
             const entry = findFoodLogEntry(originalDate, originalLogId);
             if (!entry.log) { alert('修正対象の食事ログが見つかりません。'); return; }
+            const originalKey = getFoodLogKey(entry.log) || originalLogId;
             const built = buildEnrichedFoodLog(id, detailOptions, entry.log);
             if (!built) return;
             const { date: newDate, log: updatedLog } = built;
-            healthData.foodLogs[originalDate] = (healthData.foodLogs[originalDate] || []).filter(x => getFoodLogKey(x) !== originalLogId);
-            if (!healthData.foodLogs[originalDate].length) delete healthData.foodLogs[originalDate];
-            healthData.foodLogs[newDate] = healthData.foodLogs[newDate] || [];
-            healthData.foodLogs[newDate].push({ ...updatedLog, updatedAt: new Date().toISOString() });
-            saveManualLogToFirestore('foodLogs', newDate, { ...updatedLog, updatedAt: new Date().toISOString() });
+            removeFoodLogByKeyFromAllDates(originalKey);
+            const updatedFoodLog = { ...updatedLog, logId: entry.log.logId || originalKey, createdAt: entry.log.createdAt || updatedLog.createdAt || new Date().toISOString(), updatedAt: new Date().toISOString() };
+            upsertFoodLogLocal(newDate, updatedFoodLog, { prefer: 'incoming' });
+            saveManualLogToFirestore('foodLogs', newDate, updatedFoodLog);
             const dateEl = document.getElementById('manual-log-date'); if (dateEl) dateEl.value = newDate;
             saveManualLogsToStorage(); renderManualLogUI(); updateManualDashboardSummary();
         }
@@ -5448,15 +5803,19 @@
             ensureManualStores();
             const dt = getManualLogDateTime(); const date = dateKeyFromDate(dt); const arr = healthData.foodLogs[date] || [];
             const enrichedMealLog = enrichLogTime({ id:'meal_other', logId:'meal_' + Date.now(), name:String(label).replace(/^(朝食|昼食|夕食):/,''), displayName:String(label).replace(/^(朝食|昼食|夕食):/,''), protein:0, kcal:0, group:'staple', category:'staple', comment:'一般食事ログ', type:'food', mealPlace:getMealPlaceForDate(date) || '自宅' }, dt);
-            arr.push(enrichedMealLog);
-            healthData.foodLogs[date] = arr; saveManualLogToFirestore('foodLogs', date, enrichedMealLog); saveManualLogsToStorage(); renderManualLogUI(); updateManualDashboardSummary();
+            const nowIso = new Date().toISOString();
+            const localMealLog = { ...enrichedMealLog, createdAt: enrichedMealLog.createdAt || nowIso, updatedAt: nowIso };
+            upsertFoodLogLocal(date, localMealLog, { prefer: 'incoming' }); saveManualLogToFirestore('foodLogs', date, localMealLog); saveManualLogsToStorage(); renderManualLogUI(); updateManualDashboardSummary();
         }
         function deleteFoodLog(date, logId) {
             ensureManualStores();
             const entry = findFoodLogEntry(date, logId);
-            healthData.foodLogs[date] = (healthData.foodLogs[date] || []).filter(x => getFoodLogKey(x) !== logId);
-            if (!healthData.foodLogs[date].length) delete healthData.foodLogs[date];
-            if (entry.log?.logId) deleteManualLogFromFirestore('foodLogs', entry.log.logId);
+            if (!entry.log && !logId) { alert('削除対象の食事ログが見つかりません。'); return; }
+            const key = getFoodLogKey(entry.log) || logId;
+            markFoodLogDeleted(key);
+            removeFoodLogByKeyFromAllDates(key);
+            saveDeletedFoodLogToFirestore(key);
+            deleteManualLogFromFirestore('foodLogs', entry.log?.logId || key);
             saveManualLogsToStorage(); renderManualLogUI(); updateManualDashboardSummary();
         }
         function setAlcohol(type, cups) {
@@ -5505,6 +5864,7 @@
             const eatingOutValue = String(events.eatingOut || 'なし'); const isOutsidePlace = events.mealPlace === '居酒屋' || events.mealPlace === '外食'; const eatingOutCount = eatingOutValue.includes('2回') ? 2 : (isOutsidePlace || eatingOutValue.includes('1回') ? 1 : 0);
             const highProteinCount = foods.filter(x => x.group === 'highProtein').length;
             const homeCookingCount = foods.filter(x => x.group === 'homeCooking').length;
+            const dietFoodCount = foods.filter(x => x.group === 'dietFood').length;
             const outsideCount = foods.filter(x => x.group === 'outsideFood').length;
             const snackCount = foods.filter(x => x.group === 'snack').length;
             const highProteinRate = foods.length ? Math.round((highProteinCount / foods.length) * 100) : 0;
@@ -5512,20 +5872,21 @@
             const severity = foods.reduce((s,x)=>s+(Number(x.severity)||0),0);
             const proteinScore = Math.min(100, Math.round((protein / 60) * 100));
             let rating = 3;
-            if (protein >= 40) rating += 1; if (protein >= 60) rating += 1; if (highProteinCount >= 2) rating += 1; if (homeCookingCount >= 1) rating += 1;
+            if (protein >= 40) rating += 1; if (protein >= 60) rating += 1; if (highProteinCount >= 2) rating += 1; if (homeCookingCount >= 1 || dietFoodCount >= 1) rating += 1;
             if (outsideCount >= 1) rating -= 1; if (outsideCount >= 2) rating -= 1; if (snackCount >= 2) rating -= 1; if (severity >= 3) rating -= 2; else if (severity >= 1) rating -= 1;
             if (nuts >= 100) rating -= 2; else if (nuts >= 60) rating -= 1;
             if (alcoholCups > 0) rating -= 1; if (alcoholCups >= 3) rating -= 1; if (eatingOutCount >= 2) rating -= 1; if ((events.strength || '') !== 'なし' && events.strength) rating += 1;
             rating = Math.max(1, Math.min(5, rating));
             const advice = [];
-            if (protein < 40) advice.push('タンパク質不足です。サラダチキン、ギリシャヨーグルト、納豆を追加すると改善しやすいです。');
+            if (protein < 40) advice.push('タンパク質不足です。サラダチキン、オイコス、納豆を追加すると改善しやすいです。');
             if (nuts >= 100) advice.push('ナッツ量が多いです。100g以上は体重増加要因として強く疑います。');
             else if (nuts >= 60) advice.push('ナッツは60gです。体重停滞時は30g以下に抑えると分析しやすいです。');
             if (alcoholCups > 0) advice.push('飲酒ログあり。翌日の体重増加は水分・塩分・食事量の影響も見てください。');
             if (eatingOutCount > 0) advice.push(`${events.mealPlace || '外食'}ログあり。体重増加要因として塩分・食事量を確認してください。`);
             if (outsideRate >= 40) advice.push('外食・高カロリー注意カテゴリの比率が高めです。翌日の体重変動と合わせて見てください。');
+            if (dietFoodCount >= 1 && protein < 40) advice.push('低カロリー食は良いですが、タンパク質が不足しやすいので納豆・卵・魚系と組み合わせてください。');
             if (!advice.length) advice.push('入力内容は良好です。高歩数と高タンパクを維持できています。');
-            return { protein, kcal, nuts, alcoholCups, eatingOutCount, highProteinCount, homeCookingCount, outsideCount, snackCount, highProteinRate, outsideRate, count: foods.length, proteinScore, rating, dietRating: rating, advice: advice.join(' ') };
+            return { protein, kcal, nuts, alcoholCups, eatingOutCount, highProteinCount, homeCookingCount, dietFoodCount, outsideCount, snackCount, highProteinRate, outsideRate, count: foods.length, proteinScore, rating, dietRating: rating, advice: advice.join(' ') };
         }
         function renderFoodGroup(groupKey, items) {
             const meta = FOOD_GROUPS[groupKey];
@@ -5555,11 +5916,11 @@
             if (timeline) {
                 const logs = getManualTimeline(date);
                 timeline.innerHTML = logs.length ? logs.map(x => {
-                    const d = x.time ? new Date(x.time) : new Date(); const hhmm = d.toLocaleTimeString('ja-JP', { hour:'2-digit', minute:'2-digit' }); const key = x.logId || x.time + '_' + x.name;
+                    const d = x.time ? new Date(x.time) : new Date(); const hhmm = d.toLocaleTimeString('ja-JP', { hour:'2-digit', minute:'2-digit' }); const key = x.logId || `${x.time || ''}_${x.name || x.displayName || ''}`;
                     const title = x.displayName || x.name;
                     const evalText = x.evaluation ? ` / ${x.evaluation}` : '';
                     const canEdit = x.kind === 'food' || x.type === 'food' || !!x.logId;
-                    return `<div class="timeline-row"><div class="flex items-center gap-3 min-w-0 flex-1"><div class="timeline-time">${hhmm}</div><div class="min-w-0 flex-1"><div class="timeline-title truncate">${title}</div><div class="timeline-sub">P${Number(x.protein)||0}g / ${Number(x.kcal)||0}kcal / ${FOOD_GROUPS[x.group]?.label || ''}${evalText}</div></div></div>${canEdit?`<div class="flex items-center gap-2 flex-shrink-0 ml-2"><button onclick="editFoodLog(${jsArg(date)},${jsArg(key)})" class="bg-teal-500/15 border border-teal-400/30 text-teal-200 hover:bg-teal-500/25 px-2 py-1 rounded-lg text-[11px] font-black" title="修正"><i class="fas fa-pen mr-1"></i>修正</button><button onclick="deleteFoodLog(${jsArg(date)},${jsArg(key)})" class="bg-red-500/10 border border-red-400/25 text-red-200 hover:bg-red-500/20 px-2 py-1 rounded-lg text-[11px] font-black" title="削除"><i class="fas fa-times mr-1"></i>削除</button></div>`:''}</div>`;
+                    return `<div class="timeline-row"><div class="flex items-center gap-3 min-w-0 flex-1"><div class="timeline-time">${hhmm}</div><div class="min-w-0 flex-1"><div class="timeline-title truncate">${title}</div><div class="timeline-sub">P${Number(x.protein)||0}g / ${Number(x.kcal)||0}kcal / ${FOOD_GROUPS[x.group]?.label || ''}${evalText}</div></div></div>${canEdit?`<div class="flex items-center gap-2 flex-shrink-0 ml-2"><button onclick='editFoodLog(${jsArg(date)},${jsArg(key)})' class="bg-teal-500/15 border border-teal-400/30 text-teal-200 hover:bg-teal-500/25 px-2 py-1 rounded-lg text-[11px] font-black" title="修正"><i class="fas fa-pen mr-1"></i>編集</button><button onclick='deleteFoodLog(${jsArg(date)},${jsArg(key)})' class="bg-red-500/10 border border-red-400/25 text-red-200 hover:bg-red-500/20 px-2 py-1 rounded-lg text-[11px] font-black" title="削除"><i class="fas fa-times mr-1"></i>削除</button></div>`:''}</div>`;
                 }).join('') : '<div class="text-xs text-slate-500">今日の食事ログは未入力です。</div>';
             }
             const hist = document.getElementById('manual-log-history');
@@ -5629,7 +5990,7 @@
             }
         }
 
-        const ALLOWED_FOOD_CATEGORIES_GV156 = new Set(['highProtein','homeCooking','staple','outsideFood','snack']);
+        const ALLOWED_FOOD_CATEGORIES_GV156 = new Set(['highProtein','homeCooking','dietFood','staple','outsideFood','snack']);
         const DEPRECATED_CATEGORY_MAP_GV156 = {
             outside:'outsideFood',
             recommended:'highProtein',
@@ -5675,6 +6036,7 @@
                 severity = Math.min(severity, 0);
             }
             if (category === 'homeCooking' && !['sashimi','grilled_fish'].includes(id)) evaluation = '普通';
+            if (category === 'dietFood') { evaluation = '良好'; severity = Math.min(severity, 0); }
             if (category === 'staple') evaluation = severity ? '注意' : '普通';
 
             if (['chocolate','snacks','icecream','pizza','curry','gyudon','hamburger','gyoza'].includes(id)) {
@@ -5734,6 +6096,12 @@
                 item.category = 'highProtein';
                 item.group = 'highProtein';
                 item.evaluation = '普通';
+            }
+
+            if (['tokoroten','mozuku','konjac','mushrooms','cabbage','vegetable_soup'].includes(item.id)) {
+                item.group = 'dietFood';
+                item.category = 'dietFood';
+                item.evaluation = item.evaluation || '良好';
             }
 
             if (item.id === 'nuts' || itemName.includes('ナッツ')) {
@@ -6060,6 +6428,7 @@
         function summarizeFoodDay(foods, alcs, evs, qualityContext = {}) {
             const highProteinCount = foods.filter(x => x.group === 'highProtein' || x.category === 'highProtein').length;
             const homeCookingCount = foods.filter(x => x.group === 'homeCooking' || x.category === 'homeCooking').length;
+            const dietFoodCount = foods.filter(x => x.group === 'dietFood' || x.category === 'dietFood').length;
             const outsideFoodCount = foods.filter(x => x.group === 'outsideFood' || x.category === 'outsideFood').length;
             const snackCount = foods.filter(x => x.group === 'snack' || x.category === 'snack').length;
             const riskFoodCount = foods.filter(x => Number(x.severity || 0) >= 1 || ['注意','要注意','重大リスク'].includes(x.evaluation)).length;
@@ -6084,6 +6453,7 @@
                 foodLogCount: foods.length,
                 highProteinCount,
                 homeCookingCount,
+                dietFoodCount,
                 outsideFoodCount,
                 snackCount,
                 eatingOutCount: countEatingOutFromFoodAndEvents(foods, evs),
@@ -6504,7 +6874,7 @@
             const generatedParts = getJstParts(new Date());
             const dataToExport = {
                 schemaVersion: "1.3",
-                appVersion: "gv1.79.1",
+                appVersion: "gv1.80.0",
                 generatedAt: generatedParts.timestampUtc,
                 generatedAtLocal: generatedParts.localDateTime,
                 timezone: "Asia/Tokyo",
@@ -6522,6 +6892,7 @@
                 manualLogPersistencePolicy: {
                     storage: "localStorage + lightweight JSON export + optional Firestore",
                     localStorageKey: "health-manual-logs-v1",
+                    deletedFoodLogTombstones: Object.keys(healthData.deletedFoodLogIds || {}).length,
                     preserveOnAppleHealthRefresh: true,
                     preserveOnLocationHistoryRefresh: true,
                     exportToLightweightJson: true,
@@ -6541,7 +6912,7 @@
                 },
                 dailySummaries,
                 healthData: {
-                    summary: { ...(healthData.summary || {}), version: "gv1.79.1", heightCm: 150, targetWeight: 50, targetWeightKg: 50 },
+                    summary: { ...(healthData.summary || {}), version: "gv1.80.0", heightCm: 150, targetWeight: 50, targetWeightKg: 50 },
                     weight: healthData.weight || {},
                     steps: healthData.steps || {},
                     sleep: healthData.sleep || {},
@@ -6557,6 +6928,7 @@
                     rawFoodLogs,
                     eventLogs,
                     alcoholLogs,
+                    deletedFoodLogIds: healthData.deletedFoodLogIds || {},
                     operationLogs,
                     // manualLogsは後方互換のため残すが、健康分析・食事分析には使用しない。
                     manualLogs: operationLogs,
@@ -6573,7 +6945,15 @@
             a.click(); 
         }
 
-        function confirmClear() { if(confirm("データを全消去して初期状態に戻しますか？")) location.reload(); }
+        function confirmClear() {
+            if(confirm("ローカル保存データを全消去して初期状態に戻しますか？\n食事ログ・削除済みID・設定をこのブラウザから削除します。Firestore上の履歴は削除しません。")) {
+                try {
+                    localStorage.removeItem('health-manual-logs-v1');
+                    localStorage.removeItem('health-settings-v1');
+                } catch(e) { console.warn('local clear failed', e); }
+                location.reload();
+            }
+        }
 
         window.onload = () => {
             loadSettings(); initMap(); switchTab('dashboard');

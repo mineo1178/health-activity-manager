@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Health Activity Manager gv1.80.0</title>
-    <!-- gv1.80.0 diet food update: Oikos default is sweetened P10g, added diet foods, and keeps gv1.79.9 food edit input sync fix. -->
+    <title>Health Activity Manager gv1.81.0</title>
+    <!-- gv1.81.0 convenience store text input: dictionary-based convenience food parser, candidate confirmation, and bulk registration. Keeps gv1.80.0 diet foods and gv1.79.9 edit sync fix. -->
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
     <meta name="apple-mobile-web-app-title" content="HealthManager">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -350,7 +350,7 @@
                 <h1 onclick="goHomeStartup()" class="text-xl font-bold text-blue-500 flex items-center tracking-tight cursor-pointer hover:text-blue-400 transition" title="スタート画面へ戻る">
                     <i class="fas fa-heartbeat mr-2 text-2xl"></i>HealthManager
                 </h1>
-                <p class="text-[10px] text-slate-500 font-mono mt-1 uppercase tracking-widest">gv1.80.0 OS PRO</p>
+                <p class="text-[10px] text-slate-500 font-mono mt-1 uppercase tracking-widest">gv1.81.0 OS PRO</p>
             </div>
             <nav class="flex-1 px-4 space-y-1 overflow-y-auto custom-scrollbar">
                 <button onclick="switchTab('dashboard')" class="nav-btn w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl transition" data-tab="dashboard">
@@ -559,7 +559,7 @@
                     <section id="import-diagnostics-mini" class="glass-card p-4 md:p-5 mt-6 border border-slate-700/50 bg-slate-900/25">
                         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-3">
                             <h3 class="text-sm md:text-base font-black text-slate-200"><i class="fas fa-database text-cyan-300 mr-2"></i>取込・評価信頼度</h3>
-                            <div class="text-[10px] text-slate-500 font-bold uppercase">gv1.80.0 diagnostics</div>
+                            <div class="text-[10px] text-slate-500 font-bold uppercase">gv1.81.0 diagnostics</div>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-8 gap-3 text-xs">
                             <div class="report-metric-box"><div class="text-[10px] text-slate-400 font-bold uppercase mb-1">歩数集計</div><div id="diag-step-method" class="font-black text-white">--</div></div>
@@ -1203,6 +1203,27 @@
                             <div class="report-metric-box"><div class="text-[10px] text-slate-400 font-bold uppercase mb-1">外食</div><div id="manual-today-eatingout" class="text-2xl font-black text-cyan-300">--</div></div>
                             <div class="report-metric-box"><div class="text-[10px] text-slate-400 font-bold uppercase mb-1">登録件数</div><div id="manual-today-count" class="text-2xl font-black text-emerald-300">--</div></div>
                         </div>
+
+                        <div class="glass-card p-4 bg-slate-950/35 border border-sky-500/15 space-y-3">
+                            <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
+                                <div>
+                                    <h3 class="text-sm font-black text-slate-300 uppercase tracking-widest"><i class="fas fa-store text-sky-300 mr-2"></i>コンビニ文章入力</h3>
+                                    <p class="text-xs text-slate-400 mt-1 leading-relaxed">商品名をざっくり入力すると、分類・タンパク質・kcalの候補を作ります。不明品は「その他コンビニ食品」で止めずに登録できます。</p>
+                                </div>
+                                <div class="flex flex-wrap gap-2 text-[11px]">
+                                    <button onclick="fillConvenienceFoodText('おにぎり、サラダチキン、オイコス加糖、カフェラテ')" class="quick-log-pill hover:bg-sky-500/15">出張朝食</button>
+                                    <button onclick="fillConvenienceFoodText('納豆、ところてん、もずく酢、野菜スープ')" class="quick-log-pill hover:bg-sky-500/15">調整食</button>
+                                    <button onclick="fillConvenienceFoodText('弁当、ゆで卵、サラダ')" class="quick-log-pill hover:bg-sky-500/15">弁当補正</button>
+                                </div>
+                            </div>
+                            <textarea id="convenience-food-text" rows="3" class="w-full bg-slate-950 border border-slate-700 text-white px-3 py-2 rounded-xl text-sm focus:outline-none focus:border-sky-500 min-h-[88px]" placeholder="例：おにぎり2個、サラダチキン、オイコス加糖、カフェラテ。分類に迷う商品もそのまま入力。"></textarea>
+                            <div class="flex flex-col sm:flex-row gap-2">
+                                <button onclick="analyzeConvenienceFoodText()" class="bg-sky-700 hover:bg-sky-600 text-white px-4 py-2 rounded-xl font-black text-sm shadow min-h-[44px]"><i class="fas fa-wand-magic-sparkles mr-1"></i>候補を作る</button>
+                                <button onclick="registerConvenienceFoodDraft()" class="bg-emerald-700 hover:bg-emerald-600 text-white px-4 py-2 rounded-xl font-black text-sm shadow min-h-[44px]"><i class="fas fa-check mr-1"></i>候補をまとめて登録</button>
+                                <button onclick="clearConvenienceFoodDraft()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-xl font-black text-sm min-h-[44px]"><i class="fas fa-eraser mr-1"></i>クリア</button>
+                            </div>
+                            <div id="convenience-food-result" class="text-xs text-slate-300 leading-relaxed bg-slate-900/50 border border-slate-700/60 rounded-xl p-3">コンビニで買ったものを文章で入力してください。まず候補を作ってから登録します。</div>
+                        </div>
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                             <div class="glass-card p-4 bg-slate-950/35 border border-teal-500/15">
                                 <h3 class="text-sm font-black text-slate-300 uppercase tracking-widest mb-3"><i class="fas fa-clock text-teal-300 mr-2"></i>今日の食事タイムライン</h3>
@@ -1385,7 +1406,7 @@
     <script>
         // --- Global Variables Setup ---
         let healthData = {
-            summary: { version: "gv1.80.0", isSample: false, updatedAt: null, heightCm: 150, targetWeight: 50 },
+            summary: { version: "gv1.81.0", isSample: false, updatedAt: null, heightCm: 150, targetWeight: 50 },
             weight: {}, steps: {}, sleep: {}, heartRate: {}, hrv: {},
             gpsSummaries: [], manualLogs: {}, foodLogs: {}, eventLogs: {}, alcoholLogs: {}, deletedFoodLogIds: {},
             stepImportDiagnostics: null, hrvImportDiagnostics: null, sleepImportDiagnostics: null, metricReliability: null, importWarnings: []
@@ -1868,7 +1889,7 @@
             const previousSourceSummary = data.sourceSummary || targetData.sourceSummary || targetData.summary?.previousSourceSummary || current.summary?.previousSourceSummary || null;
 
             const defSummary = {
-                version: "gv1.80.0",
+                version: "gv1.81.0",
                 heightCm: lockedHeight,
                 targetWeight: lockedTarget,
                 targetWeightKg: lockedTarget,
@@ -5017,6 +5038,18 @@
             { id:'french_fries', name:'フライドポテト', protein:5, kcal:450, group:'outsideFood', comment:'多めは要注意' },
             { id:'gyoza', name:'餃子', protein:14, kcal:380, group:'outsideFood', comment:'外食時の追加要因' },
 
+            { id:'sandwich', name:'サンドイッチ', protein:12, kcal:320, group:'staple', comment:'具材で評価が変わる。チキン・卵系なら普通' },
+            { id:'convenience_bento', name:'コンビニ弁当', protein:20, kcal:650, group:'outsideFood', comment:'出張時の食事量・塩分要因として記録' },
+            { id:'cup_noodle', name:'カップ麺', protein:10, kcal:420, group:'outsideFood', comment:'塩分・糖質寄り。翌日体重増の要因' },
+            { id:'hot_snack', name:'ホットスナック', protein:15, kcal:350, group:'outsideFood', comment:'タンパク質はあるが脂質が多い' },
+            { id:'cafe_latte', name:'カフェラテ', protein:4, kcal:100, group:'snack', comment:'無糖か加糖かで評価差。飲料糖質として記録' },
+            { id:'pastry', name:'菓子パン', protein:6, kcal:380, group:'snack', comment:'糖質・脂質寄り。出張時の体重増要因' },
+            { id:'convenience_sweets', name:'コンビニスイーツ', protein:4, kcal:300, group:'snack', comment:'甘味ログ。体重停滞時は頻度を見る' },
+            { id:'protein_bar', name:'プロテインバー', protein:15, kcal:200, group:'highProtein', comment:'高タンパクだが脂質・糖質も確認' },
+            { id:'canned_tuna', name:'ツナ缶', protein:15, kcal:120, group:'highProtein', comment:'低糖質のタンパク補助' },
+            { id:'canned_mackerel', name:'サバ缶', protein:25, kcal:250, group:'highProtein', comment:'高タンパク。脂質はあるが良質寄り' },
+            { id:'convenience_other', name:'その他コンビニ食品', protein:5, kcal:250, group:'outsideFood', comment:'迷った商品を止めずに記録するための仮分類' },
+
             { id:'nuts', name:'ナッツ', protein:6, kcal:180, group:'snack', comment:'30gなら良好。100g以上は体重増加要因', nuts:30 },
             { id:'icecream', name:'アイス', protein:4, kcal:250, group:'snack', comment:'甘いものログとして記録' },
             { id:'chocolate', name:'チョコ', protein:3, kcal:300, group:'snack', comment:'量が増えやすい嗜好品' },
@@ -5069,7 +5102,13 @@
             ],
             karaage: [{ key:'pieces', label:'個数', choices:['1〜2個','3〜4個','5個以上'], default:'3〜4個' }],
             french_fries: [{ key:'amount', label:'量', choices:['少量','普通','多め'], default:'普通' }],
-            onigiri: [{ key:'pieces', label:'個数', choices:['1個','2個','3個以上'], default:'1個' }]
+            onigiri: [{ key:'pieces', label:'個数', choices:['1個','2個','3個以上'], default:'1個' }],
+            sandwich: [{ key:'type', label:'種類', choices:['たまご/チキン','普通','カツ/揚げ物系'], default:'普通' }],
+            convenience_bento: [{ key:'amount', label:'量', choices:['小さめ','普通','大きめ'], default:'普通' }],
+            cup_noodle: [{ key:'soup', label:'スープ', choices:['飲まない','飲む'], default:'飲まない' }],
+            hot_snack: [{ key:'amount', label:'量', choices:['1個','2個','3個以上'], default:'1個' }],
+            cafe_latte: [{ key:'sweetness', label:'種類', choices:['無糖','加糖'], default:'加糖' }],
+            protein_bar: [{ key:'proteinChoice', label:'タンパク質', choices:['10g','15g','20g'], default:'15g' }]
         };
         const ALCOHOL_TYPES = ['ビール','焼酎'];
         const EVENT_MASTER = {
@@ -5082,6 +5121,7 @@
         };
         const EVENT_LABELS = { mealPlace:'食事場所', businessTrip:'出張', travel:'旅行', eatingOut:'外食', hunger:'空腹度', strength:'筋トレ' };
         let manualDetailState = null;
+        let convenienceFoodDraft = [];
 
         function latestDateKey(obj) { const keys = Object.keys(obj || {}).sort(); return keys.length ? keys[keys.length - 1] : null; }
         function ensureManualStores() {
@@ -5343,7 +5383,7 @@
                     logId,
                     date,
                     kind,
-                    appVersion: 'gv1.80.0',
+                    appVersion: 'gv1.81.0',
                     updatedAt: new Date().toISOString(),
                     source: 'browser'
                 }, { merge: true });
@@ -5384,7 +5424,7 @@
                     logId: String(logId),
                     deletedAt: healthData.deletedFoodLogIds?.[String(logId)] || new Date().toISOString(),
                     kind: 'deletedFoodLogIds',
-                    appVersion: 'gv1.80.0',
+                    appVersion: 'gv1.81.0',
                     source: 'browser'
                 }, { merge: true });
                 console.info(`[FIRESTORE_MANUAL_LOG] tombstone saved foodLogs/${logId}`);
@@ -5727,6 +5767,26 @@
                 const amount = selections.amount || '普通'; const mult = amount === '少量' ? .6 : amount === '多め' ? 1.5 : 1; log.kcal = Math.round(item.kcal*mult); log.displayName = `フライドポテト（${amount}）`; log.evaluation = amount === '多め' ? '要注意' : amount === '少量' ? '普通' : '注意'; log.severity = amount === '多め' ? 3 : amount === '普通' ? 1 : 0;
             } else if (item.id === 'onigiri') {
                 const pieces = selections.pieces || '1個'; const n = pieces.includes('3') ? 3 : parseNumberFromChoice(pieces,1); log.protein = 4*n; log.kcal = 180*n; log.displayName = `おにぎり（${pieces}）`; log.evaluation = n >= 3 ? '注意' : '普通'; log.severity = n >= 3 ? 1 : 0;
+            } else if (item.id === 'sandwich') {
+                const type = selections.type || '普通';
+                if (type.includes('カツ')) { log.protein = 14; log.kcal = 430; log.evaluation = '注意'; log.severity = 1; }
+                else if (type.includes('たまご') || type.includes('チキン')) { log.protein = 16; log.kcal = 300; log.evaluation = '普通〜良好'; }
+                log.displayName = `サンドイッチ（${type}）`;
+            } else if (item.id === 'convenience_bento') {
+                const amount = selections.amount || '普通'; const mult = amount === '小さめ' ? .75 : amount === '大きめ' ? 1.25 : 1;
+                log.protein = Math.round(item.protein * mult); log.kcal = Math.round(item.kcal * mult); log.displayName = `コンビニ弁当（${amount}）`; log.evaluation = amount === '大きめ' ? '注意' : '普通'; log.severity = amount === '大きめ' ? 1 : 0;
+            } else if (item.id === 'cup_noodle') {
+                const soup = selections.soup || '飲まない'; log.kcal = item.kcal + (soup === '飲む' ? 80 : 0); log.displayName = `カップ麺（スープ${soup}）`; log.evaluation = '注意'; log.severity = soup === '飲む' ? 2 : 1;
+            } else if (item.id === 'hot_snack') {
+                const amount = selections.amount || '1個'; const n = amount.includes('3') ? 3 : parseNumberFromChoice(amount,1); log.protein = 15*n; log.kcal = 350*n; log.displayName = `ホットスナック（${amount}）`; log.evaluation = n >= 2 ? '注意' : '普通'; log.severity = n >= 3 ? 2 : n >= 2 ? 1 : 0;
+            } else if (item.id === 'cafe_latte') {
+                const sweetness = selections.sweetness || '加糖'; log.protein = 4; log.kcal = sweetness === '無糖' ? 70 : 120; log.displayName = `カフェラテ（${sweetness}）`; log.evaluation = sweetness === '無糖' ? '普通' : '注意'; log.severity = sweetness === '無糖' ? 0 : 1;
+            } else if (item.id === 'protein_bar') {
+                const protein = selections.proteinChoice ? parseNumberFromChoice(selections.proteinChoice, 15) : 15; log.protein = protein; log.kcal = protein >= 20 ? 240 : protein <= 10 ? 160 : 200; log.displayName = `プロテインバー（P${protein}g）`; log.evaluation = '普通〜良好';
+            } else if (item.id === 'pastry') {
+                log.displayName = '菓子パン'; log.evaluation = '注意'; log.severity = 1;
+            } else if (item.id === 'convenience_sweets') {
+                log.displayName = 'コンビニスイーツ'; log.evaluation = '注意'; log.severity = 1;
             }
             return log;
         }
@@ -5888,6 +5948,176 @@
             if (!advice.length) advice.push('入力内容は良好です。高歩数と高タンパクを維持できています。');
             return { protein, kcal, nuts, alcoholCups, eatingOutCount, highProteinCount, homeCookingCount, dietFoodCount, outsideCount, snackCount, highProteinRate, outsideRate, count: foods.length, proteinScore, rating, dietRating: rating, advice: advice.join(' ') };
         }
+
+        const CONVENIENCE_FOOD_RULES = [
+            { id:'salad_chicken', terms:['サラダチキン','グリルチキン','チキンバー'] },
+            { id:'greek_yogurt', terms:['オイコス','OIKOS','おいこす','ギリシャヨーグルト','ヨーグルト'] },
+            { id:'protein_drink', terms:['高タンパク飲料','プロテイン飲料','ザバス','SAVAS','savas'] },
+            { id:'protein_bar', terms:['プロテインバー'] },
+            { id:'natto', terms:['納豆','なっとう'] },
+            { id:'tokoroten', terms:['ところてん','心太'] },
+            { id:'mozuku', terms:['もずく','モズク','もずく酢'] },
+            { id:'boiled_egg', terms:['ゆで卵','ゆでたまご','味付け卵','半熟卵','煮卵'] },
+            { id:'tofu_bar', terms:['豆腐バー'] },
+            { id:'hiyayakko', terms:['冷奴','豆腐','とうふ'] },
+            { id:'canned_mackerel', terms:['サバ缶','鯖缶','さば缶','サバ','鯖'] },
+            { id:'canned_tuna', terms:['ツナ缶','ツナ'] },
+            { id:'vegetable_soup', terms:['野菜スープ','スープ'] },
+            { id:'salad', terms:['サラダ','カット野菜'] },
+            { id:'sandwich', terms:['サンドイッチ','サンド'] },
+            { id:'onigiri', terms:['おにぎり','おむすび','手巻'] },
+            { id:'convenience_bento', terms:['コンビニ弁当','弁当','お弁当'] },
+            { id:'cup_noodle', terms:['カップ麺','カップラーメン','カップヌードル'] },
+            { id:'karaage', terms:['唐揚げ','からあげ','から揚げ'] },
+            { id:'hot_snack', terms:['ファミチキ','ななチキ','Lチキ','エルチキ','からあげクン','ホットスナック','コロッケ','アメリカンドッグ'] },
+            { id:'cafe_latte', terms:['カフェラテ','ラテ'] },
+            { id:'nuts', terms:['ナッツ','ミックスナッツ'] },
+            { id:'pastry', terms:['菓子パン','メロンパン','クリームパン','あんぱん'] },
+            { id:'bread', terms:['パン'] },
+            { id:'convenience_sweets', terms:['スイーツ','プリン','シュークリーム','ケーキ','チョコ','アイス'] }
+        ];
+        function normalizeConvenienceText(text) {
+            return String(text || '').normalize('NFKC').replace(/[、，。\.\n\r]+/g, ',').replace(/\s+/g, ' ').trim();
+        }
+        function parseJapaneseCount(raw) {
+            const s = String(raw || '').normalize('NFKC');
+            const m = s.match(/([0-9]+|一|二|三|四|五)\s*(個|こ|パック|本|杯|カップ|つ|枚)?/);
+            if (!m) return null;
+            const map = { '一':1, '二':2, '三':3, '四':4, '五':5 };
+            return map[m[1]] || Number(m[1]) || null;
+        }
+        function detectCountNearTerm(text, term) {
+            const normalized = normalizeConvenienceText(text);
+            const escaped = String(term || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const reAfter = new RegExp(`${escaped}[^0-9一二三四五]{0,8}([0-9]+|一|二|三|四|五)\\s*(個|こ|パック|本|杯|カップ|つ|枚)?`, 'i');
+            const reBefore = new RegExp(`([0-9]+|一|二|三|四|五)\\s*(個|こ|パック|本|杯|カップ|つ|枚)?[^,、。]{0,8}${escaped}`, 'i');
+            const hit = normalized.match(reAfter) || normalized.match(reBefore);
+            return hit ? parseJapaneseCount(hit[0]) : null;
+        }
+        function getConvenienceSelections(id, text, matchedTerm) {
+            const count = detectCountNearTerm(text, matchedTerm) || null;
+            const t = normalizeConvenienceText(text).toLowerCase();
+            if (id === 'onigiri') return { pieces: count >= 3 ? '3個以上' : count === 2 ? '2個' : '1個' };
+            if (id === 'natto') return { packs: count >= 2 ? '2パック' : '1パック' };
+            if (id === 'boiled_egg') return { pieces: count >= 2 ? '2個' : '1個' };
+            if (id === 'tokoroten') return { packs: count >= 2 ? '2パック' : '1パック', sauce: t.includes('黒蜜') ? '黒蜜なし' : '三杯酢' };
+            if (id === 'mozuku') return { cups: count >= 2 ? '2カップ' : '1カップ' };
+            if (id === 'nuts') {
+                const gm = String(text).normalize('NFKC').match(/([0-9]{2,3})\s*g/i);
+                const g = gm ? Number(gm[1]) : null;
+                return { amount: g >= 250 ? '250g以上' : g >= 100 ? '100g' : g >= 60 ? '60g' : '30g' };
+            }
+            if (id === 'greek_yogurt') return { sweetness: t.includes('無糖') || t.includes('砂糖なし') ? '無糖' : '加糖', proteinChoice: t.match(/20\s*g|p20/) ? '20g' : t.match(/15\s*g|p15/) ? '15g' : t.match(/12\s*g|p12/) ? '12g' : '10g' };
+            if (id === 'salad_chicken') return { size: t.includes('大') ? '大きめ' : t.includes('小') ? '小さめ' : '通常', proteinChoice: t.match(/30\s*g|p30/) ? '30g' : t.match(/20\s*g|p20/) ? '20g' : t.match(/15\s*g|p15/) ? '15g' : '25g' };
+            if (id === 'protein_drink') return { proteinChoice: t.match(/25\s*g|p25/) ? '25g' : t.match(/15\s*g|p15/) ? '15g' : '20g' };
+            if (id === 'protein_bar') return { proteinChoice: t.match(/20\s*g|p20/) ? '20g' : t.match(/10\s*g|p10/) ? '10g' : '15g' };
+            if (id === 'sandwich') return { type: t.includes('カツ') || t.includes('揚げ') ? 'カツ/揚げ物系' : (t.includes('卵') || t.includes('たまご') || t.includes('チキン')) ? 'たまご/チキン' : '普通' };
+            if (id === 'convenience_bento') return { amount: t.includes('大盛') || t.includes('大き') ? '大きめ' : t.includes('小さ') ? '小さめ' : '普通' };
+            if (id === 'cup_noodle') return { soup: t.includes('スープ飲') ? '飲む' : '飲まない' };
+            if (id === 'hot_snack') return { amount: count >= 3 ? '3個以上' : count === 2 ? '2個' : '1個' };
+            if (id === 'cafe_latte') return { sweetness: t.includes('無糖') || t.includes('砂糖なし') ? '無糖' : '加糖' };
+            return getDefaultFoodSelections(id);
+        }
+        function parseConvenienceFoodText(rawText) {
+            const text = normalizeConvenienceText(rawText);
+            if (!text) return [];
+            let workingLower = text.toLowerCase();
+            const candidates = [];
+            const usedIds = new Set();
+            CONVENIENCE_FOOD_RULES.forEach(rule => {
+                const term = rule.terms.find(term => workingLower.includes(String(term).normalize('NFKC').toLowerCase()));
+                if (!term || usedIds.has(rule.id)) return;
+                const item = FOOD_MASTER.find(x => x.id === rule.id);
+                if (!item) return;
+                const selections = getConvenienceSelections(rule.id, text, term);
+                const preview = buildFoodLogFromSelection(item, selections);
+                candidates.push({ id: rule.id, matchedTerm: term, selections, displayName: preview.displayName || item.name, protein: Number(preview.protein) || 0, kcal: Number(preview.kcal) || 0, group: preview.group || item.group, evaluation: preview.evaluation || '普通', severity: Number(preview.severity) || 0 });
+                usedIds.add(rule.id);
+                const escaped = String(term).normalize('NFKC').toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                workingLower = workingLower.replace(new RegExp(escaped, 'g'), ' ');
+            });
+            if (!candidates.length) {
+                const item = FOOD_MASTER.find(x => x.id === 'convenience_other');
+                candidates.push({ id:'convenience_other', matchedTerm:text, selections:{}, displayName:`その他コンビニ食品（${text.slice(0, 28)}${text.length > 28 ? '…' : ''}）`, protein:item?.protein || 5, kcal:item?.kcal || 250, group:'outsideFood', evaluation:'仮登録', severity:1, unknownName:text });
+            }
+            return candidates;
+        }
+        function escapeManualHtml(value) {
+            return String(value ?? '').replace(/[&<>"']/g, ch => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[ch]));
+        }
+        function fillConvenienceFoodText(text) {
+            const el = document.getElementById('convenience-food-text');
+            if (el) el.value = text;
+            analyzeConvenienceFoodText();
+        }
+        function renderConvenienceFoodDraft() {
+            const box = document.getElementById('convenience-food-result');
+            if (!box) return;
+            if (!convenienceFoodDraft.length) {
+                box.innerHTML = '候補はまだありません。商品名を入力して「候補を作る」を押してください。';
+                return;
+            }
+            const rows = convenienceFoodDraft.map((x, idx) => {
+                const groupLabel = FOOD_GROUPS[x.group]?.label || x.group || '未分類';
+                return `<div class="timeline-row"><div class="min-w-0 flex-1"><div class="timeline-title truncate">${escapeManualHtml(x.displayName)}</div><div class="timeline-sub">P${Number(x.protein)||0}g / ${Number(x.kcal)||0}kcal / ${escapeManualHtml(groupLabel)} / 判定:${escapeManualHtml(x.evaluation || '普通')}</div><div class="timeline-sub">検出: ${escapeManualHtml(x.matchedTerm || '-')}</div></div><button onclick="removeConvenienceFoodDraftItem(${idx})" class="bg-red-500/10 border border-red-400/25 text-red-200 hover:bg-red-500/20 px-2 py-1 rounded-lg text-[11px] font-black">除外</button></div>`;
+            }).join('');
+            box.innerHTML = `<div class="mb-2 text-sky-200 font-black">登録候補 ${convenienceFoodDraft.length}件</div><div class="space-y-2">${rows}</div><div class="mt-2 text-slate-400">内容が違う場合は登録後にタイムラインから編集してください。分類不能でも止めない設計です。</div>`;
+        }
+        function analyzeConvenienceFoodText() {
+            const raw = document.getElementById('convenience-food-text')?.value || '';
+            convenienceFoodDraft = parseConvenienceFoodText(raw);
+            renderConvenienceFoodDraft();
+        }
+        function removeConvenienceFoodDraftItem(index) {
+            convenienceFoodDraft.splice(index, 1);
+            renderConvenienceFoodDraft();
+        }
+        function clearConvenienceFoodDraft() {
+            convenienceFoodDraft = [];
+            const input = document.getElementById('convenience-food-text'); if (input) input.value = '';
+            renderConvenienceFoodDraft();
+        }
+        function registerConvenienceFoodDraft() {
+            ensureManualStores();
+            if (!convenienceFoodDraft.length) analyzeConvenienceFoodText();
+            if (!convenienceFoodDraft.length) { alert('登録候補がありません。商品名を入力してください。'); return; }
+            const baseDt = getManualLogDateTime();
+            let registered = 0;
+            convenienceFoodDraft.forEach((candidate, idx) => {
+                const item = FOOD_MASTER.find(x => x.id === candidate.id) || FOOD_MASTER.find(x => x.id === 'convenience_other');
+                if (!item) return;
+                const dt = new Date(baseDt.getTime() + idx * 60000);
+                const built = buildEnrichedFoodLog(item.id, { selections: candidate.selections || {}, datetime: dt }, null);
+                if (!built) return;
+                const nowIso = new Date().toISOString();
+                const log = { ...built.log, mealPlace:'コンビニ', source:'convenience_text', createdAt: built.log.createdAt || nowIso, updatedAt: nowIso };
+                if (candidate.id === 'convenience_other') {
+                    log.displayName = candidate.displayName;
+                    log.name = candidate.displayName;
+                    log.protein = candidate.protein;
+                    log.kcal = candidate.kcal;
+                    log.group = candidate.group;
+                    log.category = candidate.group;
+                    log.evaluation = candidate.evaluation;
+                    log.severity = candidate.severity;
+                    log.memo = candidate.unknownName || candidate.matchedTerm || '';
+                }
+                upsertFoodLogLocal(built.date, log, { prefer:'incoming' });
+                saveManualLogToFirestore('foodLogs', built.date, log);
+                healthData.eventLogs[built.date] = healthData.eventLogs[built.date] || {};
+                healthData.eventLogs[built.date].mealPlace = 'コンビニ';
+                healthData.eventLogs[built.date].mealPlace_time = dt.toISOString();
+                registered += 1;
+            });
+            const dateEl = document.getElementById('manual-log-date'); if (dateEl) dateEl.value = dateKeyFromDate(baseDt);
+            saveManualLogsToStorage();
+            renderManualLogUI();
+            updateManualDashboardSummary();
+            const box = document.getElementById('convenience-food-result');
+            if (box) box.innerHTML = `<span class="text-emerald-300 font-black">${registered}件登録しました。</span> タイムラインから個別編集できます。`;
+            convenienceFoodDraft = [];
+        }
+
         function renderFoodGroup(groupKey, items) {
             const meta = FOOD_GROUPS[groupKey];
             const cardHtml = items.map(item => `<button onclick="handleFoodSelect('${item.id}')" class="quick-log-btn ${meta.cls}"><span class="food-name">${item.name}</span><span class="sub">タンパク質 ${item.protein}g<br>${item.kcal}kcal</span><span class="comment">${item.comment}${FOOD_DETAIL_OPTIONS[item.id] ? '<br><span class="text-teal-200">詳細選択あり</span>' : ''}</span></button>`).join('');
@@ -6874,7 +7104,7 @@
             const generatedParts = getJstParts(new Date());
             const dataToExport = {
                 schemaVersion: "1.3",
-                appVersion: "gv1.80.0",
+                appVersion: "gv1.81.0",
                 generatedAt: generatedParts.timestampUtc,
                 generatedAtLocal: generatedParts.localDateTime,
                 timezone: "Asia/Tokyo",
@@ -6912,7 +7142,7 @@
                 },
                 dailySummaries,
                 healthData: {
-                    summary: { ...(healthData.summary || {}), version: "gv1.80.0", heightCm: 150, targetWeight: 50, targetWeightKg: 50 },
+                    summary: { ...(healthData.summary || {}), version: "gv1.81.0", heightCm: 150, targetWeight: 50, targetWeightKg: 50 },
                     weight: healthData.weight || {},
                     steps: healthData.steps || {},
                     sleep: healthData.sleep || {},

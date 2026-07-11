@@ -1,21 +1,21 @@
 {
   "schemaVersion": "1.3",
   "appVersion": "gv1.82.3",
-  "generatedAt": "2026-07-05T00:46:23.940Z",
-  "generatedAtLocal": "2026-07-05T09:46:23+09:00",
+  "generatedAt": "2026-07-11T09:55:04.075Z",
+  "generatedAtLocal": "2026-07-11T18:55:04+09:00",
   "timezone": "Asia/Tokyo",
   "purpose": "体重変動の原因分析、50kg達成に向けた改善提案、健康状態変化検出のための軽量JSON",
   "sourceSummary": {
-    "weightDays": 1560,
-    "stepDays": 4214,
-    "sleepDays": 1668,
-    "heartDays": 1692,
-    "hrvDays": 1692,
-    "gpsRoutes": 875,
+    "weightDays": 1566,
+    "stepDays": 4220,
+    "sleepDays": 1674,
+    "heartDays": 1698,
+    "hrvDays": 1698,
+    "gpsRoutes": 928,
     "foodLogDays": 26,
     "rawFoodLogDays": 26,
     "eventLogDays": 5,
-    "alcoholLogDays": 10,
+    "alcoholLogDays": 11,
     "dailySummaryDays": 27
   },
   "dataQuality": {
@@ -45,13 +45,13 @@
       "steps": {
         "status": "duplication_suspected",
         "method": "source_priority_normalized_device_no_simple_sum",
-        "last7Average": 10998,
-        "last30Average": 10885,
+        "last7Average": 9682,
+        "last30Average": 10712,
         "comment": "Apple Watch/iPhoneの二重計上を避けるため、日別ソース優先で集計"
       },
       "hrv": {
         "status": "ok",
-        "lastDate": "2026-07-05",
+        "lastDate": "2026-07-11",
         "last7DaysWithData": 7,
         "last30DaysWithData": 30,
         "comment": "HRVは直近7日のデータ数に応じて評価信頼度を調整"
@@ -59,8 +59,8 @@
       "sleep": {
         "status": "ok",
         "method": "asleep_session_merge_wake_date_based",
-        "last7Average": 6.12,
-        "last30Average": 6.48,
+        "last7Average": 6.67,
+        "last30Average": 6.54,
         "last7DaysWithData": 7,
         "last30DaysWithData": 30,
         "abnormalDayCount": 0,
@@ -71,71 +71,11 @@
     },
     "stepImportDiagnostics": {
       "method": "source_priority_normalized_device_no_simple_sum",
-      "generatedAt": "2026-07-05T00:44:12.045Z",
-      "totalDays": 4214,
+      "generatedAt": "2026-07-11T09:54:20.078Z",
+      "totalDays": 4220,
       "diagnosticDays": 30,
-      "suspectedDays": 1439,
+      "suspectedDays": 1443,
       "days": {
-        "2026-06-06": {
-          "selectedSourceKey": "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5",
-          "selectedSteps": 10187,
-          "sourceTotals": {
-            "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5": 10187,
-            "Ken の iPhone (2)|26.5|name:iPhone, manufacturer:Apple Inc., model:iPhone, hardware:iPhone14,4, software:26.5": 3233
-          },
-          "simpleSumSteps": 13420,
-          "duplicationSuspected": false
-        },
-        "2026-06-07": {
-          "selectedSourceKey": "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5",
-          "selectedSteps": 10180,
-          "sourceTotals": {
-            "Ken の iPhone (2)|26.5|name:iPhone, manufacturer:Apple Inc., model:iPhone, hardware:iPhone14,4, software:26.5": 7620,
-            "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5": 10180
-          },
-          "simpleSumSteps": 17800,
-          "duplicationSuspected": true
-        },
-        "2026-06-08": {
-          "selectedSourceKey": "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5",
-          "selectedSteps": 10851,
-          "sourceTotals": {
-            "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5": 10851,
-            "Ken の iPhone (2)|26.5|name:iPhone, manufacturer:Apple Inc., model:iPhone, hardware:iPhone14,4, software:26.5": 10313
-          },
-          "simpleSumSteps": 21164,
-          "duplicationSuspected": true
-        },
-        "2026-06-09": {
-          "selectedSourceKey": "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5",
-          "selectedSteps": 10343,
-          "sourceTotals": {
-            "Ken の iPhone (2)|26.5|name:iPhone, manufacturer:Apple Inc., model:iPhone, hardware:iPhone14,4, software:26.5": 7710,
-            "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5": 10343
-          },
-          "simpleSumSteps": 18053,
-          "duplicationSuspected": true
-        },
-        "2026-06-10": {
-          "selectedSourceKey": "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5",
-          "selectedSteps": 10698,
-          "sourceTotals": {
-            "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5": 10698,
-            "Ken の iPhone (2)|26.5|name:iPhone, manufacturer:Apple Inc., model:iPhone, hardware:iPhone14,4, software:26.5": 9734
-          },
-          "simpleSumSteps": 20432,
-          "duplicationSuspected": true
-        },
-        "2026-06-11": {
-          "selectedSourceKey": "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5",
-          "selectedSteps": 10212,
-          "sourceTotals": {
-            "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5": 10212,
-            "Ken の iPhone (2)|26.5|name:iPhone, manufacturer:Apple Inc., model:iPhone, hardware:iPhone14,4, software:26.5": 8115
-          },
-          "simpleSumSteps": 18327,
-          "duplicationSuspected": true
-        },
         "2026-06-12": {
           "selectedSourceKey": "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5",
           "selectedSteps": 9777,
@@ -368,21 +308,81 @@
         },
         "2026-07-05": {
           "selectedSourceKey": "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5",
-          "selectedSteps": 356,
+          "selectedSteps": 10480,
           "sourceTotals": {
-            "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5": 356,
-            "Ken の iPhone (2)|26.5|name:iPhone, manufacturer:Apple Inc., model:iPhone, hardware:iPhone14,4, software:26.5": 49
+            "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5": 10480,
+            "Ken の iPhone (2)|26.5|name:iPhone, manufacturer:Apple Inc., model:iPhone, hardware:iPhone14,4, software:26.5": 7531
           },
-          "simpleSumSteps": 405,
+          "simpleSumSteps": 18011,
+          "duplicationSuspected": true
+        },
+        "2026-07-06": {
+          "selectedSourceKey": "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5",
+          "selectedSteps": 8085,
+          "sourceTotals": {
+            "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5": 8085,
+            "Ken の iPhone (2)|26.5|name:iPhone, manufacturer:Apple Inc., model:iPhone, hardware:iPhone14,4, software:26.5": 5137
+          },
+          "simpleSumSteps": 13222,
+          "duplicationSuspected": true
+        },
+        "2026-07-07": {
+          "selectedSourceKey": "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5",
+          "selectedSteps": 10167,
+          "sourceTotals": {
+            "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5": 10167,
+            "Ken の iPhone (2)|26.5|name:iPhone, manufacturer:Apple Inc., model:iPhone, hardware:iPhone14,4, software:26.5": 4521
+          },
+          "simpleSumSteps": 14688,
+          "duplicationSuspected": false
+        },
+        "2026-07-08": {
+          "selectedSourceKey": "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5",
+          "selectedSteps": 10141,
+          "sourceTotals": {
+            "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5": 10141,
+            "Ken の iPhone (2)|26.5|name:iPhone, manufacturer:Apple Inc., model:iPhone, hardware:iPhone14,4, software:26.5": 6372
+          },
+          "simpleSumSteps": 16513,
+          "duplicationSuspected": true
+        },
+        "2026-07-09": {
+          "selectedSourceKey": "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5",
+          "selectedSteps": 10328,
+          "sourceTotals": {
+            "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5": 10328,
+            "Ken の iPhone (2)|26.5|name:iPhone, manufacturer:Apple Inc., model:iPhone, hardware:iPhone14,4, software:26.5": 4176
+          },
+          "simpleSumSteps": 14504,
+          "duplicationSuspected": false
+        },
+        "2026-07-10": {
+          "selectedSourceKey": "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5",
+          "selectedSteps": 7842,
+          "sourceTotals": {
+            "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5": 7842,
+            "Ken の iPhone (2)|26.5|name:iPhone, manufacturer:Apple Inc., model:iPhone, hardware:iPhone14,4, software:26.5": 6624
+          },
+          "simpleSumSteps": 14466,
+          "duplicationSuspected": true
+        },
+        "2026-07-11": {
+          "selectedSourceKey": "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5",
+          "selectedSteps": 4542,
+          "sourceTotals": {
+            "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5": 4542,
+            "Ken の iPhone (2)|26.5|name:iPhone, manufacturer:Apple Inc., model:iPhone, hardware:iPhone14,4, software:26.5": 981
+          },
+          "simpleSumSteps": 5523,
           "duplicationSuspected": false
         }
       }
     },
     "hrvImportDiagnostics": {
-      "totalRecords": 16676,
+      "totalRecords": 16745,
       "firstDate": "2021-11-17",
-      "lastDate": "2026-07-05",
-      "latestDataDate": "2026-07-05",
+      "lastDate": "2026-07-11",
+      "latestDataDate": "2026-07-11",
       "last7DaysWithHrv": 7,
       "last30DaysWithHrv": 30,
       "recentMissingDates": [],
@@ -390,10 +390,10 @@
     },
     "sleepImportDiagnostics": {
       "method": "asleep_session_merge_wake_date_based",
-      "totalRecords": 56623,
+      "totalRecords": 56810,
       "firstDate": "2021-11-18",
-      "lastDate": "2026-07-05",
-      "latestDataDate": "2026-07-05",
+      "lastDate": "2026-07-11",
+      "latestDataDate": "2026-07-11",
       "last7DaysWithSleep": 7,
       "last30DaysWithSleep": 30,
       "abnormalDayCount": 0,
@@ -582,297 +582,9 @@
         }
       ],
       "abnormalRecent30Days": [],
-      "unspecifiedAddedHoursAll": 5113.34,
-      "unspecifiedExcludedOverlapHoursAll": 6124.94,
+      "unspecifiedAddedHoursAll": 5129.6,
+      "unspecifiedExcludedOverlapHoursAll": 6150.64,
       "recentDays": {
-        "2026-06-05": {
-          "selectedSleepHours": 6,
-          "simpleSumHours": 6,
-          "mergedIntervalCount": 1,
-          "sessionCount": 1,
-          "detailedStageHours": 3.57,
-          "unspecifiedAddedHours": 2.43,
-          "unspecifiedExcludedOverlapHours": 3.57,
-          "awakeExcludedHours": 1.1,
-          "inBedExcludedHours": 6,
-          "sourceSummary": {
-            "AutoSleep": {
-              "asleepHours": 0,
-              "asleepUnspecifiedHours": 6,
-              "asleepCoreHours": 0,
-              "asleepDeepHours": 0,
-              "asleepRemHours": 0,
-              "awakeHours": 0,
-              "inBedHours": 6,
-              "otherHours": 0
-            },
-            "大嶺賢一さんのApple Watch": {
-              "asleepHours": 0,
-              "asleepUnspecifiedHours": 0,
-              "asleepCoreHours": 2.18,
-              "asleepDeepHours": 0.44,
-              "asleepRemHours": 0.97,
-              "awakeHours": 1.1,
-              "inBedHours": 0,
-              "otherHours": 0
-            }
-          },
-          "usedValues": [
-            "HKCategoryValueSleepAnalysisAsleepCore",
-            "HKCategoryValueSleepAnalysisAsleepDeep",
-            "HKCategoryValueSleepAnalysisAsleepREM",
-            "HKCategoryValueSleepAnalysisAsleepUnspecified"
-          ],
-          "excludedValues": [
-            "HKCategoryValueSleepAnalysisAwake",
-            "HKCategoryValueSleepAnalysisInBed"
-          ],
-          "abnormal": false,
-          "reason": null,
-          "assignedBy": "wake_date",
-          "sessionGapMinutes": 90,
-          "watchDetailedPreferred": false
-        },
-        "2026-06-06": {
-          "selectedSleepHours": 6.25,
-          "simpleSumHours": 6.25,
-          "mergedIntervalCount": 2,
-          "sessionCount": 1,
-          "detailedStageHours": 5.19,
-          "unspecifiedAddedHours": 1.06,
-          "unspecifiedExcludedOverlapHours": 5.19,
-          "awakeExcludedHours": 1.18,
-          "inBedExcludedHours": 6.55,
-          "sourceSummary": {
-            "AutoSleep": {
-              "asleepHours": 0,
-              "asleepUnspecifiedHours": 6.25,
-              "asleepCoreHours": 0,
-              "asleepDeepHours": 0,
-              "asleepRemHours": 0,
-              "awakeHours": 0,
-              "inBedHours": 6.55,
-              "otherHours": 0
-            },
-            "大嶺賢一さんのApple Watch": {
-              "asleepHours": 0,
-              "asleepUnspecifiedHours": 0,
-              "asleepCoreHours": 3.46,
-              "asleepDeepHours": 0.83,
-              "asleepRemHours": 1.52,
-              "awakeHours": 1.19,
-              "inBedHours": 0,
-              "otherHours": 0
-            }
-          },
-          "usedValues": [
-            "HKCategoryValueSleepAnalysisAsleepCore",
-            "HKCategoryValueSleepAnalysisAsleepDeep",
-            "HKCategoryValueSleepAnalysisAsleepREM",
-            "HKCategoryValueSleepAnalysisAsleepUnspecified"
-          ],
-          "excludedValues": [
-            "HKCategoryValueSleepAnalysisAwake",
-            "HKCategoryValueSleepAnalysisInBed"
-          ],
-          "abnormal": false,
-          "reason": null,
-          "assignedBy": "wake_date",
-          "sessionGapMinutes": 90,
-          "watchDetailedPreferred": false
-        },
-        "2026-06-07": {
-          "selectedSleepHours": 6.65,
-          "simpleSumHours": 6.65,
-          "mergedIntervalCount": 2,
-          "sessionCount": 1,
-          "detailedStageHours": 5.66,
-          "unspecifiedAddedHours": 0.99,
-          "unspecifiedExcludedOverlapHours": 5.04,
-          "awakeExcludedHours": 0.8,
-          "inBedExcludedHours": 6.85,
-          "sourceSummary": {
-            "AutoSleep": {
-              "asleepHours": 0,
-              "asleepUnspecifiedHours": 6.65,
-              "asleepCoreHours": 0,
-              "asleepDeepHours": 0,
-              "asleepRemHours": 0,
-              "awakeHours": 0,
-              "inBedHours": 6.85,
-              "otherHours": 0
-            },
-            "大嶺賢一さんのApple Watch": {
-              "asleepHours": 0,
-              "asleepUnspecifiedHours": 0,
-              "asleepCoreHours": 3.31,
-              "asleepDeepHours": 0.31,
-              "asleepRemHours": 1.42,
-              "awakeHours": 0.81,
-              "inBedHours": 0,
-              "otherHours": 0
-            }
-          },
-          "usedValues": [
-            "HKCategoryValueSleepAnalysisAsleepCore",
-            "HKCategoryValueSleepAnalysisAsleepDeep",
-            "HKCategoryValueSleepAnalysisAsleepREM",
-            "HKCategoryValueSleepAnalysisAsleepUnspecified"
-          ],
-          "excludedValues": [
-            "HKCategoryValueSleepAnalysisAwake",
-            "HKCategoryValueSleepAnalysisInBed"
-          ],
-          "abnormal": false,
-          "reason": null,
-          "assignedBy": "wake_date",
-          "sessionGapMinutes": 90,
-          "watchDetailedPreferred": false
-        },
-        "2026-06-08": {
-          "selectedSleepHours": 6.11,
-          "simpleSumHours": 6.11,
-          "mergedIntervalCount": 4,
-          "sessionCount": 1,
-          "detailedStageHours": 5.06,
-          "unspecifiedAddedHours": 1.05,
-          "unspecifiedExcludedOverlapHours": 5,
-          "awakeExcludedHours": 0.34,
-          "inBedExcludedHours": 6.5,
-          "sourceSummary": {
-            "AutoSleep": {
-              "asleepHours": 0,
-              "asleepUnspecifiedHours": 6.05,
-              "asleepCoreHours": 0,
-              "asleepDeepHours": 0,
-              "asleepRemHours": 0,
-              "awakeHours": 0,
-              "inBedHours": 6.5,
-              "otherHours": 0
-            },
-            "大嶺賢一さんのApple Watch": {
-              "asleepHours": 0,
-              "asleepUnspecifiedHours": 0,
-              "asleepCoreHours": 2.65,
-              "asleepDeepHours": 0.68,
-              "asleepRemHours": 1.72,
-              "awakeHours": 0.33,
-              "inBedHours": 0,
-              "otherHours": 0
-            }
-          },
-          "usedValues": [
-            "HKCategoryValueSleepAnalysisAsleepCore",
-            "HKCategoryValueSleepAnalysisAsleepDeep",
-            "HKCategoryValueSleepAnalysisAsleepREM",
-            "HKCategoryValueSleepAnalysisAsleepUnspecified"
-          ],
-          "excludedValues": [
-            "HKCategoryValueSleepAnalysisAwake",
-            "HKCategoryValueSleepAnalysisInBed"
-          ],
-          "abnormal": false,
-          "reason": null,
-          "assignedBy": "wake_date",
-          "sessionGapMinutes": 90,
-          "watchDetailedPreferred": false
-        },
-        "2026-06-09": {
-          "selectedSleepHours": 5.83,
-          "simpleSumHours": 5.83,
-          "mergedIntervalCount": 1,
-          "sessionCount": 1,
-          "detailedStageHours": 4.53,
-          "unspecifiedAddedHours": 1.31,
-          "unspecifiedExcludedOverlapHours": 4.53,
-          "awakeExcludedHours": 0.67,
-          "inBedExcludedHours": 5.83,
-          "sourceSummary": {
-            "AutoSleep": {
-              "asleepHours": 0,
-              "asleepUnspecifiedHours": 5.83,
-              "asleepCoreHours": 0,
-              "asleepDeepHours": 0,
-              "asleepRemHours": 0,
-              "awakeHours": 0,
-              "inBedHours": 5.83,
-              "otherHours": 0
-            },
-            "大嶺賢一さんのApple Watch": {
-              "asleepHours": 0,
-              "asleepUnspecifiedHours": 0,
-              "asleepCoreHours": 3.78,
-              "asleepDeepHours": 0.43,
-              "asleepRemHours": 0.32,
-              "awakeHours": 0.68,
-              "inBedHours": 0,
-              "otherHours": 0
-            }
-          },
-          "usedValues": [
-            "HKCategoryValueSleepAnalysisAsleepCore",
-            "HKCategoryValueSleepAnalysisAsleepDeep",
-            "HKCategoryValueSleepAnalysisAsleepREM",
-            "HKCategoryValueSleepAnalysisAsleepUnspecified"
-          ],
-          "excludedValues": [
-            "HKCategoryValueSleepAnalysisAwake",
-            "HKCategoryValueSleepAnalysisInBed"
-          ],
-          "abnormal": false,
-          "reason": null,
-          "assignedBy": "wake_date",
-          "sessionGapMinutes": 90,
-          "watchDetailedPreferred": false
-        },
-        "2026-06-10": {
-          "selectedSleepHours": 6.86,
-          "simpleSumHours": 6.86,
-          "mergedIntervalCount": 3,
-          "sessionCount": 2,
-          "detailedStageHours": 5.55,
-          "unspecifiedAddedHours": 1.31,
-          "unspecifiedExcludedOverlapHours": 5.49,
-          "awakeExcludedHours": 0.31,
-          "inBedExcludedHours": 7.02,
-          "sourceSummary": {
-            "AutoSleep": {
-              "asleepHours": 0,
-              "asleepUnspecifiedHours": 6.8,
-              "asleepCoreHours": 0,
-              "asleepDeepHours": 0,
-              "asleepRemHours": 0,
-              "awakeHours": 0,
-              "inBedHours": 7.02,
-              "otherHours": 0
-            },
-            "大嶺賢一さんのApple Watch": {
-              "asleepHours": 0,
-              "asleepUnspecifiedHours": 0,
-              "asleepCoreHours": 3.19,
-              "asleepDeepHours": 0.94,
-              "asleepRemHours": 1.4,
-              "awakeHours": 0.31,
-              "inBedHours": 0,
-              "otherHours": 0
-            }
-          },
-          "usedValues": [
-            "HKCategoryValueSleepAnalysisAsleepCore",
-            "HKCategoryValueSleepAnalysisAsleepDeep",
-            "HKCategoryValueSleepAnalysisAsleepREM",
-            "HKCategoryValueSleepAnalysisAsleepUnspecified"
-          ],
-          "excludedValues": [
-            "HKCategoryValueSleepAnalysisAwake",
-            "HKCategoryValueSleepAnalysisInBed"
-          ],
-          "abnormal": false,
-          "reason": null,
-          "assignedBy": "wake_date",
-          "sessionGapMinutes": 90,
-          "watchDetailedPreferred": false
-        },
         "2026-06-11": {
           "selectedSleepHours": 5.73,
           "simpleSumHours": 7.33,
@@ -2024,45 +1736,298 @@
           "assignedBy": "wake_date",
           "sessionGapMinutes": 90,
           "watchDetailedPreferred": false
+        },
+        "2026-07-05": {
+          "selectedSleepHours": 6.93,
+          "simpleSumHours": 6.93,
+          "mergedIntervalCount": 3,
+          "sessionCount": 2,
+          "detailedStageHours": 5.36,
+          "unspecifiedAddedHours": 1.57,
+          "unspecifiedExcludedOverlapHours": 5.15,
+          "awakeExcludedHours": 0.03,
+          "inBedExcludedHours": 6.95,
+          "sourceSummary": {
+            "AutoSleep": {
+              "asleepHours": 0,
+              "asleepUnspecifiedHours": 6.72,
+              "asleepCoreHours": 0,
+              "asleepDeepHours": 0,
+              "asleepRemHours": 0,
+              "awakeHours": 0,
+              "inBedHours": 6.95,
+              "otherHours": 0
+            },
+            "大嶺賢一さんのApple Watch": {
+              "asleepHours": 0,
+              "asleepUnspecifiedHours": 0,
+              "asleepCoreHours": 3.75,
+              "asleepDeepHours": 0.91,
+              "asleepRemHours": 1.26,
+              "awakeHours": 0.03,
+              "inBedHours": 0,
+              "otherHours": 0
+            }
+          },
+          "usedValues": [
+            "HKCategoryValueSleepAnalysisAsleepCore",
+            "HKCategoryValueSleepAnalysisAsleepDeep",
+            "HKCategoryValueSleepAnalysisAsleepREM",
+            "HKCategoryValueSleepAnalysisAsleepUnspecified"
+          ],
+          "excludedValues": [
+            "HKCategoryValueSleepAnalysisAwake",
+            "HKCategoryValueSleepAnalysisInBed"
+          ],
+          "abnormal": false,
+          "reason": null,
+          "assignedBy": "wake_date",
+          "sessionGapMinutes": 90,
+          "watchDetailedPreferred": false
+        },
+        "2026-07-06": {
+          "selectedSleepHours": 8.33,
+          "simpleSumHours": 8.33,
+          "mergedIntervalCount": 1,
+          "sessionCount": 1,
+          "detailedStageHours": 7.61,
+          "unspecifiedAddedHours": 0.72,
+          "unspecifiedExcludedOverlapHours": 7.06,
+          "awakeExcludedHours": 0.51,
+          "inBedExcludedHours": 8.33,
+          "sourceSummary": {
+            "AutoSleep": {
+              "asleepHours": 0,
+              "asleepUnspecifiedHours": 8.33,
+              "asleepCoreHours": 0,
+              "asleepDeepHours": 0,
+              "asleepRemHours": 0,
+              "awakeHours": 0,
+              "inBedHours": 8.33,
+              "otherHours": 0
+            },
+            "大嶺賢一さんのApple Watch": {
+              "asleepHours": 0,
+              "asleepUnspecifiedHours": 0,
+              "asleepCoreHours": 5.29,
+              "asleepDeepHours": 0.33,
+              "asleepRemHours": 1.41,
+              "awakeHours": 0.51,
+              "inBedHours": 0,
+              "otherHours": 0
+            }
+          },
+          "usedValues": [
+            "HKCategoryValueSleepAnalysisAsleepCore",
+            "HKCategoryValueSleepAnalysisAsleepDeep",
+            "HKCategoryValueSleepAnalysisAsleepREM",
+            "HKCategoryValueSleepAnalysisAsleepUnspecified"
+          ],
+          "excludedValues": [
+            "HKCategoryValueSleepAnalysisAwake",
+            "HKCategoryValueSleepAnalysisInBed"
+          ],
+          "abnormal": false,
+          "reason": null,
+          "assignedBy": "wake_date",
+          "sessionGapMinutes": 90,
+          "watchDetailedPreferred": false
+        },
+        "2026-07-07": {
+          "selectedSleepHours": 5.17,
+          "simpleSumHours": 5.17,
+          "mergedIntervalCount": 2,
+          "sessionCount": 1,
+          "detailedStageHours": 3.52,
+          "unspecifiedAddedHours": 1.65,
+          "unspecifiedExcludedOverlapHours": 3.52,
+          "awakeExcludedHours": 0.26,
+          "inBedExcludedHours": 5.35,
+          "sourceSummary": {
+            "AutoSleep": {
+              "asleepHours": 0,
+              "asleepUnspecifiedHours": 5.17,
+              "asleepCoreHours": 0,
+              "asleepDeepHours": 0,
+              "asleepRemHours": 0,
+              "awakeHours": 0,
+              "inBedHours": 5.35,
+              "otherHours": 0
+            },
+            "大嶺賢一さんのApple Watch": {
+              "asleepHours": 0,
+              "asleepUnspecifiedHours": 0,
+              "asleepCoreHours": 2.1,
+              "asleepDeepHours": 0.83,
+              "asleepRemHours": 0.61,
+              "awakeHours": 0.27,
+              "inBedHours": 0,
+              "otherHours": 0
+            }
+          },
+          "usedValues": [
+            "HKCategoryValueSleepAnalysisAsleepCore",
+            "HKCategoryValueSleepAnalysisAsleepDeep",
+            "HKCategoryValueSleepAnalysisAsleepREM",
+            "HKCategoryValueSleepAnalysisAsleepUnspecified"
+          ],
+          "excludedValues": [
+            "HKCategoryValueSleepAnalysisAwake",
+            "HKCategoryValueSleepAnalysisInBed"
+          ],
+          "abnormal": false,
+          "reason": null,
+          "assignedBy": "wake_date",
+          "sessionGapMinutes": 90,
+          "watchDetailedPreferred": false
+        },
+        "2026-07-08": {
+          "selectedSleepHours": 4.87,
+          "simpleSumHours": 4.87,
+          "mergedIntervalCount": 2,
+          "sessionCount": 1,
+          "detailedStageHours": 3.48,
+          "unspecifiedAddedHours": 1.38,
+          "unspecifiedExcludedOverlapHours": 3.48,
+          "awakeExcludedHours": 0.78,
+          "inBedExcludedHours": 5.1,
+          "sourceSummary": {
+            "AutoSleep": {
+              "asleepHours": 0,
+              "asleepUnspecifiedHours": 4.87,
+              "asleepCoreHours": 0,
+              "asleepDeepHours": 0,
+              "asleepRemHours": 0,
+              "awakeHours": 0,
+              "inBedHours": 5.1,
+              "otherHours": 0
+            },
+            "大嶺賢一さんのApple Watch": {
+              "asleepHours": 0,
+              "asleepUnspecifiedHours": 0,
+              "asleepCoreHours": 2.44,
+              "asleepDeepHours": 0.6,
+              "asleepRemHours": 0.44,
+              "awakeHours": 0.79,
+              "inBedHours": 0,
+              "otherHours": 0
+            }
+          },
+          "usedValues": [
+            "HKCategoryValueSleepAnalysisAsleepCore",
+            "HKCategoryValueSleepAnalysisAsleepDeep",
+            "HKCategoryValueSleepAnalysisAsleepREM",
+            "HKCategoryValueSleepAnalysisAsleepUnspecified"
+          ],
+          "excludedValues": [
+            "HKCategoryValueSleepAnalysisAwake",
+            "HKCategoryValueSleepAnalysisInBed"
+          ],
+          "abnormal": false,
+          "reason": null,
+          "assignedBy": "wake_date",
+          "sessionGapMinutes": 90,
+          "watchDetailedPreferred": false
+        },
+        "2026-07-09": {
+          "selectedSleepHours": 7.1,
+          "simpleSumHours": 7.1,
+          "mergedIntervalCount": 2,
+          "sessionCount": 1,
+          "detailedStageHours": 5.34,
+          "unspecifiedAddedHours": 1.77,
+          "unspecifiedExcludedOverlapHours": 5.23,
+          "awakeExcludedHours": 1.29,
+          "inBedExcludedHours": 7.12,
+          "sourceSummary": {
+            "AutoSleep": {
+              "asleepHours": 0,
+              "asleepUnspecifiedHours": 7.7,
+              "asleepCoreHours": 0,
+              "asleepDeepHours": 0,
+              "asleepRemHours": 0,
+              "awakeHours": 0,
+              "inBedHours": 7.12,
+              "otherHours": 0
+            },
+            "大嶺賢一さんのApple Watch": {
+              "asleepHours": 0,
+              "asleepUnspecifiedHours": 0,
+              "asleepCoreHours": 4.67,
+              "asleepDeepHours": 0.45,
+              "asleepRemHours": 0.24,
+              "awakeHours": 1.29,
+              "inBedHours": 0,
+              "otherHours": 0
+            }
+          },
+          "usedValues": [
+            "HKCategoryValueSleepAnalysisAsleepCore",
+            "HKCategoryValueSleepAnalysisAsleepDeep",
+            "HKCategoryValueSleepAnalysisAsleepREM",
+            "HKCategoryValueSleepAnalysisAsleepUnspecified"
+          ],
+          "excludedValues": [
+            "HKCategoryValueSleepAnalysisAwake",
+            "HKCategoryValueSleepAnalysisInBed"
+          ],
+          "abnormal": false,
+          "reason": null,
+          "assignedBy": "wake_date",
+          "sessionGapMinutes": 90,
+          "watchDetailedPreferred": false
+        },
+        "2026-07-10": {
+          "selectedSleepHours": 7.24,
+          "simpleSumHours": 7.24,
+          "mergedIntervalCount": 4,
+          "sessionCount": 1,
+          "detailedStageHours": 5.98,
+          "unspecifiedAddedHours": 1.26,
+          "unspecifiedExcludedOverlapHours": 5.84,
+          "awakeExcludedHours": 0.56,
+          "inBedExcludedHours": 8.22,
+          "sourceSummary": {
+            "AutoSleep": {
+              "asleepHours": 0,
+              "asleepUnspecifiedHours": 6.4,
+              "asleepCoreHours": 0,
+              "asleepDeepHours": 0,
+              "asleepRemHours": 0,
+              "awakeHours": 0,
+              "inBedHours": 8.22,
+              "otherHours": 0
+            },
+            "大嶺賢一さんのApple Watch": {
+              "asleepHours": 0,
+              "asleepUnspecifiedHours": 0,
+              "asleepCoreHours": 3.74,
+              "asleepDeepHours": 0.72,
+              "asleepRemHours": 1.54,
+              "awakeHours": 0.58,
+              "inBedHours": 0,
+              "otherHours": 0
+            }
+          },
+          "usedValues": [
+            "HKCategoryValueSleepAnalysisAsleepCore",
+            "HKCategoryValueSleepAnalysisAsleepDeep",
+            "HKCategoryValueSleepAnalysisAsleepREM",
+            "HKCategoryValueSleepAnalysisAsleepUnspecified"
+          ],
+          "excludedValues": [
+            "HKCategoryValueSleepAnalysisAwake",
+            "HKCategoryValueSleepAnalysisInBed"
+          ],
+          "abnormal": false,
+          "reason": null,
+          "assignedBy": "wake_date",
+          "sessionGapMinutes": 90,
+          "watchDetailedPreferred": false
         }
       }
     },
     "importWarnings": [
-      {
-        "type": "STEP_DUPLICATION_SUSPECTED",
-        "date": "2026-06-07",
-        "message": "複数ソースの歩数合算により二重計上の可能性があります",
-        "selectedSteps": 10180,
-        "simpleSumSteps": 17800
-      },
-      {
-        "type": "STEP_DUPLICATION_SUSPECTED",
-        "date": "2026-06-08",
-        "message": "複数ソースの歩数合算により二重計上の可能性があります",
-        "selectedSteps": 10851,
-        "simpleSumSteps": 21164
-      },
-      {
-        "type": "STEP_DUPLICATION_SUSPECTED",
-        "date": "2026-06-09",
-        "message": "複数ソースの歩数合算により二重計上の可能性があります",
-        "selectedSteps": 10343,
-        "simpleSumSteps": 18053
-      },
-      {
-        "type": "STEP_DUPLICATION_SUSPECTED",
-        "date": "2026-06-10",
-        "message": "複数ソースの歩数合算により二重計上の可能性があります",
-        "selectedSteps": 10698,
-        "simpleSumSteps": 20432
-      },
-      {
-        "type": "STEP_DUPLICATION_SUSPECTED",
-        "date": "2026-06-11",
-        "message": "複数ソースの歩数合算により二重計上の可能性があります",
-        "selectedSteps": 10212,
-        "simpleSumSteps": 18327
-      },
       {
         "type": "STEP_DUPLICATION_SUSPECTED",
         "date": "2026-06-12",
@@ -2195,20 +2160,48 @@
         "message": "複数ソースの歩数合算により二重計上の可能性があります",
         "selectedSteps": 10732,
         "simpleSumSteps": 21744
+      },
+      {
+        "type": "STEP_DUPLICATION_SUSPECTED",
+        "date": "2026-07-05",
+        "message": "複数ソースの歩数合算により二重計上の可能性があります",
+        "selectedSteps": 10480,
+        "simpleSumSteps": 18011
+      },
+      {
+        "type": "STEP_DUPLICATION_SUSPECTED",
+        "date": "2026-07-06",
+        "message": "複数ソースの歩数合算により二重計上の可能性があります",
+        "selectedSteps": 8085,
+        "simpleSumSteps": 13222
+      },
+      {
+        "type": "STEP_DUPLICATION_SUSPECTED",
+        "date": "2026-07-08",
+        "message": "複数ソースの歩数合算により二重計上の可能性があります",
+        "selectedSteps": 10141,
+        "simpleSumSteps": 16513
+      },
+      {
+        "type": "STEP_DUPLICATION_SUSPECTED",
+        "date": "2026-07-10",
+        "message": "複数ソースの歩数合算により二重計上の可能性があります",
+        "selectedSteps": 7842,
+        "simpleSumSteps": 14466
       }
     ],
     "importWarningSummary": {
-      "totalCount": 24,
+      "totalCount": 23,
       "byType": {
-        "STEP_DUPLICATION_SUSPECTED": 24
+        "STEP_DUPLICATION_SUSPECTED": 23
       },
       "stepDuplication": {
-        "count": 24,
-        "firstDate": "2026-06-07",
-        "lastDate": "2026-07-04",
-        "averageSelectedSteps": 10983,
-        "averageSimpleSumSteps": 19780,
-        "comment": "歩数の二重計上疑いは24日ありますが、healthData.stepsにはソース優先で補正したselectedStepsを採用済みです。"
+        "count": 23,
+        "firstDate": "2026-06-12",
+        "lastDate": "2026-07-10",
+        "averageSelectedSteps": 10776,
+        "averageSimpleSumSteps": 19181,
+        "comment": "歩数の二重計上疑いは23日ありますが、healthData.stepsにはソース優先で補正したselectedStepsを採用済みです。"
       },
       "stepExtreme": {
         "count": 0
@@ -2237,12 +2230,12 @@
     "testDataReasons": [],
     "regressionWarnings": [],
     "healthDataValidation": {
-      "generatedAt": "2026-07-05T00:46:23.940Z",
-      "warningCountRaw": 6,
-      "warningCount": 6,
-      "displayWarningCount": 6,
-      "uniqueWarningCount": 6,
-      "dataQualityScore": 70,
+      "generatedAt": "2026-07-11T09:55:04.074Z",
+      "warningCountRaw": 7,
+      "warningCount": 7,
+      "displayWarningCount": 7,
+      "uniqueWarningCount": 7,
+      "dataQualityScore": 65,
       "mealPlaceSummary": {
         "restaurant": 1,
         "home": 68,
@@ -2254,6 +2247,7 @@
         "HIGH_ALCOHOL_INTAKE",
         "HIGH_ALCOHOL_INTAKE",
         "ALCOHOL_WITH_RISK_FOOD",
+        "HIGH_ALCOHOL_INTAKE",
         "HIGH_ALCOHOL_INTAKE"
       ],
       "warnings": [
@@ -2315,6 +2309,15 @@
           "targetCount": 1,
           "foodNames": [],
           "occurrences": 1
+        },
+        {
+          "type": "HIGH_ALCOHOL_INTAKE",
+          "date": "2026-06-26",
+          "message": "飲酒量が多めです",
+          "alcoholCups": 4,
+          "targetCount": 1,
+          "foodNames": [],
+          "occurrences": 1
         }
       ]
     },
@@ -2345,23 +2348,24 @@
       "飲酒量が多めです",
       "飲酒と高カロリー・外食系の組み合わせがあります",
       "飲酒量が多めです",
-      "2026-06-07〜2026-07-04のうち24日で歩数二重計上疑いがあります。ただし、歩数値は単純合算ではなくApple Watch/iPhoneソース優先で補正済みです。"
+      "飲酒量が多めです",
+      "2026-06-12〜2026-07-10のうち23日で歩数二重計上疑いがあります。ただし、歩数値は単純合算ではなくApple Watch/iPhoneソース優先で補正済みです。"
     ]
   },
   "dataCompleteness": {
     "last7Days": {
-      "weightDays": 5,
+      "weightDays": 7,
       "stepDays": 7,
       "sleepDays": 7,
-      "foodLogDays": 1,
-      "score": 77,
-      "grade": "B"
+      "foodLogDays": 0,
+      "score": 85,
+      "grade": "A"
     },
     "last30Days": {
-      "weightDays": 25,
+      "weightDays": 27,
       "stepDays": 30,
       "sleepDays": 30,
-      "foodLogDays": 20,
+      "foodLogDays": 14,
       "score": 89,
       "grade": "A"
     }
@@ -2385,71 +2389,11 @@
   },
   "stepImportDiagnostics": {
     "method": "source_priority_normalized_device_no_simple_sum",
-    "generatedAt": "2026-07-05T00:44:12.045Z",
-    "totalDays": 4214,
+    "generatedAt": "2026-07-11T09:54:20.078Z",
+    "totalDays": 4220,
     "diagnosticDays": 30,
-    "suspectedDays": 1439,
+    "suspectedDays": 1443,
     "days": {
-      "2026-06-06": {
-        "selectedSourceKey": "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5",
-        "selectedSteps": 10187,
-        "sourceTotals": {
-          "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5": 10187,
-          "Ken の iPhone (2)|26.5|name:iPhone, manufacturer:Apple Inc., model:iPhone, hardware:iPhone14,4, software:26.5": 3233
-        },
-        "simpleSumSteps": 13420,
-        "duplicationSuspected": false
-      },
-      "2026-06-07": {
-        "selectedSourceKey": "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5",
-        "selectedSteps": 10180,
-        "sourceTotals": {
-          "Ken の iPhone (2)|26.5|name:iPhone, manufacturer:Apple Inc., model:iPhone, hardware:iPhone14,4, software:26.5": 7620,
-          "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5": 10180
-        },
-        "simpleSumSteps": 17800,
-        "duplicationSuspected": true
-      },
-      "2026-06-08": {
-        "selectedSourceKey": "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5",
-        "selectedSteps": 10851,
-        "sourceTotals": {
-          "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5": 10851,
-          "Ken の iPhone (2)|26.5|name:iPhone, manufacturer:Apple Inc., model:iPhone, hardware:iPhone14,4, software:26.5": 10313
-        },
-        "simpleSumSteps": 21164,
-        "duplicationSuspected": true
-      },
-      "2026-06-09": {
-        "selectedSourceKey": "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5",
-        "selectedSteps": 10343,
-        "sourceTotals": {
-          "Ken の iPhone (2)|26.5|name:iPhone, manufacturer:Apple Inc., model:iPhone, hardware:iPhone14,4, software:26.5": 7710,
-          "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5": 10343
-        },
-        "simpleSumSteps": 18053,
-        "duplicationSuspected": true
-      },
-      "2026-06-10": {
-        "selectedSourceKey": "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5",
-        "selectedSteps": 10698,
-        "sourceTotals": {
-          "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5": 10698,
-          "Ken の iPhone (2)|26.5|name:iPhone, manufacturer:Apple Inc., model:iPhone, hardware:iPhone14,4, software:26.5": 9734
-        },
-        "simpleSumSteps": 20432,
-        "duplicationSuspected": true
-      },
-      "2026-06-11": {
-        "selectedSourceKey": "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5",
-        "selectedSteps": 10212,
-        "sourceTotals": {
-          "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5": 10212,
-          "Ken の iPhone (2)|26.5|name:iPhone, manufacturer:Apple Inc., model:iPhone, hardware:iPhone14,4, software:26.5": 8115
-        },
-        "simpleSumSteps": 18327,
-        "duplicationSuspected": true
-      },
       "2026-06-12": {
         "selectedSourceKey": "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5",
         "selectedSteps": 9777,
@@ -2682,21 +2626,81 @@
       },
       "2026-07-05": {
         "selectedSourceKey": "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5",
-        "selectedSteps": 356,
+        "selectedSteps": 10480,
         "sourceTotals": {
-          "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5": 356,
-          "Ken の iPhone (2)|26.5|name:iPhone, manufacturer:Apple Inc., model:iPhone, hardware:iPhone14,4, software:26.5": 49
+          "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5": 10480,
+          "Ken の iPhone (2)|26.5|name:iPhone, manufacturer:Apple Inc., model:iPhone, hardware:iPhone14,4, software:26.5": 7531
         },
-        "simpleSumSteps": 405,
+        "simpleSumSteps": 18011,
+        "duplicationSuspected": true
+      },
+      "2026-07-06": {
+        "selectedSourceKey": "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5",
+        "selectedSteps": 8085,
+        "sourceTotals": {
+          "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5": 8085,
+          "Ken の iPhone (2)|26.5|name:iPhone, manufacturer:Apple Inc., model:iPhone, hardware:iPhone14,4, software:26.5": 5137
+        },
+        "simpleSumSteps": 13222,
+        "duplicationSuspected": true
+      },
+      "2026-07-07": {
+        "selectedSourceKey": "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5",
+        "selectedSteps": 10167,
+        "sourceTotals": {
+          "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5": 10167,
+          "Ken の iPhone (2)|26.5|name:iPhone, manufacturer:Apple Inc., model:iPhone, hardware:iPhone14,4, software:26.5": 4521
+        },
+        "simpleSumSteps": 14688,
+        "duplicationSuspected": false
+      },
+      "2026-07-08": {
+        "selectedSourceKey": "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5",
+        "selectedSteps": 10141,
+        "sourceTotals": {
+          "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5": 10141,
+          "Ken の iPhone (2)|26.5|name:iPhone, manufacturer:Apple Inc., model:iPhone, hardware:iPhone14,4, software:26.5": 6372
+        },
+        "simpleSumSteps": 16513,
+        "duplicationSuspected": true
+      },
+      "2026-07-09": {
+        "selectedSourceKey": "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5",
+        "selectedSteps": 10328,
+        "sourceTotals": {
+          "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5": 10328,
+          "Ken の iPhone (2)|26.5|name:iPhone, manufacturer:Apple Inc., model:iPhone, hardware:iPhone14,4, software:26.5": 4176
+        },
+        "simpleSumSteps": 14504,
+        "duplicationSuspected": false
+      },
+      "2026-07-10": {
+        "selectedSourceKey": "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5",
+        "selectedSteps": 7842,
+        "sourceTotals": {
+          "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5": 7842,
+          "Ken の iPhone (2)|26.5|name:iPhone, manufacturer:Apple Inc., model:iPhone, hardware:iPhone14,4, software:26.5": 6624
+        },
+        "simpleSumSteps": 14466,
+        "duplicationSuspected": true
+      },
+      "2026-07-11": {
+        "selectedSourceKey": "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5",
+        "selectedSteps": 4542,
+        "sourceTotals": {
+          "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5": 4542,
+          "Ken の iPhone (2)|26.5|name:iPhone, manufacturer:Apple Inc., model:iPhone, hardware:iPhone14,4, software:26.5": 981
+        },
+        "simpleSumSteps": 5523,
         "duplicationSuspected": false
       }
     }
   },
   "hrvImportDiagnostics": {
-    "totalRecords": 16676,
+    "totalRecords": 16745,
     "firstDate": "2021-11-17",
-    "lastDate": "2026-07-05",
-    "latestDataDate": "2026-07-05",
+    "lastDate": "2026-07-11",
+    "latestDataDate": "2026-07-11",
     "last7DaysWithHrv": 7,
     "last30DaysWithHrv": 30,
     "recentMissingDates": [],
@@ -2704,10 +2708,10 @@
   },
   "sleepImportDiagnostics": {
     "method": "asleep_session_merge_wake_date_based",
-    "totalRecords": 56623,
+    "totalRecords": 56810,
     "firstDate": "2021-11-18",
-    "lastDate": "2026-07-05",
-    "latestDataDate": "2026-07-05",
+    "lastDate": "2026-07-11",
+    "latestDataDate": "2026-07-11",
     "last7DaysWithSleep": 7,
     "last30DaysWithSleep": 30,
     "abnormalDayCount": 0,
@@ -2896,297 +2900,9 @@
       }
     ],
     "abnormalRecent30Days": [],
-    "unspecifiedAddedHoursAll": 5113.34,
-    "unspecifiedExcludedOverlapHoursAll": 6124.94,
+    "unspecifiedAddedHoursAll": 5129.6,
+    "unspecifiedExcludedOverlapHoursAll": 6150.64,
     "recentDays": {
-      "2026-06-05": {
-        "selectedSleepHours": 6,
-        "simpleSumHours": 6,
-        "mergedIntervalCount": 1,
-        "sessionCount": 1,
-        "detailedStageHours": 3.57,
-        "unspecifiedAddedHours": 2.43,
-        "unspecifiedExcludedOverlapHours": 3.57,
-        "awakeExcludedHours": 1.1,
-        "inBedExcludedHours": 6,
-        "sourceSummary": {
-          "AutoSleep": {
-            "asleepHours": 0,
-            "asleepUnspecifiedHours": 6,
-            "asleepCoreHours": 0,
-            "asleepDeepHours": 0,
-            "asleepRemHours": 0,
-            "awakeHours": 0,
-            "inBedHours": 6,
-            "otherHours": 0
-          },
-          "大嶺賢一さんのApple Watch": {
-            "asleepHours": 0,
-            "asleepUnspecifiedHours": 0,
-            "asleepCoreHours": 2.18,
-            "asleepDeepHours": 0.44,
-            "asleepRemHours": 0.97,
-            "awakeHours": 1.1,
-            "inBedHours": 0,
-            "otherHours": 0
-          }
-        },
-        "usedValues": [
-          "HKCategoryValueSleepAnalysisAsleepCore",
-          "HKCategoryValueSleepAnalysisAsleepDeep",
-          "HKCategoryValueSleepAnalysisAsleepREM",
-          "HKCategoryValueSleepAnalysisAsleepUnspecified"
-        ],
-        "excludedValues": [
-          "HKCategoryValueSleepAnalysisAwake",
-          "HKCategoryValueSleepAnalysisInBed"
-        ],
-        "abnormal": false,
-        "reason": null,
-        "assignedBy": "wake_date",
-        "sessionGapMinutes": 90,
-        "watchDetailedPreferred": false
-      },
-      "2026-06-06": {
-        "selectedSleepHours": 6.25,
-        "simpleSumHours": 6.25,
-        "mergedIntervalCount": 2,
-        "sessionCount": 1,
-        "detailedStageHours": 5.19,
-        "unspecifiedAddedHours": 1.06,
-        "unspecifiedExcludedOverlapHours": 5.19,
-        "awakeExcludedHours": 1.18,
-        "inBedExcludedHours": 6.55,
-        "sourceSummary": {
-          "AutoSleep": {
-            "asleepHours": 0,
-            "asleepUnspecifiedHours": 6.25,
-            "asleepCoreHours": 0,
-            "asleepDeepHours": 0,
-            "asleepRemHours": 0,
-            "awakeHours": 0,
-            "inBedHours": 6.55,
-            "otherHours": 0
-          },
-          "大嶺賢一さんのApple Watch": {
-            "asleepHours": 0,
-            "asleepUnspecifiedHours": 0,
-            "asleepCoreHours": 3.46,
-            "asleepDeepHours": 0.83,
-            "asleepRemHours": 1.52,
-            "awakeHours": 1.19,
-            "inBedHours": 0,
-            "otherHours": 0
-          }
-        },
-        "usedValues": [
-          "HKCategoryValueSleepAnalysisAsleepCore",
-          "HKCategoryValueSleepAnalysisAsleepDeep",
-          "HKCategoryValueSleepAnalysisAsleepREM",
-          "HKCategoryValueSleepAnalysisAsleepUnspecified"
-        ],
-        "excludedValues": [
-          "HKCategoryValueSleepAnalysisAwake",
-          "HKCategoryValueSleepAnalysisInBed"
-        ],
-        "abnormal": false,
-        "reason": null,
-        "assignedBy": "wake_date",
-        "sessionGapMinutes": 90,
-        "watchDetailedPreferred": false
-      },
-      "2026-06-07": {
-        "selectedSleepHours": 6.65,
-        "simpleSumHours": 6.65,
-        "mergedIntervalCount": 2,
-        "sessionCount": 1,
-        "detailedStageHours": 5.66,
-        "unspecifiedAddedHours": 0.99,
-        "unspecifiedExcludedOverlapHours": 5.04,
-        "awakeExcludedHours": 0.8,
-        "inBedExcludedHours": 6.85,
-        "sourceSummary": {
-          "AutoSleep": {
-            "asleepHours": 0,
-            "asleepUnspecifiedHours": 6.65,
-            "asleepCoreHours": 0,
-            "asleepDeepHours": 0,
-            "asleepRemHours": 0,
-            "awakeHours": 0,
-            "inBedHours": 6.85,
-            "otherHours": 0
-          },
-          "大嶺賢一さんのApple Watch": {
-            "asleepHours": 0,
-            "asleepUnspecifiedHours": 0,
-            "asleepCoreHours": 3.31,
-            "asleepDeepHours": 0.31,
-            "asleepRemHours": 1.42,
-            "awakeHours": 0.81,
-            "inBedHours": 0,
-            "otherHours": 0
-          }
-        },
-        "usedValues": [
-          "HKCategoryValueSleepAnalysisAsleepCore",
-          "HKCategoryValueSleepAnalysisAsleepDeep",
-          "HKCategoryValueSleepAnalysisAsleepREM",
-          "HKCategoryValueSleepAnalysisAsleepUnspecified"
-        ],
-        "excludedValues": [
-          "HKCategoryValueSleepAnalysisAwake",
-          "HKCategoryValueSleepAnalysisInBed"
-        ],
-        "abnormal": false,
-        "reason": null,
-        "assignedBy": "wake_date",
-        "sessionGapMinutes": 90,
-        "watchDetailedPreferred": false
-      },
-      "2026-06-08": {
-        "selectedSleepHours": 6.11,
-        "simpleSumHours": 6.11,
-        "mergedIntervalCount": 4,
-        "sessionCount": 1,
-        "detailedStageHours": 5.06,
-        "unspecifiedAddedHours": 1.05,
-        "unspecifiedExcludedOverlapHours": 5,
-        "awakeExcludedHours": 0.34,
-        "inBedExcludedHours": 6.5,
-        "sourceSummary": {
-          "AutoSleep": {
-            "asleepHours": 0,
-            "asleepUnspecifiedHours": 6.05,
-            "asleepCoreHours": 0,
-            "asleepDeepHours": 0,
-            "asleepRemHours": 0,
-            "awakeHours": 0,
-            "inBedHours": 6.5,
-            "otherHours": 0
-          },
-          "大嶺賢一さんのApple Watch": {
-            "asleepHours": 0,
-            "asleepUnspecifiedHours": 0,
-            "asleepCoreHours": 2.65,
-            "asleepDeepHours": 0.68,
-            "asleepRemHours": 1.72,
-            "awakeHours": 0.33,
-            "inBedHours": 0,
-            "otherHours": 0
-          }
-        },
-        "usedValues": [
-          "HKCategoryValueSleepAnalysisAsleepCore",
-          "HKCategoryValueSleepAnalysisAsleepDeep",
-          "HKCategoryValueSleepAnalysisAsleepREM",
-          "HKCategoryValueSleepAnalysisAsleepUnspecified"
-        ],
-        "excludedValues": [
-          "HKCategoryValueSleepAnalysisAwake",
-          "HKCategoryValueSleepAnalysisInBed"
-        ],
-        "abnormal": false,
-        "reason": null,
-        "assignedBy": "wake_date",
-        "sessionGapMinutes": 90,
-        "watchDetailedPreferred": false
-      },
-      "2026-06-09": {
-        "selectedSleepHours": 5.83,
-        "simpleSumHours": 5.83,
-        "mergedIntervalCount": 1,
-        "sessionCount": 1,
-        "detailedStageHours": 4.53,
-        "unspecifiedAddedHours": 1.31,
-        "unspecifiedExcludedOverlapHours": 4.53,
-        "awakeExcludedHours": 0.67,
-        "inBedExcludedHours": 5.83,
-        "sourceSummary": {
-          "AutoSleep": {
-            "asleepHours": 0,
-            "asleepUnspecifiedHours": 5.83,
-            "asleepCoreHours": 0,
-            "asleepDeepHours": 0,
-            "asleepRemHours": 0,
-            "awakeHours": 0,
-            "inBedHours": 5.83,
-            "otherHours": 0
-          },
-          "大嶺賢一さんのApple Watch": {
-            "asleepHours": 0,
-            "asleepUnspecifiedHours": 0,
-            "asleepCoreHours": 3.78,
-            "asleepDeepHours": 0.43,
-            "asleepRemHours": 0.32,
-            "awakeHours": 0.68,
-            "inBedHours": 0,
-            "otherHours": 0
-          }
-        },
-        "usedValues": [
-          "HKCategoryValueSleepAnalysisAsleepCore",
-          "HKCategoryValueSleepAnalysisAsleepDeep",
-          "HKCategoryValueSleepAnalysisAsleepREM",
-          "HKCategoryValueSleepAnalysisAsleepUnspecified"
-        ],
-        "excludedValues": [
-          "HKCategoryValueSleepAnalysisAwake",
-          "HKCategoryValueSleepAnalysisInBed"
-        ],
-        "abnormal": false,
-        "reason": null,
-        "assignedBy": "wake_date",
-        "sessionGapMinutes": 90,
-        "watchDetailedPreferred": false
-      },
-      "2026-06-10": {
-        "selectedSleepHours": 6.86,
-        "simpleSumHours": 6.86,
-        "mergedIntervalCount": 3,
-        "sessionCount": 2,
-        "detailedStageHours": 5.55,
-        "unspecifiedAddedHours": 1.31,
-        "unspecifiedExcludedOverlapHours": 5.49,
-        "awakeExcludedHours": 0.31,
-        "inBedExcludedHours": 7.02,
-        "sourceSummary": {
-          "AutoSleep": {
-            "asleepHours": 0,
-            "asleepUnspecifiedHours": 6.8,
-            "asleepCoreHours": 0,
-            "asleepDeepHours": 0,
-            "asleepRemHours": 0,
-            "awakeHours": 0,
-            "inBedHours": 7.02,
-            "otherHours": 0
-          },
-          "大嶺賢一さんのApple Watch": {
-            "asleepHours": 0,
-            "asleepUnspecifiedHours": 0,
-            "asleepCoreHours": 3.19,
-            "asleepDeepHours": 0.94,
-            "asleepRemHours": 1.4,
-            "awakeHours": 0.31,
-            "inBedHours": 0,
-            "otherHours": 0
-          }
-        },
-        "usedValues": [
-          "HKCategoryValueSleepAnalysisAsleepCore",
-          "HKCategoryValueSleepAnalysisAsleepDeep",
-          "HKCategoryValueSleepAnalysisAsleepREM",
-          "HKCategoryValueSleepAnalysisAsleepUnspecified"
-        ],
-        "excludedValues": [
-          "HKCategoryValueSleepAnalysisAwake",
-          "HKCategoryValueSleepAnalysisInBed"
-        ],
-        "abnormal": false,
-        "reason": null,
-        "assignedBy": "wake_date",
-        "sessionGapMinutes": 90,
-        "watchDetailedPreferred": false
-      },
       "2026-06-11": {
         "selectedSleepHours": 5.73,
         "simpleSumHours": 7.33,
@@ -4338,6 +4054,294 @@
         "assignedBy": "wake_date",
         "sessionGapMinutes": 90,
         "watchDetailedPreferred": false
+      },
+      "2026-07-05": {
+        "selectedSleepHours": 6.93,
+        "simpleSumHours": 6.93,
+        "mergedIntervalCount": 3,
+        "sessionCount": 2,
+        "detailedStageHours": 5.36,
+        "unspecifiedAddedHours": 1.57,
+        "unspecifiedExcludedOverlapHours": 5.15,
+        "awakeExcludedHours": 0.03,
+        "inBedExcludedHours": 6.95,
+        "sourceSummary": {
+          "AutoSleep": {
+            "asleepHours": 0,
+            "asleepUnspecifiedHours": 6.72,
+            "asleepCoreHours": 0,
+            "asleepDeepHours": 0,
+            "asleepRemHours": 0,
+            "awakeHours": 0,
+            "inBedHours": 6.95,
+            "otherHours": 0
+          },
+          "大嶺賢一さんのApple Watch": {
+            "asleepHours": 0,
+            "asleepUnspecifiedHours": 0,
+            "asleepCoreHours": 3.75,
+            "asleepDeepHours": 0.91,
+            "asleepRemHours": 1.26,
+            "awakeHours": 0.03,
+            "inBedHours": 0,
+            "otherHours": 0
+          }
+        },
+        "usedValues": [
+          "HKCategoryValueSleepAnalysisAsleepCore",
+          "HKCategoryValueSleepAnalysisAsleepDeep",
+          "HKCategoryValueSleepAnalysisAsleepREM",
+          "HKCategoryValueSleepAnalysisAsleepUnspecified"
+        ],
+        "excludedValues": [
+          "HKCategoryValueSleepAnalysisAwake",
+          "HKCategoryValueSleepAnalysisInBed"
+        ],
+        "abnormal": false,
+        "reason": null,
+        "assignedBy": "wake_date",
+        "sessionGapMinutes": 90,
+        "watchDetailedPreferred": false
+      },
+      "2026-07-06": {
+        "selectedSleepHours": 8.33,
+        "simpleSumHours": 8.33,
+        "mergedIntervalCount": 1,
+        "sessionCount": 1,
+        "detailedStageHours": 7.61,
+        "unspecifiedAddedHours": 0.72,
+        "unspecifiedExcludedOverlapHours": 7.06,
+        "awakeExcludedHours": 0.51,
+        "inBedExcludedHours": 8.33,
+        "sourceSummary": {
+          "AutoSleep": {
+            "asleepHours": 0,
+            "asleepUnspecifiedHours": 8.33,
+            "asleepCoreHours": 0,
+            "asleepDeepHours": 0,
+            "asleepRemHours": 0,
+            "awakeHours": 0,
+            "inBedHours": 8.33,
+            "otherHours": 0
+          },
+          "大嶺賢一さんのApple Watch": {
+            "asleepHours": 0,
+            "asleepUnspecifiedHours": 0,
+            "asleepCoreHours": 5.29,
+            "asleepDeepHours": 0.33,
+            "asleepRemHours": 1.41,
+            "awakeHours": 0.51,
+            "inBedHours": 0,
+            "otherHours": 0
+          }
+        },
+        "usedValues": [
+          "HKCategoryValueSleepAnalysisAsleepCore",
+          "HKCategoryValueSleepAnalysisAsleepDeep",
+          "HKCategoryValueSleepAnalysisAsleepREM",
+          "HKCategoryValueSleepAnalysisAsleepUnspecified"
+        ],
+        "excludedValues": [
+          "HKCategoryValueSleepAnalysisAwake",
+          "HKCategoryValueSleepAnalysisInBed"
+        ],
+        "abnormal": false,
+        "reason": null,
+        "assignedBy": "wake_date",
+        "sessionGapMinutes": 90,
+        "watchDetailedPreferred": false
+      },
+      "2026-07-07": {
+        "selectedSleepHours": 5.17,
+        "simpleSumHours": 5.17,
+        "mergedIntervalCount": 2,
+        "sessionCount": 1,
+        "detailedStageHours": 3.52,
+        "unspecifiedAddedHours": 1.65,
+        "unspecifiedExcludedOverlapHours": 3.52,
+        "awakeExcludedHours": 0.26,
+        "inBedExcludedHours": 5.35,
+        "sourceSummary": {
+          "AutoSleep": {
+            "asleepHours": 0,
+            "asleepUnspecifiedHours": 5.17,
+            "asleepCoreHours": 0,
+            "asleepDeepHours": 0,
+            "asleepRemHours": 0,
+            "awakeHours": 0,
+            "inBedHours": 5.35,
+            "otherHours": 0
+          },
+          "大嶺賢一さんのApple Watch": {
+            "asleepHours": 0,
+            "asleepUnspecifiedHours": 0,
+            "asleepCoreHours": 2.1,
+            "asleepDeepHours": 0.83,
+            "asleepRemHours": 0.61,
+            "awakeHours": 0.27,
+            "inBedHours": 0,
+            "otherHours": 0
+          }
+        },
+        "usedValues": [
+          "HKCategoryValueSleepAnalysisAsleepCore",
+          "HKCategoryValueSleepAnalysisAsleepDeep",
+          "HKCategoryValueSleepAnalysisAsleepREM",
+          "HKCategoryValueSleepAnalysisAsleepUnspecified"
+        ],
+        "excludedValues": [
+          "HKCategoryValueSleepAnalysisAwake",
+          "HKCategoryValueSleepAnalysisInBed"
+        ],
+        "abnormal": false,
+        "reason": null,
+        "assignedBy": "wake_date",
+        "sessionGapMinutes": 90,
+        "watchDetailedPreferred": false
+      },
+      "2026-07-08": {
+        "selectedSleepHours": 4.87,
+        "simpleSumHours": 4.87,
+        "mergedIntervalCount": 2,
+        "sessionCount": 1,
+        "detailedStageHours": 3.48,
+        "unspecifiedAddedHours": 1.38,
+        "unspecifiedExcludedOverlapHours": 3.48,
+        "awakeExcludedHours": 0.78,
+        "inBedExcludedHours": 5.1,
+        "sourceSummary": {
+          "AutoSleep": {
+            "asleepHours": 0,
+            "asleepUnspecifiedHours": 4.87,
+            "asleepCoreHours": 0,
+            "asleepDeepHours": 0,
+            "asleepRemHours": 0,
+            "awakeHours": 0,
+            "inBedHours": 5.1,
+            "otherHours": 0
+          },
+          "大嶺賢一さんのApple Watch": {
+            "asleepHours": 0,
+            "asleepUnspecifiedHours": 0,
+            "asleepCoreHours": 2.44,
+            "asleepDeepHours": 0.6,
+            "asleepRemHours": 0.44,
+            "awakeHours": 0.79,
+            "inBedHours": 0,
+            "otherHours": 0
+          }
+        },
+        "usedValues": [
+          "HKCategoryValueSleepAnalysisAsleepCore",
+          "HKCategoryValueSleepAnalysisAsleepDeep",
+          "HKCategoryValueSleepAnalysisAsleepREM",
+          "HKCategoryValueSleepAnalysisAsleepUnspecified"
+        ],
+        "excludedValues": [
+          "HKCategoryValueSleepAnalysisAwake",
+          "HKCategoryValueSleepAnalysisInBed"
+        ],
+        "abnormal": false,
+        "reason": null,
+        "assignedBy": "wake_date",
+        "sessionGapMinutes": 90,
+        "watchDetailedPreferred": false
+      },
+      "2026-07-09": {
+        "selectedSleepHours": 7.1,
+        "simpleSumHours": 7.1,
+        "mergedIntervalCount": 2,
+        "sessionCount": 1,
+        "detailedStageHours": 5.34,
+        "unspecifiedAddedHours": 1.77,
+        "unspecifiedExcludedOverlapHours": 5.23,
+        "awakeExcludedHours": 1.29,
+        "inBedExcludedHours": 7.12,
+        "sourceSummary": {
+          "AutoSleep": {
+            "asleepHours": 0,
+            "asleepUnspecifiedHours": 7.7,
+            "asleepCoreHours": 0,
+            "asleepDeepHours": 0,
+            "asleepRemHours": 0,
+            "awakeHours": 0,
+            "inBedHours": 7.12,
+            "otherHours": 0
+          },
+          "大嶺賢一さんのApple Watch": {
+            "asleepHours": 0,
+            "asleepUnspecifiedHours": 0,
+            "asleepCoreHours": 4.67,
+            "asleepDeepHours": 0.45,
+            "asleepRemHours": 0.24,
+            "awakeHours": 1.29,
+            "inBedHours": 0,
+            "otherHours": 0
+          }
+        },
+        "usedValues": [
+          "HKCategoryValueSleepAnalysisAsleepCore",
+          "HKCategoryValueSleepAnalysisAsleepDeep",
+          "HKCategoryValueSleepAnalysisAsleepREM",
+          "HKCategoryValueSleepAnalysisAsleepUnspecified"
+        ],
+        "excludedValues": [
+          "HKCategoryValueSleepAnalysisAwake",
+          "HKCategoryValueSleepAnalysisInBed"
+        ],
+        "abnormal": false,
+        "reason": null,
+        "assignedBy": "wake_date",
+        "sessionGapMinutes": 90,
+        "watchDetailedPreferred": false
+      },
+      "2026-07-10": {
+        "selectedSleepHours": 7.24,
+        "simpleSumHours": 7.24,
+        "mergedIntervalCount": 4,
+        "sessionCount": 1,
+        "detailedStageHours": 5.98,
+        "unspecifiedAddedHours": 1.26,
+        "unspecifiedExcludedOverlapHours": 5.84,
+        "awakeExcludedHours": 0.56,
+        "inBedExcludedHours": 8.22,
+        "sourceSummary": {
+          "AutoSleep": {
+            "asleepHours": 0,
+            "asleepUnspecifiedHours": 6.4,
+            "asleepCoreHours": 0,
+            "asleepDeepHours": 0,
+            "asleepRemHours": 0,
+            "awakeHours": 0,
+            "inBedHours": 8.22,
+            "otherHours": 0
+          },
+          "大嶺賢一さんのApple Watch": {
+            "asleepHours": 0,
+            "asleepUnspecifiedHours": 0,
+            "asleepCoreHours": 3.74,
+            "asleepDeepHours": 0.72,
+            "asleepRemHours": 1.54,
+            "awakeHours": 0.58,
+            "inBedHours": 0,
+            "otherHours": 0
+          }
+        },
+        "usedValues": [
+          "HKCategoryValueSleepAnalysisAsleepCore",
+          "HKCategoryValueSleepAnalysisAsleepDeep",
+          "HKCategoryValueSleepAnalysisAsleepREM",
+          "HKCategoryValueSleepAnalysisAsleepUnspecified"
+        ],
+        "excludedValues": [
+          "HKCategoryValueSleepAnalysisAwake",
+          "HKCategoryValueSleepAnalysisInBed"
+        ],
+        "abnormal": false,
+        "reason": null,
+        "assignedBy": "wake_date",
+        "sessionGapMinutes": 90,
+        "watchDetailedPreferred": false
       }
     }
   },
@@ -4345,13 +4349,13 @@
     "steps": {
       "status": "duplication_suspected",
       "method": "source_priority_normalized_device_no_simple_sum",
-      "last7Average": 10998,
-      "last30Average": 10885,
+      "last7Average": 9682,
+      "last30Average": 10712,
       "comment": "Apple Watch/iPhoneの二重計上を避けるため、日別ソース優先で集計"
     },
     "hrv": {
       "status": "ok",
-      "lastDate": "2026-07-05",
+      "lastDate": "2026-07-11",
       "last7DaysWithData": 7,
       "last30DaysWithData": 30,
       "comment": "HRVは直近7日のデータ数に応じて評価信頼度を調整"
@@ -4359,8 +4363,8 @@
     "sleep": {
       "status": "ok",
       "method": "asleep_session_merge_wake_date_based",
-      "last7Average": 6.12,
-      "last30Average": 6.48,
+      "last7Average": 6.67,
+      "last30Average": 6.54,
       "last7DaysWithData": 7,
       "last30DaysWithData": 30,
       "abnormalDayCount": 0,
@@ -4370,41 +4374,6 @@
     }
   },
   "importWarnings": [
-    {
-      "type": "STEP_DUPLICATION_SUSPECTED",
-      "date": "2026-06-07",
-      "message": "複数ソースの歩数合算により二重計上の可能性があります",
-      "selectedSteps": 10180,
-      "simpleSumSteps": 17800
-    },
-    {
-      "type": "STEP_DUPLICATION_SUSPECTED",
-      "date": "2026-06-08",
-      "message": "複数ソースの歩数合算により二重計上の可能性があります",
-      "selectedSteps": 10851,
-      "simpleSumSteps": 21164
-    },
-    {
-      "type": "STEP_DUPLICATION_SUSPECTED",
-      "date": "2026-06-09",
-      "message": "複数ソースの歩数合算により二重計上の可能性があります",
-      "selectedSteps": 10343,
-      "simpleSumSteps": 18053
-    },
-    {
-      "type": "STEP_DUPLICATION_SUSPECTED",
-      "date": "2026-06-10",
-      "message": "複数ソースの歩数合算により二重計上の可能性があります",
-      "selectedSteps": 10698,
-      "simpleSumSteps": 20432
-    },
-    {
-      "type": "STEP_DUPLICATION_SUSPECTED",
-      "date": "2026-06-11",
-      "message": "複数ソースの歩数合算により二重計上の可能性があります",
-      "selectedSteps": 10212,
-      "simpleSumSteps": 18327
-    },
     {
       "type": "STEP_DUPLICATION_SUSPECTED",
       "date": "2026-06-12",
@@ -4537,20 +4506,48 @@
       "message": "複数ソースの歩数合算により二重計上の可能性があります",
       "selectedSteps": 10732,
       "simpleSumSteps": 21744
+    },
+    {
+      "type": "STEP_DUPLICATION_SUSPECTED",
+      "date": "2026-07-05",
+      "message": "複数ソースの歩数合算により二重計上の可能性があります",
+      "selectedSteps": 10480,
+      "simpleSumSteps": 18011
+    },
+    {
+      "type": "STEP_DUPLICATION_SUSPECTED",
+      "date": "2026-07-06",
+      "message": "複数ソースの歩数合算により二重計上の可能性があります",
+      "selectedSteps": 8085,
+      "simpleSumSteps": 13222
+    },
+    {
+      "type": "STEP_DUPLICATION_SUSPECTED",
+      "date": "2026-07-08",
+      "message": "複数ソースの歩数合算により二重計上の可能性があります",
+      "selectedSteps": 10141,
+      "simpleSumSteps": 16513
+    },
+    {
+      "type": "STEP_DUPLICATION_SUSPECTED",
+      "date": "2026-07-10",
+      "message": "複数ソースの歩数合算により二重計上の可能性があります",
+      "selectedSteps": 7842,
+      "simpleSumSteps": 14466
     }
   ],
   "importWarningSummary": {
-    "totalCount": 24,
+    "totalCount": 23,
     "byType": {
-      "STEP_DUPLICATION_SUSPECTED": 24
+      "STEP_DUPLICATION_SUSPECTED": 23
     },
     "stepDuplication": {
-      "count": 24,
-      "firstDate": "2026-06-07",
-      "lastDate": "2026-07-04",
-      "averageSelectedSteps": 10983,
-      "averageSimpleSumSteps": 19780,
-      "comment": "歩数の二重計上疑いは24日ありますが、healthData.stepsにはソース優先で補正したselectedStepsを採用済みです。"
+      "count": 23,
+      "firstDate": "2026-06-12",
+      "lastDate": "2026-07-10",
+      "averageSelectedSteps": 10776,
+      "averageSimpleSumSteps": 19181,
+      "comment": "歩数の二重計上疑いは23日ありますが、healthData.stepsにはソース優先で補正したselectedStepsを採用済みです。"
     },
     "stepExtreme": {
       "count": 0
@@ -4585,12 +4582,12 @@
     "firestoreUserId": "mineo"
   },
   "healthDataValidation": {
-    "generatedAt": "2026-07-05T00:46:23.940Z",
-    "warningCountRaw": 6,
-    "warningCount": 6,
-    "displayWarningCount": 6,
-    "uniqueWarningCount": 6,
-    "dataQualityScore": 70,
+    "generatedAt": "2026-07-11T09:55:04.074Z",
+    "warningCountRaw": 7,
+    "warningCount": 7,
+    "displayWarningCount": 7,
+    "uniqueWarningCount": 7,
+    "dataQualityScore": 65,
     "mealPlaceSummary": {
       "restaurant": 1,
       "home": 68,
@@ -4602,6 +4599,7 @@
       "HIGH_ALCOHOL_INTAKE",
       "HIGH_ALCOHOL_INTAKE",
       "ALCOHOL_WITH_RISK_FOOD",
+      "HIGH_ALCOHOL_INTAKE",
       "HIGH_ALCOHOL_INTAKE"
     ],
     "warnings": [
@@ -4663,14 +4661,23 @@
         "targetCount": 1,
         "foodNames": [],
         "occurrences": 1
+      },
+      {
+        "type": "HIGH_ALCOHOL_INTAKE",
+        "date": "2026-06-26",
+        "message": "飲酒量が多めです",
+        "alcoholCups": 4,
+        "targetCount": 1,
+        "foodNames": [],
+        "occurrences": 1
       }
     ]
   },
   "foodAnalysisMetrics": {
     "foodLogDays": 26,
     "mealCount": 70,
-    "alcoholLogCount": 12,
-    "alcoholDays": 10,
+    "alcoholLogCount": 13,
+    "alcoholDays": 11,
     "lastAlcoholDateTime": "2026-06-27T11:48:00+09:00",
     "lastAlcoholLabel": "2026-06-27 11:48 ビール 1杯",
     "highCalorieFoodCount": 13,
@@ -6416,8 +6423,8 @@
     },
     "2026-06-22": {
       "raw": {
-        "proteinG": 42,
-        "estimatedCalories": 610,
+        "proteinG": 37,
+        "estimatedCalories": 580,
         "nutsGrams": 60,
         "alcoholCups": 3,
         "beerCups": 1,
@@ -6463,8 +6470,8 @@
         }
       },
       "analyzed": {
-        "proteinG": 42,
-        "estimatedCalories": 610,
+        "proteinG": 37,
+        "estimatedCalories": 580,
         "nutsGrams": 60,
         "alcoholCups": 3,
         "beerCups": 1,
@@ -6704,8 +6711,8 @@
     },
     "2026-06-25": {
       "raw": {
-        "proteinG": 37,
-        "estimatedCalories": 430,
+        "proteinG": 42,
+        "estimatedCalories": 460,
         "nutsGrams": 0,
         "alcoholCups": 3,
         "beerCups": 3,
@@ -6751,8 +6758,8 @@
         }
       },
       "analyzed": {
-        "proteinG": 37,
-        "estimatedCalories": 430,
+        "proteinG": 42,
+        "estimatedCalories": 460,
         "nutsGrams": 0,
         "alcoholCups": 3,
         "beerCups": 3,
@@ -6800,11 +6807,11 @@
     },
     "2026-06-26": {
       "raw": {
-        "proteinG": 57,
-        "estimatedCalories": 490,
+        "proteinG": 47,
+        "estimatedCalories": 460,
         "nutsGrams": 0,
-        "alcoholCups": 0,
-        "beerCups": 0,
+        "alcoholCups": 4,
+        "beerCups": 4,
         "shochuCups": 0,
         "foodLogCount": 4,
         "highProteinCount": 2,
@@ -6815,9 +6822,9 @@
         "eatingOutCount": 0,
         "riskFoodCount": 0,
         "mealCount": 4,
-        "alcoholLogCount": 0,
-        "alcoholDay": false,
-        "lastAlcoholDateTime": null,
+        "alcoholLogCount": 1,
+        "alcoholDay": true,
+        "lastAlcoholDateTime": "2026-06-26T17:39:00+09:00",
         "highCalorieFoodCount": 0,
         "lateNightFoodCount": 0,
         "outsideMealCount": 0,
@@ -6825,18 +6832,18 @@
         "homeCookingRate": 25,
         "outsideFoodRate": 0,
         "hasTestLogs": false,
-        "dataQualityScore": 100,
-        "warningCountRaw": 0,
-        "warningCount": 0,
-        "displayWarningCount": 0,
-        "uniqueWarningCount": 0,
+        "dataQualityScore": 95,
+        "warningCountRaw": 1,
+        "warningCount": 1,
+        "displayWarningCount": 1,
+        "uniqueWarningCount": 1,
         "dataQualityScoreReasons": {
           "rule": "score = max(60, 100 - uniqueWarningCount * 5)",
           "warningPenaltyPerUniqueWarning": -5,
-          "warningPenaltyCountRaw": 0,
-          "displayWarningCount": 0,
-          "uniqueWarningCount": 0,
-          "totalPenalty": 0
+          "warningPenaltyCountRaw": 1,
+          "displayWarningCount": 1,
+          "uniqueWarningCount": 1,
+          "totalPenalty": -5
         },
         "summaryBasedOn": {
           "foodLogs": true,
@@ -6847,11 +6854,11 @@
         }
       },
       "analyzed": {
-        "proteinG": 57,
-        "estimatedCalories": 490,
+        "proteinG": 47,
+        "estimatedCalories": 460,
         "nutsGrams": 0,
-        "alcoholCups": 0,
-        "beerCups": 0,
+        "alcoholCups": 4,
+        "beerCups": 4,
         "shochuCups": 0,
         "foodLogCount": 4,
         "highProteinCount": 2,
@@ -6862,9 +6869,9 @@
         "eatingOutCount": 0,
         "riskFoodCount": 0,
         "mealCount": 4,
-        "alcoholLogCount": 0,
-        "alcoholDay": false,
-        "lastAlcoholDateTime": null,
+        "alcoholLogCount": 1,
+        "alcoholDay": true,
+        "lastAlcoholDateTime": "2026-06-26T17:39:00+09:00",
         "highCalorieFoodCount": 0,
         "lateNightFoodCount": 0,
         "outsideMealCount": 0,
@@ -6872,18 +6879,18 @@
         "homeCookingRate": 25,
         "outsideFoodRate": 0,
         "hasTestLogs": false,
-        "dataQualityScore": 100,
-        "warningCountRaw": 0,
-        "warningCount": 0,
-        "displayWarningCount": 0,
-        "uniqueWarningCount": 0,
+        "dataQualityScore": 95,
+        "warningCountRaw": 1,
+        "warningCount": 1,
+        "displayWarningCount": 1,
+        "uniqueWarningCount": 1,
         "dataQualityScoreReasons": {
           "rule": "score = max(60, 100 - uniqueWarningCount * 5)",
           "warningPenaltyPerUniqueWarning": -5,
-          "warningPenaltyCountRaw": 0,
-          "displayWarningCount": 0,
-          "uniqueWarningCount": 0,
-          "totalPenalty": 0
+          "warningPenaltyCountRaw": 1,
+          "displayWarningCount": 1,
+          "uniqueWarningCount": 1,
+          "totalPenalty": -5
         },
         "summaryBasedOn": {
           "foodLogs": true,
@@ -7283,7 +7290,7 @@
     "summary": {
       "version": "gv1.82.3",
       "isSample": false,
-      "updatedAt": "2026-07-05T00:44:13.152Z",
+      "updatedAt": "2026-07-11T09:54:21.020Z",
       "heightCm": 150,
       "targetWeight": 50,
       "supplementsNote": "",
@@ -7291,10 +7298,23 @@
       "targetWeightKg": 50,
       "dataSource": "Apple Health ZIP x1 + Location History JSON x1",
       "privacyMode": "full-gps",
-      "previousSourceSummary": null,
+      "previousSourceSummary": {
+        "weightDays": 1560,
+        "stepDays": 4214,
+        "sleepDays": 1668,
+        "heartDays": 1692,
+        "hrvDays": 1692,
+        "gpsRoutes": 875,
+        "foodLogDays": 26,
+        "rawFoodLogDays": 26,
+        "eventLogDays": 5,
+        "alcoholLogDays": 10,
+        "dailySummaryDays": 27
+      },
       "sourceKind": "local",
       "sourceLabel": "ローカル",
-      "sourceFiles": "location-history.json, 書き出したデータ.zip"
+      "sourceFiles": "location-history.json, 書き出したデータ.zip",
+      "lightweightGeneratedAt": "2026-07-05T00:46:23.940Z"
     },
     "weight": {
       "2016-08-23": 70.05,
@@ -8856,7 +8876,13 @@
       "2026-06-30": 57.65,
       "2026-07-02": 57.3,
       "2026-07-03": 58,
-      "2026-07-05": 57.35
+      "2026-07-05": 57.35,
+      "2026-07-06": 57.55,
+      "2026-07-07": 56.5,
+      "2026-07-08": 55.85,
+      "2026-07-09": 55.9,
+      "2026-07-10": 56.15,
+      "2026-07-11": 56.75
     },
     "steps": {
       "2014-11-02": 15326,
@@ -13072,7 +13098,13 @@
       "2026-07-02": 10107,
       "2026-07-03": 10447,
       "2026-07-04": 10732,
-      "2026-07-05": 356
+      "2026-07-05": 10480,
+      "2026-07-06": 8085,
+      "2026-07-07": 10167,
+      "2026-07-08": 10141,
+      "2026-07-09": 10328,
+      "2026-07-10": 7842,
+      "2026-07-11": 4542
     },
     "sleep": {
       "2021-11-18": 4.7,
@@ -14742,7 +14774,13 @@
       "2026-07-02": 4.62,
       "2026-07-03": 7.02,
       "2026-07-04": 7.07,
-      "2026-07-05": 6.38
+      "2026-07-05": 6.93,
+      "2026-07-06": 8.33,
+      "2026-07-07": 5.17,
+      "2026-07-08": 4.87,
+      "2026-07-09": 7.1,
+      "2026-07-10": 7.24,
+      "2026-07-11": 6.28
     },
     "heartRate": {
       "2021-11-17": 81,
@@ -16436,7 +16474,13 @@
       "2026-07-01": 77,
       "2026-07-03": 78,
       "2026-07-04": 73,
-      "2026-07-05": 63
+      "2026-07-05": 66,
+      "2026-07-06": 70,
+      "2026-07-07": 69,
+      "2026-07-08": 87,
+      "2026-07-09": 76,
+      "2026-07-10": 69,
+      "2026-07-11": 80
     },
     "hrv": {
       "2021-11-17": 19.7,
@@ -18130,75 +18174,21 @@
       "2026-07-02": 32.5,
       "2026-07-03": 31.8,
       "2026-07-04": 36.9,
-      "2026-07-05": 41.5
+      "2026-07-05": 36.2,
+      "2026-07-06": 39.9,
+      "2026-07-07": 39.8,
+      "2026-07-08": 25,
+      "2026-07-09": 31,
+      "2026-07-10": 30.9,
+      "2026-07-11": 35.8
     },
     "stepImportDiagnostics": {
       "method": "source_priority_normalized_device_no_simple_sum",
-      "generatedAt": "2026-07-05T00:44:12.045Z",
-      "totalDays": 4214,
+      "generatedAt": "2026-07-11T09:54:20.078Z",
+      "totalDays": 4220,
       "diagnosticDays": 30,
-      "suspectedDays": 1439,
+      "suspectedDays": 1443,
       "days": {
-        "2026-06-06": {
-          "selectedSourceKey": "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5",
-          "selectedSteps": 10187,
-          "sourceTotals": {
-            "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5": 10187,
-            "Ken の iPhone (2)|26.5|name:iPhone, manufacturer:Apple Inc., model:iPhone, hardware:iPhone14,4, software:26.5": 3233
-          },
-          "simpleSumSteps": 13420,
-          "duplicationSuspected": false
-        },
-        "2026-06-07": {
-          "selectedSourceKey": "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5",
-          "selectedSteps": 10180,
-          "sourceTotals": {
-            "Ken の iPhone (2)|26.5|name:iPhone, manufacturer:Apple Inc., model:iPhone, hardware:iPhone14,4, software:26.5": 7620,
-            "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5": 10180
-          },
-          "simpleSumSteps": 17800,
-          "duplicationSuspected": true
-        },
-        "2026-06-08": {
-          "selectedSourceKey": "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5",
-          "selectedSteps": 10851,
-          "sourceTotals": {
-            "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5": 10851,
-            "Ken の iPhone (2)|26.5|name:iPhone, manufacturer:Apple Inc., model:iPhone, hardware:iPhone14,4, software:26.5": 10313
-          },
-          "simpleSumSteps": 21164,
-          "duplicationSuspected": true
-        },
-        "2026-06-09": {
-          "selectedSourceKey": "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5",
-          "selectedSteps": 10343,
-          "sourceTotals": {
-            "Ken の iPhone (2)|26.5|name:iPhone, manufacturer:Apple Inc., model:iPhone, hardware:iPhone14,4, software:26.5": 7710,
-            "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5": 10343
-          },
-          "simpleSumSteps": 18053,
-          "duplicationSuspected": true
-        },
-        "2026-06-10": {
-          "selectedSourceKey": "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5",
-          "selectedSteps": 10698,
-          "sourceTotals": {
-            "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5": 10698,
-            "Ken の iPhone (2)|26.5|name:iPhone, manufacturer:Apple Inc., model:iPhone, hardware:iPhone14,4, software:26.5": 9734
-          },
-          "simpleSumSteps": 20432,
-          "duplicationSuspected": true
-        },
-        "2026-06-11": {
-          "selectedSourceKey": "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5",
-          "selectedSteps": 10212,
-          "sourceTotals": {
-            "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5": 10212,
-            "Ken の iPhone (2)|26.5|name:iPhone, manufacturer:Apple Inc., model:iPhone, hardware:iPhone14,4, software:26.5": 8115
-          },
-          "simpleSumSteps": 18327,
-          "duplicationSuspected": true
-        },
         "2026-06-12": {
           "selectedSourceKey": "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5",
           "selectedSteps": 9777,
@@ -18431,21 +18421,81 @@
         },
         "2026-07-05": {
           "selectedSourceKey": "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5",
-          "selectedSteps": 356,
+          "selectedSteps": 10480,
           "sourceTotals": {
-            "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5": 356,
-            "Ken の iPhone (2)|26.5|name:iPhone, manufacturer:Apple Inc., model:iPhone, hardware:iPhone14,4, software:26.5": 49
+            "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5": 10480,
+            "Ken の iPhone (2)|26.5|name:iPhone, manufacturer:Apple Inc., model:iPhone, hardware:iPhone14,4, software:26.5": 7531
           },
-          "simpleSumSteps": 405,
+          "simpleSumSteps": 18011,
+          "duplicationSuspected": true
+        },
+        "2026-07-06": {
+          "selectedSourceKey": "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5",
+          "selectedSteps": 8085,
+          "sourceTotals": {
+            "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5": 8085,
+            "Ken の iPhone (2)|26.5|name:iPhone, manufacturer:Apple Inc., model:iPhone, hardware:iPhone14,4, software:26.5": 5137
+          },
+          "simpleSumSteps": 13222,
+          "duplicationSuspected": true
+        },
+        "2026-07-07": {
+          "selectedSourceKey": "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5",
+          "selectedSteps": 10167,
+          "sourceTotals": {
+            "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5": 10167,
+            "Ken の iPhone (2)|26.5|name:iPhone, manufacturer:Apple Inc., model:iPhone, hardware:iPhone14,4, software:26.5": 4521
+          },
+          "simpleSumSteps": 14688,
+          "duplicationSuspected": false
+        },
+        "2026-07-08": {
+          "selectedSourceKey": "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5",
+          "selectedSteps": 10141,
+          "sourceTotals": {
+            "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5": 10141,
+            "Ken の iPhone (2)|26.5|name:iPhone, manufacturer:Apple Inc., model:iPhone, hardware:iPhone14,4, software:26.5": 6372
+          },
+          "simpleSumSteps": 16513,
+          "duplicationSuspected": true
+        },
+        "2026-07-09": {
+          "selectedSourceKey": "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5",
+          "selectedSteps": 10328,
+          "sourceTotals": {
+            "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5": 10328,
+            "Ken の iPhone (2)|26.5|name:iPhone, manufacturer:Apple Inc., model:iPhone, hardware:iPhone14,4, software:26.5": 4176
+          },
+          "simpleSumSteps": 14504,
+          "duplicationSuspected": false
+        },
+        "2026-07-10": {
+          "selectedSourceKey": "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5",
+          "selectedSteps": 7842,
+          "sourceTotals": {
+            "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5": 7842,
+            "Ken の iPhone (2)|26.5|name:iPhone, manufacturer:Apple Inc., model:iPhone, hardware:iPhone14,4, software:26.5": 6624
+          },
+          "simpleSumSteps": 14466,
+          "duplicationSuspected": true
+        },
+        "2026-07-11": {
+          "selectedSourceKey": "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5",
+          "selectedSteps": 4542,
+          "sourceTotals": {
+            "大嶺賢一さんのApple Watch|26.5|name:Apple Watch, manufacturer:Apple Inc., model:Watch, hardware:Watch6,6, software:26.5": 4542,
+            "Ken の iPhone (2)|26.5|name:iPhone, manufacturer:Apple Inc., model:iPhone, hardware:iPhone14,4, software:26.5": 981
+          },
+          "simpleSumSteps": 5523,
           "duplicationSuspected": false
         }
       }
     },
     "hrvImportDiagnostics": {
-      "totalRecords": 16676,
+      "totalRecords": 16745,
       "firstDate": "2021-11-17",
-      "lastDate": "2026-07-05",
-      "latestDataDate": "2026-07-05",
+      "lastDate": "2026-07-11",
+      "latestDataDate": "2026-07-11",
       "last7DaysWithHrv": 7,
       "last30DaysWithHrv": 30,
       "recentMissingDates": [],
@@ -18453,10 +18503,10 @@
     },
     "sleepImportDiagnostics": {
       "method": "asleep_session_merge_wake_date_based",
-      "totalRecords": 56623,
+      "totalRecords": 56810,
       "firstDate": "2021-11-18",
-      "lastDate": "2026-07-05",
-      "latestDataDate": "2026-07-05",
+      "lastDate": "2026-07-11",
+      "latestDataDate": "2026-07-11",
       "last7DaysWithSleep": 7,
       "last30DaysWithSleep": 30,
       "abnormalDayCount": 0,
@@ -18645,297 +18695,9 @@
         }
       ],
       "abnormalRecent30Days": [],
-      "unspecifiedAddedHoursAll": 5113.34,
-      "unspecifiedExcludedOverlapHoursAll": 6124.94,
+      "unspecifiedAddedHoursAll": 5129.6,
+      "unspecifiedExcludedOverlapHoursAll": 6150.64,
       "recentDays": {
-        "2026-06-05": {
-          "selectedSleepHours": 6,
-          "simpleSumHours": 6,
-          "mergedIntervalCount": 1,
-          "sessionCount": 1,
-          "detailedStageHours": 3.57,
-          "unspecifiedAddedHours": 2.43,
-          "unspecifiedExcludedOverlapHours": 3.57,
-          "awakeExcludedHours": 1.1,
-          "inBedExcludedHours": 6,
-          "sourceSummary": {
-            "AutoSleep": {
-              "asleepHours": 0,
-              "asleepUnspecifiedHours": 6,
-              "asleepCoreHours": 0,
-              "asleepDeepHours": 0,
-              "asleepRemHours": 0,
-              "awakeHours": 0,
-              "inBedHours": 6,
-              "otherHours": 0
-            },
-            "大嶺賢一さんのApple Watch": {
-              "asleepHours": 0,
-              "asleepUnspecifiedHours": 0,
-              "asleepCoreHours": 2.18,
-              "asleepDeepHours": 0.44,
-              "asleepRemHours": 0.97,
-              "awakeHours": 1.1,
-              "inBedHours": 0,
-              "otherHours": 0
-            }
-          },
-          "usedValues": [
-            "HKCategoryValueSleepAnalysisAsleepCore",
-            "HKCategoryValueSleepAnalysisAsleepDeep",
-            "HKCategoryValueSleepAnalysisAsleepREM",
-            "HKCategoryValueSleepAnalysisAsleepUnspecified"
-          ],
-          "excludedValues": [
-            "HKCategoryValueSleepAnalysisAwake",
-            "HKCategoryValueSleepAnalysisInBed"
-          ],
-          "abnormal": false,
-          "reason": null,
-          "assignedBy": "wake_date",
-          "sessionGapMinutes": 90,
-          "watchDetailedPreferred": false
-        },
-        "2026-06-06": {
-          "selectedSleepHours": 6.25,
-          "simpleSumHours": 6.25,
-          "mergedIntervalCount": 2,
-          "sessionCount": 1,
-          "detailedStageHours": 5.19,
-          "unspecifiedAddedHours": 1.06,
-          "unspecifiedExcludedOverlapHours": 5.19,
-          "awakeExcludedHours": 1.18,
-          "inBedExcludedHours": 6.55,
-          "sourceSummary": {
-            "AutoSleep": {
-              "asleepHours": 0,
-              "asleepUnspecifiedHours": 6.25,
-              "asleepCoreHours": 0,
-              "asleepDeepHours": 0,
-              "asleepRemHours": 0,
-              "awakeHours": 0,
-              "inBedHours": 6.55,
-              "otherHours": 0
-            },
-            "大嶺賢一さんのApple Watch": {
-              "asleepHours": 0,
-              "asleepUnspecifiedHours": 0,
-              "asleepCoreHours": 3.46,
-              "asleepDeepHours": 0.83,
-              "asleepRemHours": 1.52,
-              "awakeHours": 1.19,
-              "inBedHours": 0,
-              "otherHours": 0
-            }
-          },
-          "usedValues": [
-            "HKCategoryValueSleepAnalysisAsleepCore",
-            "HKCategoryValueSleepAnalysisAsleepDeep",
-            "HKCategoryValueSleepAnalysisAsleepREM",
-            "HKCategoryValueSleepAnalysisAsleepUnspecified"
-          ],
-          "excludedValues": [
-            "HKCategoryValueSleepAnalysisAwake",
-            "HKCategoryValueSleepAnalysisInBed"
-          ],
-          "abnormal": false,
-          "reason": null,
-          "assignedBy": "wake_date",
-          "sessionGapMinutes": 90,
-          "watchDetailedPreferred": false
-        },
-        "2026-06-07": {
-          "selectedSleepHours": 6.65,
-          "simpleSumHours": 6.65,
-          "mergedIntervalCount": 2,
-          "sessionCount": 1,
-          "detailedStageHours": 5.66,
-          "unspecifiedAddedHours": 0.99,
-          "unspecifiedExcludedOverlapHours": 5.04,
-          "awakeExcludedHours": 0.8,
-          "inBedExcludedHours": 6.85,
-          "sourceSummary": {
-            "AutoSleep": {
-              "asleepHours": 0,
-              "asleepUnspecifiedHours": 6.65,
-              "asleepCoreHours": 0,
-              "asleepDeepHours": 0,
-              "asleepRemHours": 0,
-              "awakeHours": 0,
-              "inBedHours": 6.85,
-              "otherHours": 0
-            },
-            "大嶺賢一さんのApple Watch": {
-              "asleepHours": 0,
-              "asleepUnspecifiedHours": 0,
-              "asleepCoreHours": 3.31,
-              "asleepDeepHours": 0.31,
-              "asleepRemHours": 1.42,
-              "awakeHours": 0.81,
-              "inBedHours": 0,
-              "otherHours": 0
-            }
-          },
-          "usedValues": [
-            "HKCategoryValueSleepAnalysisAsleepCore",
-            "HKCategoryValueSleepAnalysisAsleepDeep",
-            "HKCategoryValueSleepAnalysisAsleepREM",
-            "HKCategoryValueSleepAnalysisAsleepUnspecified"
-          ],
-          "excludedValues": [
-            "HKCategoryValueSleepAnalysisAwake",
-            "HKCategoryValueSleepAnalysisInBed"
-          ],
-          "abnormal": false,
-          "reason": null,
-          "assignedBy": "wake_date",
-          "sessionGapMinutes": 90,
-          "watchDetailedPreferred": false
-        },
-        "2026-06-08": {
-          "selectedSleepHours": 6.11,
-          "simpleSumHours": 6.11,
-          "mergedIntervalCount": 4,
-          "sessionCount": 1,
-          "detailedStageHours": 5.06,
-          "unspecifiedAddedHours": 1.05,
-          "unspecifiedExcludedOverlapHours": 5,
-          "awakeExcludedHours": 0.34,
-          "inBedExcludedHours": 6.5,
-          "sourceSummary": {
-            "AutoSleep": {
-              "asleepHours": 0,
-              "asleepUnspecifiedHours": 6.05,
-              "asleepCoreHours": 0,
-              "asleepDeepHours": 0,
-              "asleepRemHours": 0,
-              "awakeHours": 0,
-              "inBedHours": 6.5,
-              "otherHours": 0
-            },
-            "大嶺賢一さんのApple Watch": {
-              "asleepHours": 0,
-              "asleepUnspecifiedHours": 0,
-              "asleepCoreHours": 2.65,
-              "asleepDeepHours": 0.68,
-              "asleepRemHours": 1.72,
-              "awakeHours": 0.33,
-              "inBedHours": 0,
-              "otherHours": 0
-            }
-          },
-          "usedValues": [
-            "HKCategoryValueSleepAnalysisAsleepCore",
-            "HKCategoryValueSleepAnalysisAsleepDeep",
-            "HKCategoryValueSleepAnalysisAsleepREM",
-            "HKCategoryValueSleepAnalysisAsleepUnspecified"
-          ],
-          "excludedValues": [
-            "HKCategoryValueSleepAnalysisAwake",
-            "HKCategoryValueSleepAnalysisInBed"
-          ],
-          "abnormal": false,
-          "reason": null,
-          "assignedBy": "wake_date",
-          "sessionGapMinutes": 90,
-          "watchDetailedPreferred": false
-        },
-        "2026-06-09": {
-          "selectedSleepHours": 5.83,
-          "simpleSumHours": 5.83,
-          "mergedIntervalCount": 1,
-          "sessionCount": 1,
-          "detailedStageHours": 4.53,
-          "unspecifiedAddedHours": 1.31,
-          "unspecifiedExcludedOverlapHours": 4.53,
-          "awakeExcludedHours": 0.67,
-          "inBedExcludedHours": 5.83,
-          "sourceSummary": {
-            "AutoSleep": {
-              "asleepHours": 0,
-              "asleepUnspecifiedHours": 5.83,
-              "asleepCoreHours": 0,
-              "asleepDeepHours": 0,
-              "asleepRemHours": 0,
-              "awakeHours": 0,
-              "inBedHours": 5.83,
-              "otherHours": 0
-            },
-            "大嶺賢一さんのApple Watch": {
-              "asleepHours": 0,
-              "asleepUnspecifiedHours": 0,
-              "asleepCoreHours": 3.78,
-              "asleepDeepHours": 0.43,
-              "asleepRemHours": 0.32,
-              "awakeHours": 0.68,
-              "inBedHours": 0,
-              "otherHours": 0
-            }
-          },
-          "usedValues": [
-            "HKCategoryValueSleepAnalysisAsleepCore",
-            "HKCategoryValueSleepAnalysisAsleepDeep",
-            "HKCategoryValueSleepAnalysisAsleepREM",
-            "HKCategoryValueSleepAnalysisAsleepUnspecified"
-          ],
-          "excludedValues": [
-            "HKCategoryValueSleepAnalysisAwake",
-            "HKCategoryValueSleepAnalysisInBed"
-          ],
-          "abnormal": false,
-          "reason": null,
-          "assignedBy": "wake_date",
-          "sessionGapMinutes": 90,
-          "watchDetailedPreferred": false
-        },
-        "2026-06-10": {
-          "selectedSleepHours": 6.86,
-          "simpleSumHours": 6.86,
-          "mergedIntervalCount": 3,
-          "sessionCount": 2,
-          "detailedStageHours": 5.55,
-          "unspecifiedAddedHours": 1.31,
-          "unspecifiedExcludedOverlapHours": 5.49,
-          "awakeExcludedHours": 0.31,
-          "inBedExcludedHours": 7.02,
-          "sourceSummary": {
-            "AutoSleep": {
-              "asleepHours": 0,
-              "asleepUnspecifiedHours": 6.8,
-              "asleepCoreHours": 0,
-              "asleepDeepHours": 0,
-              "asleepRemHours": 0,
-              "awakeHours": 0,
-              "inBedHours": 7.02,
-              "otherHours": 0
-            },
-            "大嶺賢一さんのApple Watch": {
-              "asleepHours": 0,
-              "asleepUnspecifiedHours": 0,
-              "asleepCoreHours": 3.19,
-              "asleepDeepHours": 0.94,
-              "asleepRemHours": 1.4,
-              "awakeHours": 0.31,
-              "inBedHours": 0,
-              "otherHours": 0
-            }
-          },
-          "usedValues": [
-            "HKCategoryValueSleepAnalysisAsleepCore",
-            "HKCategoryValueSleepAnalysisAsleepDeep",
-            "HKCategoryValueSleepAnalysisAsleepREM",
-            "HKCategoryValueSleepAnalysisAsleepUnspecified"
-          ],
-          "excludedValues": [
-            "HKCategoryValueSleepAnalysisAwake",
-            "HKCategoryValueSleepAnalysisInBed"
-          ],
-          "abnormal": false,
-          "reason": null,
-          "assignedBy": "wake_date",
-          "sessionGapMinutes": 90,
-          "watchDetailedPreferred": false
-        },
         "2026-06-11": {
           "selectedSleepHours": 5.73,
           "simpleSumHours": 7.33,
@@ -20087,6 +19849,294 @@
           "assignedBy": "wake_date",
           "sessionGapMinutes": 90,
           "watchDetailedPreferred": false
+        },
+        "2026-07-05": {
+          "selectedSleepHours": 6.93,
+          "simpleSumHours": 6.93,
+          "mergedIntervalCount": 3,
+          "sessionCount": 2,
+          "detailedStageHours": 5.36,
+          "unspecifiedAddedHours": 1.57,
+          "unspecifiedExcludedOverlapHours": 5.15,
+          "awakeExcludedHours": 0.03,
+          "inBedExcludedHours": 6.95,
+          "sourceSummary": {
+            "AutoSleep": {
+              "asleepHours": 0,
+              "asleepUnspecifiedHours": 6.72,
+              "asleepCoreHours": 0,
+              "asleepDeepHours": 0,
+              "asleepRemHours": 0,
+              "awakeHours": 0,
+              "inBedHours": 6.95,
+              "otherHours": 0
+            },
+            "大嶺賢一さんのApple Watch": {
+              "asleepHours": 0,
+              "asleepUnspecifiedHours": 0,
+              "asleepCoreHours": 3.75,
+              "asleepDeepHours": 0.91,
+              "asleepRemHours": 1.26,
+              "awakeHours": 0.03,
+              "inBedHours": 0,
+              "otherHours": 0
+            }
+          },
+          "usedValues": [
+            "HKCategoryValueSleepAnalysisAsleepCore",
+            "HKCategoryValueSleepAnalysisAsleepDeep",
+            "HKCategoryValueSleepAnalysisAsleepREM",
+            "HKCategoryValueSleepAnalysisAsleepUnspecified"
+          ],
+          "excludedValues": [
+            "HKCategoryValueSleepAnalysisAwake",
+            "HKCategoryValueSleepAnalysisInBed"
+          ],
+          "abnormal": false,
+          "reason": null,
+          "assignedBy": "wake_date",
+          "sessionGapMinutes": 90,
+          "watchDetailedPreferred": false
+        },
+        "2026-07-06": {
+          "selectedSleepHours": 8.33,
+          "simpleSumHours": 8.33,
+          "mergedIntervalCount": 1,
+          "sessionCount": 1,
+          "detailedStageHours": 7.61,
+          "unspecifiedAddedHours": 0.72,
+          "unspecifiedExcludedOverlapHours": 7.06,
+          "awakeExcludedHours": 0.51,
+          "inBedExcludedHours": 8.33,
+          "sourceSummary": {
+            "AutoSleep": {
+              "asleepHours": 0,
+              "asleepUnspecifiedHours": 8.33,
+              "asleepCoreHours": 0,
+              "asleepDeepHours": 0,
+              "asleepRemHours": 0,
+              "awakeHours": 0,
+              "inBedHours": 8.33,
+              "otherHours": 0
+            },
+            "大嶺賢一さんのApple Watch": {
+              "asleepHours": 0,
+              "asleepUnspecifiedHours": 0,
+              "asleepCoreHours": 5.29,
+              "asleepDeepHours": 0.33,
+              "asleepRemHours": 1.41,
+              "awakeHours": 0.51,
+              "inBedHours": 0,
+              "otherHours": 0
+            }
+          },
+          "usedValues": [
+            "HKCategoryValueSleepAnalysisAsleepCore",
+            "HKCategoryValueSleepAnalysisAsleepDeep",
+            "HKCategoryValueSleepAnalysisAsleepREM",
+            "HKCategoryValueSleepAnalysisAsleepUnspecified"
+          ],
+          "excludedValues": [
+            "HKCategoryValueSleepAnalysisAwake",
+            "HKCategoryValueSleepAnalysisInBed"
+          ],
+          "abnormal": false,
+          "reason": null,
+          "assignedBy": "wake_date",
+          "sessionGapMinutes": 90,
+          "watchDetailedPreferred": false
+        },
+        "2026-07-07": {
+          "selectedSleepHours": 5.17,
+          "simpleSumHours": 5.17,
+          "mergedIntervalCount": 2,
+          "sessionCount": 1,
+          "detailedStageHours": 3.52,
+          "unspecifiedAddedHours": 1.65,
+          "unspecifiedExcludedOverlapHours": 3.52,
+          "awakeExcludedHours": 0.26,
+          "inBedExcludedHours": 5.35,
+          "sourceSummary": {
+            "AutoSleep": {
+              "asleepHours": 0,
+              "asleepUnspecifiedHours": 5.17,
+              "asleepCoreHours": 0,
+              "asleepDeepHours": 0,
+              "asleepRemHours": 0,
+              "awakeHours": 0,
+              "inBedHours": 5.35,
+              "otherHours": 0
+            },
+            "大嶺賢一さんのApple Watch": {
+              "asleepHours": 0,
+              "asleepUnspecifiedHours": 0,
+              "asleepCoreHours": 2.1,
+              "asleepDeepHours": 0.83,
+              "asleepRemHours": 0.61,
+              "awakeHours": 0.27,
+              "inBedHours": 0,
+              "otherHours": 0
+            }
+          },
+          "usedValues": [
+            "HKCategoryValueSleepAnalysisAsleepCore",
+            "HKCategoryValueSleepAnalysisAsleepDeep",
+            "HKCategoryValueSleepAnalysisAsleepREM",
+            "HKCategoryValueSleepAnalysisAsleepUnspecified"
+          ],
+          "excludedValues": [
+            "HKCategoryValueSleepAnalysisAwake",
+            "HKCategoryValueSleepAnalysisInBed"
+          ],
+          "abnormal": false,
+          "reason": null,
+          "assignedBy": "wake_date",
+          "sessionGapMinutes": 90,
+          "watchDetailedPreferred": false
+        },
+        "2026-07-08": {
+          "selectedSleepHours": 4.87,
+          "simpleSumHours": 4.87,
+          "mergedIntervalCount": 2,
+          "sessionCount": 1,
+          "detailedStageHours": 3.48,
+          "unspecifiedAddedHours": 1.38,
+          "unspecifiedExcludedOverlapHours": 3.48,
+          "awakeExcludedHours": 0.78,
+          "inBedExcludedHours": 5.1,
+          "sourceSummary": {
+            "AutoSleep": {
+              "asleepHours": 0,
+              "asleepUnspecifiedHours": 4.87,
+              "asleepCoreHours": 0,
+              "asleepDeepHours": 0,
+              "asleepRemHours": 0,
+              "awakeHours": 0,
+              "inBedHours": 5.1,
+              "otherHours": 0
+            },
+            "大嶺賢一さんのApple Watch": {
+              "asleepHours": 0,
+              "asleepUnspecifiedHours": 0,
+              "asleepCoreHours": 2.44,
+              "asleepDeepHours": 0.6,
+              "asleepRemHours": 0.44,
+              "awakeHours": 0.79,
+              "inBedHours": 0,
+              "otherHours": 0
+            }
+          },
+          "usedValues": [
+            "HKCategoryValueSleepAnalysisAsleepCore",
+            "HKCategoryValueSleepAnalysisAsleepDeep",
+            "HKCategoryValueSleepAnalysisAsleepREM",
+            "HKCategoryValueSleepAnalysisAsleepUnspecified"
+          ],
+          "excludedValues": [
+            "HKCategoryValueSleepAnalysisAwake",
+            "HKCategoryValueSleepAnalysisInBed"
+          ],
+          "abnormal": false,
+          "reason": null,
+          "assignedBy": "wake_date",
+          "sessionGapMinutes": 90,
+          "watchDetailedPreferred": false
+        },
+        "2026-07-09": {
+          "selectedSleepHours": 7.1,
+          "simpleSumHours": 7.1,
+          "mergedIntervalCount": 2,
+          "sessionCount": 1,
+          "detailedStageHours": 5.34,
+          "unspecifiedAddedHours": 1.77,
+          "unspecifiedExcludedOverlapHours": 5.23,
+          "awakeExcludedHours": 1.29,
+          "inBedExcludedHours": 7.12,
+          "sourceSummary": {
+            "AutoSleep": {
+              "asleepHours": 0,
+              "asleepUnspecifiedHours": 7.7,
+              "asleepCoreHours": 0,
+              "asleepDeepHours": 0,
+              "asleepRemHours": 0,
+              "awakeHours": 0,
+              "inBedHours": 7.12,
+              "otherHours": 0
+            },
+            "大嶺賢一さんのApple Watch": {
+              "asleepHours": 0,
+              "asleepUnspecifiedHours": 0,
+              "asleepCoreHours": 4.67,
+              "asleepDeepHours": 0.45,
+              "asleepRemHours": 0.24,
+              "awakeHours": 1.29,
+              "inBedHours": 0,
+              "otherHours": 0
+            }
+          },
+          "usedValues": [
+            "HKCategoryValueSleepAnalysisAsleepCore",
+            "HKCategoryValueSleepAnalysisAsleepDeep",
+            "HKCategoryValueSleepAnalysisAsleepREM",
+            "HKCategoryValueSleepAnalysisAsleepUnspecified"
+          ],
+          "excludedValues": [
+            "HKCategoryValueSleepAnalysisAwake",
+            "HKCategoryValueSleepAnalysisInBed"
+          ],
+          "abnormal": false,
+          "reason": null,
+          "assignedBy": "wake_date",
+          "sessionGapMinutes": 90,
+          "watchDetailedPreferred": false
+        },
+        "2026-07-10": {
+          "selectedSleepHours": 7.24,
+          "simpleSumHours": 7.24,
+          "mergedIntervalCount": 4,
+          "sessionCount": 1,
+          "detailedStageHours": 5.98,
+          "unspecifiedAddedHours": 1.26,
+          "unspecifiedExcludedOverlapHours": 5.84,
+          "awakeExcludedHours": 0.56,
+          "inBedExcludedHours": 8.22,
+          "sourceSummary": {
+            "AutoSleep": {
+              "asleepHours": 0,
+              "asleepUnspecifiedHours": 6.4,
+              "asleepCoreHours": 0,
+              "asleepDeepHours": 0,
+              "asleepRemHours": 0,
+              "awakeHours": 0,
+              "inBedHours": 8.22,
+              "otherHours": 0
+            },
+            "大嶺賢一さんのApple Watch": {
+              "asleepHours": 0,
+              "asleepUnspecifiedHours": 0,
+              "asleepCoreHours": 3.74,
+              "asleepDeepHours": 0.72,
+              "asleepRemHours": 1.54,
+              "awakeHours": 0.58,
+              "inBedHours": 0,
+              "otherHours": 0
+            }
+          },
+          "usedValues": [
+            "HKCategoryValueSleepAnalysisAsleepCore",
+            "HKCategoryValueSleepAnalysisAsleepDeep",
+            "HKCategoryValueSleepAnalysisAsleepREM",
+            "HKCategoryValueSleepAnalysisAsleepUnspecified"
+          ],
+          "excludedValues": [
+            "HKCategoryValueSleepAnalysisAwake",
+            "HKCategoryValueSleepAnalysisInBed"
+          ],
+          "abnormal": false,
+          "reason": null,
+          "assignedBy": "wake_date",
+          "sessionGapMinutes": 90,
+          "watchDetailedPreferred": false
         }
       }
     },
@@ -20094,13 +20144,13 @@
       "steps": {
         "status": "duplication_suspected",
         "method": "source_priority_normalized_device_no_simple_sum",
-        "last7Average": 10998,
-        "last30Average": 10885,
+        "last7Average": 9682,
+        "last30Average": 10712,
         "comment": "Apple Watch/iPhoneの二重計上を避けるため、日別ソース優先で集計"
       },
       "hrv": {
         "status": "ok",
-        "lastDate": "2026-07-05",
+        "lastDate": "2026-07-11",
         "last7DaysWithData": 7,
         "last30DaysWithData": 30,
         "comment": "HRVは直近7日のデータ数に応じて評価信頼度を調整"
@@ -20108,8 +20158,8 @@
       "sleep": {
         "status": "ok",
         "method": "asleep_session_merge_wake_date_based",
-        "last7Average": 6.12,
-        "last30Average": 6.48,
+        "last7Average": 6.67,
+        "last30Average": 6.54,
         "last7DaysWithData": 7,
         "last30DaysWithData": 30,
         "abnormalDayCount": 0,
@@ -20119,41 +20169,6 @@
       }
     },
     "importWarnings": [
-      {
-        "type": "STEP_DUPLICATION_SUSPECTED",
-        "date": "2026-06-07",
-        "message": "複数ソースの歩数合算により二重計上の可能性があります",
-        "selectedSteps": 10180,
-        "simpleSumSteps": 17800
-      },
-      {
-        "type": "STEP_DUPLICATION_SUSPECTED",
-        "date": "2026-06-08",
-        "message": "複数ソースの歩数合算により二重計上の可能性があります",
-        "selectedSteps": 10851,
-        "simpleSumSteps": 21164
-      },
-      {
-        "type": "STEP_DUPLICATION_SUSPECTED",
-        "date": "2026-06-09",
-        "message": "複数ソースの歩数合算により二重計上の可能性があります",
-        "selectedSteps": 10343,
-        "simpleSumSteps": 18053
-      },
-      {
-        "type": "STEP_DUPLICATION_SUSPECTED",
-        "date": "2026-06-10",
-        "message": "複数ソースの歩数合算により二重計上の可能性があります",
-        "selectedSteps": 10698,
-        "simpleSumSteps": 20432
-      },
-      {
-        "type": "STEP_DUPLICATION_SUSPECTED",
-        "date": "2026-06-11",
-        "message": "複数ソースの歩数合算により二重計上の可能性があります",
-        "selectedSteps": 10212,
-        "simpleSumSteps": 18327
-      },
       {
         "type": "STEP_DUPLICATION_SUSPECTED",
         "date": "2026-06-12",
@@ -20286,20 +20301,48 @@
         "message": "複数ソースの歩数合算により二重計上の可能性があります",
         "selectedSteps": 10732,
         "simpleSumSteps": 21744
+      },
+      {
+        "type": "STEP_DUPLICATION_SUSPECTED",
+        "date": "2026-07-05",
+        "message": "複数ソースの歩数合算により二重計上の可能性があります",
+        "selectedSteps": 10480,
+        "simpleSumSteps": 18011
+      },
+      {
+        "type": "STEP_DUPLICATION_SUSPECTED",
+        "date": "2026-07-06",
+        "message": "複数ソースの歩数合算により二重計上の可能性があります",
+        "selectedSteps": 8085,
+        "simpleSumSteps": 13222
+      },
+      {
+        "type": "STEP_DUPLICATION_SUSPECTED",
+        "date": "2026-07-08",
+        "message": "複数ソースの歩数合算により二重計上の可能性があります",
+        "selectedSteps": 10141,
+        "simpleSumSteps": 16513
+      },
+      {
+        "type": "STEP_DUPLICATION_SUSPECTED",
+        "date": "2026-07-10",
+        "message": "複数ソースの歩数合算により二重計上の可能性があります",
+        "selectedSteps": 7842,
+        "simpleSumSteps": 14466
       }
     ],
     "importWarningSummary": {
-      "totalCount": 24,
+      "totalCount": 23,
       "byType": {
-        "STEP_DUPLICATION_SUSPECTED": 24
+        "STEP_DUPLICATION_SUSPECTED": 23
       },
       "stepDuplication": {
-        "count": 24,
-        "firstDate": "2026-06-07",
-        "lastDate": "2026-07-04",
-        "averageSelectedSteps": 10983,
-        "averageSimpleSumSteps": 19780,
-        "comment": "歩数の二重計上疑いは24日ありますが、healthData.stepsにはソース優先で補正したselectedStepsを採用済みです。"
+        "count": 23,
+        "firstDate": "2026-06-12",
+        "lastDate": "2026-07-10",
+        "averageSelectedSteps": 10776,
+        "averageSimpleSumSteps": 19181,
+        "comment": "歩数の二重計上疑いは23日ありますが、healthData.stepsにはソース優先で補正したselectedStepsを採用済みです。"
       },
       "stepExtreme": {
         "count": 0
@@ -21606,35 +21649,31 @@
       ],
       "2026-06-13": [
         {
-          "time": "2026-06-13T11:10:00.000Z",
-          "mealPlace": "自宅",
-          "kind": "foodLogs",
-          "comment": "ダイエット最強クラス",
-          "type": "food",
-          "severity": 0,
-          "localDateTime": "2026-06-13T20:10:00+09:00",
-          "group": "highProtein",
-          "evaluation": "良好",
-          "localDate": "2026-06-13",
-          "displayName": "サラダチキン（通常・P25g）",
-          "kcal": 120,
-          "timestampUtc": "2026-06-13T11:10:00.000Z",
-          "source": "browser",
           "id": "salad_chicken",
           "name": "サラダチキン",
-          "logId": "food_1781349021111_1795",
           "protein": 25,
-          "isTest": false,
-          "category": "highProtein",
+          "kcal": 120,
+          "group": "highProtein",
+          "comment": "ダイエット最強クラス",
           "detail": {
-            "proteinChoice": "25g",
-            "size": "通常"
+            "size": "通常",
+            "proteinChoice": "25g"
           },
-          "appVersion": "gv1.74",
+          "displayName": "サラダチキン（通常・P25g）",
+          "evaluation": "良好",
+          "severity": 0,
+          "logId": "food_1781349027286_6v78",
+          "type": "food",
+          "category": "highProtein",
+          "mealPlace": "自宅",
+          "timestampUtc": "2026-06-13T11:10:00.000Z",
+          "localDate": "2026-06-13",
           "localTime": "20:10",
-          "updatedAt": "2026-06-13T11:10:21.113Z",
-          "date": "2026-06-13",
+          "localDateTime": "2026-06-13T20:10:00+09:00",
           "timezone": "Asia/Tokyo",
+          "time": "2026-06-13T11:10:00.000Z",
+          "isTest": false,
+          "source": "user",
           "foodCode": "salad_chicken",
           "estimatedCalories": 120,
           "mealPlaceCode": "home"
@@ -22055,37 +22094,37 @@
       ],
       "2026-06-22": [
         {
-          "type": "food",
-          "severity": 0,
-          "kind": "foodLogs",
           "comment": "ダイエット最強クラス",
-          "mealPlace": "自宅",
-          "time": "2026-06-22T12:16:00.000Z",
-          "timestampUtc": "2026-06-22T12:16:00.000Z",
-          "kcal": 120,
+          "isTest": false,
+          "updatedAt": "2026-06-22T12:16:32.906Z",
+          "kcal": 90,
+          "localTime": "21:16",
           "localDate": "2026-06-22",
-          "displayName": "サラダチキン（通常・P20g）",
-          "group": "highProtein",
-          "evaluation": "良好",
-          "localDateTime": "2026-06-22T21:16:00+09:00",
-          "id": "salad_chicken",
-          "source": "browser",
-          "updatedAt": "2026-06-22T12:16:23.414Z",
           "date": "2026-06-22",
           "timezone": "Asia/Tokyo",
-          "localTime": "21:16",
-          "appVersion": "gv1.79.1",
+          "timestampUtc": "2026-06-22T12:16:00.000Z",
+          "group": "highProtein",
           "detail": {
-            "proteinChoice": "20g",
+            "proteinChoice": "15g",
             "size": "通常"
           },
+          "type": "food",
+          "source": "browser",
+          "localDateTime": "2026-06-22T21:16:00+09:00",
           "category": "highProtein",
-          "isTest": false,
-          "protein": 20,
-          "logId": "food_1782130583404_p9js",
+          "appVersion": "gv1.79.1",
+          "kind": "foodLogs",
+          "severity": 0,
+          "id": "salad_chicken",
+          "displayName": "サラダチキン（通常・P15g）",
+          "time": "2026-06-22T12:16:00.000Z",
+          "evaluation": "良好",
           "name": "サラダチキン",
+          "mealPlace": "自宅",
+          "protein": 15,
+          "logId": "food_1782130592897_3ojg",
           "foodCode": "salad_chicken",
-          "estimatedCalories": 120,
+          "estimatedCalories": 90,
           "mealPlaceCode": "home"
         },
         {
@@ -22400,37 +22439,37 @@
           "mealPlaceCode": "home"
         },
         {
+          "isTest": false,
+          "comment": "ダイエット最強クラス",
+          "localTime": "08:22",
+          "localDate": "2026-06-25",
+          "kcal": 120,
+          "updatedAt": "2026-06-25T23:22:43.923Z",
           "timezone": "Asia/Tokyo",
           "date": "2026-06-25",
-          "updatedAt": "2026-06-25T23:22:37.745Z",
-          "localTime": "08:22",
-          "appVersion": "gv1.79.1",
-          "detail": {
-            "proteinChoice": "15g",
-            "size": "小さめ"
-          },
-          "category": "highProtein",
-          "isTest": false,
-          "name": "サラダチキン",
-          "logId": "food_1782429757737_4iza",
-          "protein": 15,
-          "id": "salad_chicken",
-          "source": "browser",
-          "timestampUtc": "2026-06-24T23:22:00.000Z",
-          "kcal": 90,
-          "displayName": "サラダチキン（小さめ・P15g）",
-          "localDate": "2026-06-25",
           "group": "highProtein",
-          "evaluation": "良好",
+          "timestampUtc": "2026-06-24T23:22:00.000Z",
           "localDateTime": "2026-06-25T08:22:00+09:00",
-          "severity": 0,
+          "source": "browser",
           "type": "food",
+          "detail": {
+            "proteinChoice": "20g",
+            "size": "通常"
+          },
+          "appVersion": "gv1.79.1",
+          "category": "highProtein",
+          "displayName": "サラダチキン（通常・P20g）",
+          "id": "salad_chicken",
           "kind": "foodLogs",
-          "comment": "ダイエット最強クラス",
-          "mealPlace": "自宅",
+          "severity": 0,
           "time": "2026-06-24T23:22:00.000Z",
+          "name": "サラダチキン",
+          "evaluation": "良好",
+          "protein": 20,
+          "mealPlace": "自宅",
+          "logId": "food_1782429763916_ca1r",
           "foodCode": "salad_chicken",
-          "estimatedCalories": 90,
+          "estimatedCalories": 120,
           "mealPlaceCode": "home"
         },
         {
@@ -22535,37 +22574,33 @@
           "mealPlaceCode": "home"
         },
         {
-          "source": "browser",
           "id": "salad_chicken",
           "name": "サラダチキン",
-          "logId": "food_1782528528850_qogb",
-          "protein": 25,
-          "isTest": false,
-          "category": "highProtein",
-          "detail": {
-            "proteinChoice": "25g",
-            "size": "通常"
-          },
-          "localTime": "11:48",
-          "appVersion": "gv1.79.1",
-          "timezone": "Asia/Tokyo",
-          "date": "2026-06-26",
-          "updatedAt": "2026-06-27T02:48:48.853Z",
-          "time": "2026-06-26T02:48:00.000Z",
-          "mealPlace": "自宅",
-          "comment": "ダイエット最強クラス",
-          "kind": "foodLogs",
-          "severity": 0,
-          "type": "food",
-          "localDateTime": "2026-06-26T11:48:00+09:00",
+          "protein": 15,
+          "kcal": 90,
           "group": "highProtein",
+          "comment": "ダイエット最強クラス",
+          "detail": {
+            "size": "通常",
+            "proteinChoice": "15g"
+          },
+          "displayName": "サラダチキン（通常・P15g）",
           "evaluation": "良好",
-          "displayName": "サラダチキン（通常・P25g）",
-          "localDate": "2026-06-26",
-          "kcal": 120,
+          "severity": 0,
+          "logId": "food_1782528532922_1mik",
+          "type": "food",
+          "category": "highProtein",
+          "mealPlace": "自宅",
           "timestampUtc": "2026-06-26T02:48:00.000Z",
+          "localDate": "2026-06-26",
+          "localTime": "11:48",
+          "localDateTime": "2026-06-26T11:48:00+09:00",
+          "timezone": "Asia/Tokyo",
+          "time": "2026-06-26T02:48:00.000Z",
+          "isTest": false,
+          "source": "user",
           "foodCode": "salad_chicken",
-          "estimatedCalories": 120,
+          "estimatedCalories": 90,
           "mealPlaceCode": "home"
         },
         {
@@ -24022,35 +24057,31 @@
       ],
       "2026-06-13": [
         {
-          "time": "2026-06-13T11:10:00.000Z",
-          "mealPlace": "自宅",
-          "kind": "foodLogs",
-          "comment": "ダイエット最強クラス",
-          "type": "food",
-          "severity": 0,
-          "localDateTime": "2026-06-13T20:10:00+09:00",
-          "group": "highProtein",
-          "evaluation": "良好",
-          "localDate": "2026-06-13",
-          "displayName": "サラダチキン（通常・P25g）",
-          "kcal": 120,
-          "timestampUtc": "2026-06-13T11:10:00.000Z",
-          "source": "browser",
           "id": "salad_chicken",
           "name": "サラダチキン",
-          "logId": "food_1781349021111_1795",
           "protein": 25,
-          "isTest": false,
-          "category": "highProtein",
+          "kcal": 120,
+          "group": "highProtein",
+          "comment": "ダイエット最強クラス",
           "detail": {
-            "proteinChoice": "25g",
-            "size": "通常"
+            "size": "通常",
+            "proteinChoice": "25g"
           },
-          "appVersion": "gv1.74",
+          "displayName": "サラダチキン（通常・P25g）",
+          "evaluation": "良好",
+          "severity": 0,
+          "logId": "food_1781349027286_6v78",
+          "type": "food",
+          "category": "highProtein",
+          "mealPlace": "自宅",
+          "timestampUtc": "2026-06-13T11:10:00.000Z",
+          "localDate": "2026-06-13",
           "localTime": "20:10",
-          "updatedAt": "2026-06-13T11:10:21.113Z",
-          "date": "2026-06-13",
+          "localDateTime": "2026-06-13T20:10:00+09:00",
           "timezone": "Asia/Tokyo",
+          "time": "2026-06-13T11:10:00.000Z",
+          "isTest": false,
+          "source": "user",
           "foodCode": "salad_chicken",
           "estimatedCalories": 120,
           "mealPlaceCode": "home"
@@ -24471,37 +24502,37 @@
       ],
       "2026-06-22": [
         {
-          "type": "food",
-          "severity": 0,
-          "kind": "foodLogs",
           "comment": "ダイエット最強クラス",
-          "mealPlace": "自宅",
-          "time": "2026-06-22T12:16:00.000Z",
-          "timestampUtc": "2026-06-22T12:16:00.000Z",
-          "kcal": 120,
+          "isTest": false,
+          "updatedAt": "2026-06-22T12:16:32.906Z",
+          "kcal": 90,
+          "localTime": "21:16",
           "localDate": "2026-06-22",
-          "displayName": "サラダチキン（通常・P20g）",
-          "group": "highProtein",
-          "evaluation": "良好",
-          "localDateTime": "2026-06-22T21:16:00+09:00",
-          "id": "salad_chicken",
-          "source": "browser",
-          "updatedAt": "2026-06-22T12:16:23.414Z",
           "date": "2026-06-22",
           "timezone": "Asia/Tokyo",
-          "localTime": "21:16",
-          "appVersion": "gv1.79.1",
+          "timestampUtc": "2026-06-22T12:16:00.000Z",
+          "group": "highProtein",
           "detail": {
-            "proteinChoice": "20g",
+            "proteinChoice": "15g",
             "size": "通常"
           },
+          "type": "food",
+          "source": "browser",
+          "localDateTime": "2026-06-22T21:16:00+09:00",
           "category": "highProtein",
-          "isTest": false,
-          "protein": 20,
-          "logId": "food_1782130583404_p9js",
+          "appVersion": "gv1.79.1",
+          "kind": "foodLogs",
+          "severity": 0,
+          "id": "salad_chicken",
+          "displayName": "サラダチキン（通常・P15g）",
+          "time": "2026-06-22T12:16:00.000Z",
+          "evaluation": "良好",
           "name": "サラダチキン",
+          "mealPlace": "自宅",
+          "protein": 15,
+          "logId": "food_1782130592897_3ojg",
           "foodCode": "salad_chicken",
-          "estimatedCalories": 120,
+          "estimatedCalories": 90,
           "mealPlaceCode": "home"
         },
         {
@@ -24816,37 +24847,37 @@
           "mealPlaceCode": "home"
         },
         {
+          "isTest": false,
+          "comment": "ダイエット最強クラス",
+          "localTime": "08:22",
+          "localDate": "2026-06-25",
+          "kcal": 120,
+          "updatedAt": "2026-06-25T23:22:43.923Z",
           "timezone": "Asia/Tokyo",
           "date": "2026-06-25",
-          "updatedAt": "2026-06-25T23:22:37.745Z",
-          "localTime": "08:22",
-          "appVersion": "gv1.79.1",
-          "detail": {
-            "proteinChoice": "15g",
-            "size": "小さめ"
-          },
-          "category": "highProtein",
-          "isTest": false,
-          "name": "サラダチキン",
-          "logId": "food_1782429757737_4iza",
-          "protein": 15,
-          "id": "salad_chicken",
-          "source": "browser",
-          "timestampUtc": "2026-06-24T23:22:00.000Z",
-          "kcal": 90,
-          "displayName": "サラダチキン（小さめ・P15g）",
-          "localDate": "2026-06-25",
           "group": "highProtein",
-          "evaluation": "良好",
+          "timestampUtc": "2026-06-24T23:22:00.000Z",
           "localDateTime": "2026-06-25T08:22:00+09:00",
-          "severity": 0,
+          "source": "browser",
           "type": "food",
+          "detail": {
+            "proteinChoice": "20g",
+            "size": "通常"
+          },
+          "appVersion": "gv1.79.1",
+          "category": "highProtein",
+          "displayName": "サラダチキン（通常・P20g）",
+          "id": "salad_chicken",
           "kind": "foodLogs",
-          "comment": "ダイエット最強クラス",
-          "mealPlace": "自宅",
+          "severity": 0,
           "time": "2026-06-24T23:22:00.000Z",
+          "name": "サラダチキン",
+          "evaluation": "良好",
+          "protein": 20,
+          "mealPlace": "自宅",
+          "logId": "food_1782429763916_ca1r",
           "foodCode": "salad_chicken",
-          "estimatedCalories": 90,
+          "estimatedCalories": 120,
           "mealPlaceCode": "home"
         },
         {
@@ -24951,37 +24982,33 @@
           "mealPlaceCode": "home"
         },
         {
-          "source": "browser",
           "id": "salad_chicken",
           "name": "サラダチキン",
-          "logId": "food_1782528528850_qogb",
-          "protein": 25,
-          "isTest": false,
-          "category": "highProtein",
-          "detail": {
-            "proteinChoice": "25g",
-            "size": "通常"
-          },
-          "localTime": "11:48",
-          "appVersion": "gv1.79.1",
-          "timezone": "Asia/Tokyo",
-          "date": "2026-06-26",
-          "updatedAt": "2026-06-27T02:48:48.853Z",
-          "time": "2026-06-26T02:48:00.000Z",
-          "mealPlace": "自宅",
-          "comment": "ダイエット最強クラス",
-          "kind": "foodLogs",
-          "severity": 0,
-          "type": "food",
-          "localDateTime": "2026-06-26T11:48:00+09:00",
+          "protein": 15,
+          "kcal": 90,
           "group": "highProtein",
+          "comment": "ダイエット最強クラス",
+          "detail": {
+            "size": "通常",
+            "proteinChoice": "15g"
+          },
+          "displayName": "サラダチキン（通常・P15g）",
           "evaluation": "良好",
-          "displayName": "サラダチキン（通常・P25g）",
-          "localDate": "2026-06-26",
-          "kcal": 120,
+          "severity": 0,
+          "logId": "food_1782528532922_1mik",
+          "type": "food",
+          "category": "highProtein",
+          "mealPlace": "自宅",
           "timestampUtc": "2026-06-26T02:48:00.000Z",
+          "localDate": "2026-06-26",
+          "localTime": "11:48",
+          "localDateTime": "2026-06-26T11:48:00+09:00",
+          "timezone": "Asia/Tokyo",
+          "time": "2026-06-26T02:48:00.000Z",
+          "isTest": false,
+          "source": "user",
           "foodCode": "salad_chicken",
-          "estimatedCalories": 120,
+          "estimatedCalories": 90,
           "mealPlaceCode": "home"
         },
         {
@@ -28736,22 +28763,6 @@
           "source": "user"
         },
         {
-          "logId": "event_2026-05-31_hunger",
-          "type": "event",
-          "eventKey": "hunger",
-          "eventLabel": "空腹度",
-          "value": "🙂 少し空腹",
-          "rawValue": "🙂 少し空腹",
-          "timestampUtc": "2026-05-31T06:07:00.000Z",
-          "localDate": "2026-05-31",
-          "localTime": "15:07",
-          "localDateTime": "2026-05-31T15:07:00+09:00",
-          "timezone": "Asia/Tokyo",
-          "time": "2026-05-31T06:07:00.000Z",
-          "isTest": false,
-          "source": "user"
-        },
-        {
           "logId": "event_2026-05-31_eatingOut",
           "type": "event",
           "eventKey": "eatingOut",
@@ -28764,6 +28775,22 @@
           "localDateTime": "2026-05-31T18:31:00+09:00",
           "timezone": "Asia/Tokyo",
           "time": "2026-05-31T09:31:00.000Z",
+          "isTest": false,
+          "source": "user"
+        },
+        {
+          "logId": "event_2026-05-31_hunger",
+          "type": "event",
+          "eventKey": "hunger",
+          "eventLabel": "空腹度",
+          "value": "🙂 少し空腹",
+          "rawValue": "🙂 少し空腹",
+          "timestampUtc": "2026-05-31T06:07:00.000Z",
+          "localDate": "2026-05-31",
+          "localTime": "15:07",
+          "localDateTime": "2026-05-31T15:07:00+09:00",
+          "timezone": "Asia/Tokyo",
+          "time": "2026-05-31T06:07:00.000Z",
           "isTest": false,
           "source": "user"
         }
@@ -30499,35 +30526,35 @@
           "eventKey": "0",
           "eventLabel": "0",
           "value": {
-            "localTime": "20:51",
-            "timestampUtc": "2026-06-12T11:51:00.000Z",
-            "timezone": "Asia/Tokyo",
-            "isTest": false,
-            "localDateTime": "2026-06-12T20:51:00+09:00",
-            "logId": "event_2026-06-12_mealPlace",
             "localDate": "2026-06-12",
+            "source": "user",
             "rawValue": "居酒屋",
-            "eventLabel": "食事場所",
-            "type": "event",
+            "logId": "event_2026-06-12_mealPlace",
             "eventKey": "mealPlace",
             "value": "居酒屋",
-            "source": "user",
+            "isTest": false,
+            "localTime": "20:51",
+            "localDateTime": "2026-06-12T20:51:00+09:00",
+            "type": "event",
+            "eventLabel": "食事場所",
+            "timezone": "Asia/Tokyo",
+            "timestampUtc": "2026-06-12T11:51:00.000Z",
             "time": "2026-06-12T11:51:00.000Z"
           },
           "rawValue": {
-            "localTime": "20:51",
-            "timestampUtc": "2026-06-12T11:51:00.000Z",
-            "timezone": "Asia/Tokyo",
-            "isTest": false,
-            "localDateTime": "2026-06-12T20:51:00+09:00",
-            "logId": "event_2026-06-12_mealPlace",
             "localDate": "2026-06-12",
+            "source": "user",
             "rawValue": "居酒屋",
-            "eventLabel": "食事場所",
-            "type": "event",
+            "logId": "event_2026-06-12_mealPlace",
             "eventKey": "mealPlace",
             "value": "居酒屋",
-            "source": "user",
+            "isTest": false,
+            "localTime": "20:51",
+            "localDateTime": "2026-06-12T20:51:00+09:00",
+            "type": "event",
+            "eventLabel": "食事場所",
+            "timezone": "Asia/Tokyo",
+            "timestampUtc": "2026-06-12T11:51:00.000Z",
             "time": "2026-06-12T11:51:00.000Z"
           },
           "timestampUtc": "2026-06-12T03:00:00.000Z",
@@ -31543,33 +31570,35 @@
           "isTest": false,
           "source": "user"
         }
+      ],
+      "2026-06-26": [
+        {
+          "logId": "alcohol_2026-06-26_beer",
+          "type": "alcohol",
+          "alcoholCode": "beer",
+          "alcoholName": "ビール",
+          "alcoholType": "beer",
+          "cups": 4,
+          "timestampUtc": "2026-06-26T08:39:00.000Z",
+          "localDate": "2026-06-26",
+          "localTime": "17:39",
+          "localDateTime": "2026-06-26T17:39:00+09:00",
+          "timezone": "Asia/Tokyo",
+          "time": "2026-06-26T08:39:00.000Z",
+          "isTest": false,
+          "source": "user"
+        }
       ]
     },
     "deletedFoodLogIds": {
+      "food_1782528480591_rlqb": "2026-06-27T08:45:07.055Z",
       "food_1782547099761_u9f5": "2026-06-27T08:13:36.416Z",
       "food_1782548021880_cxzi": "2026-06-27T08:14:09.626Z",
       "food_1782548056285_ndhl": "2026-06-27T08:33:52.872Z",
       "food_1782549238073_f60k": "2026-06-27T08:34:20.445Z",
-      "food_1782543937331_hw47": "2026-06-27T08:34:46.803Z",
-      "food_1782528480591_rlqb": "2026-06-27T08:45:07.055Z"
+      "food_1782543937331_hw47": "2026-06-27T08:34:46.803Z"
     },
     "operationLogs": {
-      "2026-05-31": [
-        {
-          "logId": "alcohol_1780204215820",
-          "type": "alcohol",
-          "alcoholType": "焼酎",
-          "cups": 3,
-          "timestampUtc": "2026-05-31T05:10:00.000Z",
-          "localDate": "2026-05-31",
-          "localTime": "14:10",
-          "localDateTime": "2026-05-31T14:10:00+09:00",
-          "timezone": "Asia/Tokyo",
-          "time": "2026-05-31T05:10:00.000Z",
-          "isTest": false,
-          "source": "user"
-        }
-      ],
       "2026-06-13": [
         {
           "logId": "alcohol_1781349089146",
@@ -31586,32 +31615,18 @@
           "source": "user"
         }
       ],
-      "2026-06-28": [
+      "2026-05-31": [
         {
-          "logId": "alcohol_1782549255083",
+          "logId": "alcohol_1780204215820",
           "type": "alcohol",
           "alcoholType": "焼酎",
-          "cups": 4,
-          "timestampUtc": "2026-06-28T08:33:00.000Z",
-          "localDate": "2026-06-28",
-          "localTime": "17:33",
-          "localDateTime": "2026-06-28T17:33:00+09:00",
+          "cups": 3,
+          "timestampUtc": "2026-05-31T05:10:00.000Z",
+          "localDate": "2026-05-31",
+          "localTime": "14:10",
+          "localDateTime": "2026-05-31T14:10:00+09:00",
           "timezone": "Asia/Tokyo",
-          "time": "2026-06-28T08:33:00.000Z",
-          "isTest": false,
-          "source": "user"
-        },
-        {
-          "logId": "alcohol_1782549267421",
-          "type": "alcohol",
-          "alcoholType": "焼酎",
-          "cups": 0,
-          "timestampUtc": "2026-06-28T08:33:00.000Z",
-          "localDate": "2026-06-28",
-          "localTime": "17:33",
-          "localDateTime": "2026-06-28T17:33:00+09:00",
-          "timezone": "Asia/Tokyo",
-          "time": "2026-06-28T08:33:00.000Z",
+          "time": "2026-05-31T05:10:00.000Z",
           "isTest": false,
           "source": "user"
         }
@@ -31730,28 +31745,42 @@
           "localDateTime": "2026-06-26T17:39:00+09:00",
           "timezone": "Asia/Tokyo",
           "time": "2026-06-26T08:39:00.000Z",
+          "isTest": false,
+          "source": "user"
+        }
+      ],
+      "2026-06-28": [
+        {
+          "logId": "alcohol_1782549255083",
+          "type": "alcohol",
+          "alcoholType": "焼酎",
+          "cups": 4,
+          "timestampUtc": "2026-06-28T08:33:00.000Z",
+          "localDate": "2026-06-28",
+          "localTime": "17:33",
+          "localDateTime": "2026-06-28T17:33:00+09:00",
+          "timezone": "Asia/Tokyo",
+          "time": "2026-06-28T08:33:00.000Z",
+          "isTest": false,
+          "source": "user"
+        },
+        {
+          "logId": "alcohol_1782549267421",
+          "type": "alcohol",
+          "alcoholType": "焼酎",
+          "cups": 0,
+          "timestampUtc": "2026-06-28T08:33:00.000Z",
+          "localDate": "2026-06-28",
+          "localTime": "17:33",
+          "localDateTime": "2026-06-28T17:33:00+09:00",
+          "timezone": "Asia/Tokyo",
+          "time": "2026-06-28T08:33:00.000Z",
           "isTest": false,
           "source": "user"
         }
       ]
     },
     "manualLogs": {
-      "2026-05-31": [
-        {
-          "logId": "alcohol_1780204215820",
-          "type": "alcohol",
-          "alcoholType": "焼酎",
-          "cups": 3,
-          "timestampUtc": "2026-05-31T05:10:00.000Z",
-          "localDate": "2026-05-31",
-          "localTime": "14:10",
-          "localDateTime": "2026-05-31T14:10:00+09:00",
-          "timezone": "Asia/Tokyo",
-          "time": "2026-05-31T05:10:00.000Z",
-          "isTest": false,
-          "source": "user"
-        }
-      ],
       "2026-06-13": [
         {
           "logId": "alcohol_1781349089146",
@@ -31768,32 +31797,18 @@
           "source": "user"
         }
       ],
-      "2026-06-28": [
+      "2026-05-31": [
         {
-          "logId": "alcohol_1782549255083",
+          "logId": "alcohol_1780204215820",
           "type": "alcohol",
           "alcoholType": "焼酎",
-          "cups": 4,
-          "timestampUtc": "2026-06-28T08:33:00.000Z",
-          "localDate": "2026-06-28",
-          "localTime": "17:33",
-          "localDateTime": "2026-06-28T17:33:00+09:00",
+          "cups": 3,
+          "timestampUtc": "2026-05-31T05:10:00.000Z",
+          "localDate": "2026-05-31",
+          "localTime": "14:10",
+          "localDateTime": "2026-05-31T14:10:00+09:00",
           "timezone": "Asia/Tokyo",
-          "time": "2026-06-28T08:33:00.000Z",
-          "isTest": false,
-          "source": "user"
-        },
-        {
-          "logId": "alcohol_1782549267421",
-          "type": "alcohol",
-          "alcoholType": "焼酎",
-          "cups": 0,
-          "timestampUtc": "2026-06-28T08:33:00.000Z",
-          "localDate": "2026-06-28",
-          "localTime": "17:33",
-          "localDateTime": "2026-06-28T17:33:00+09:00",
-          "timezone": "Asia/Tokyo",
-          "time": "2026-06-28T08:33:00.000Z",
+          "time": "2026-05-31T05:10:00.000Z",
           "isTest": false,
           "source": "user"
         }
@@ -31912,6 +31927,36 @@
           "localDateTime": "2026-06-26T17:39:00+09:00",
           "timezone": "Asia/Tokyo",
           "time": "2026-06-26T08:39:00.000Z",
+          "isTest": false,
+          "source": "user"
+        }
+      ],
+      "2026-06-28": [
+        {
+          "logId": "alcohol_1782549255083",
+          "type": "alcohol",
+          "alcoholType": "焼酎",
+          "cups": 4,
+          "timestampUtc": "2026-06-28T08:33:00.000Z",
+          "localDate": "2026-06-28",
+          "localTime": "17:33",
+          "localDateTime": "2026-06-28T17:33:00+09:00",
+          "timezone": "Asia/Tokyo",
+          "time": "2026-06-28T08:33:00.000Z",
+          "isTest": false,
+          "source": "user"
+        },
+        {
+          "logId": "alcohol_1782549267421",
+          "type": "alcohol",
+          "alcoholType": "焼酎",
+          "cups": 0,
+          "timestampUtc": "2026-06-28T08:33:00.000Z",
+          "localDate": "2026-06-28",
+          "localTime": "17:33",
+          "localDateTime": "2026-06-28T17:33:00+09:00",
+          "timezone": "Asia/Tokyo",
+          "time": "2026-06-28T08:33:00.000Z",
           "isTest": false,
           "source": "user"
         }
@@ -141213,6 +141258,2175 @@
         "pointCount": 2,
         "startTimeStr": "18:00",
         "endTimeStr": "20:00",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-637-piqhhafp4ll",
+        "date": "2026-07-05",
+        "name": "in train / Google Timeline",
+        "type": "Travel",
+        "subType": "Train",
+        "rawType": "in train",
+        "distance": 12.93,
+        "durationMinutes": 22,
+        "avgSpeed": 35.3,
+        "start": [
+          35.576032,
+          139.659905
+        ],
+        "end": [
+          35.467195,
+          139.622733
+        ],
+        "representativePoints": [
+          [
+            35.576032,
+            139.659905
+          ],
+          [
+            35.467195,
+            139.622733
+          ]
+        ],
+        "pointCount": 2,
+        "startTimeStr": "13:11",
+        "endTimeStr": "13:32",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-639-ybocaj8jp",
+        "date": "2026-07-05",
+        "name": "walking / Google Timeline",
+        "type": "Walking",
+        "subType": "Unknown",
+        "rawType": "walking",
+        "distance": 0.14,
+        "durationMinutes": 4,
+        "avgSpeed": 2.1,
+        "start": [
+          35.465949,
+          139.621199
+        ],
+        "end": [
+          35.46684,
+          139.622299
+        ],
+        "representativePoints": [
+          [
+            35.465949,
+            139.621199
+          ],
+          [
+            35.46684,
+            139.622299
+          ]
+        ],
+        "pointCount": 2,
+        "startTimeStr": "14:38",
+        "endTimeStr": "14:42",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-640-feqzzherxom",
+        "date": "2026-07-05",
+        "name": "in train / Google Timeline",
+        "type": "Travel",
+        "subType": "Train",
+        "rawType": "in train",
+        "distance": 12.92,
+        "durationMinutes": 22,
+        "avgSpeed": 35.2,
+        "start": [
+          35.46684,
+          139.622299
+        ],
+        "end": [
+          35.575141,
+          139.65919
+        ],
+        "representativePoints": [
+          [
+            35.46684,
+            139.622299
+          ],
+          [
+            35.575141,
+            139.65919
+          ]
+        ],
+        "pointCount": 2,
+        "startTimeStr": "14:42",
+        "endTimeStr": "15:04",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-641-06h7y81v44hy",
+        "date": "2026-07-05",
+        "name": "walking / Google Timeline",
+        "type": "Walking",
+        "subType": "Unknown",
+        "rawType": "walking",
+        "distance": 0.05,
+        "durationMinutes": 318,
+        "avgSpeed": 0,
+        "start": [
+          35.574183,
+          139.658725
+        ],
+        "end": [
+          35.574292,
+          139.659252
+        ],
+        "representativePoints": [
+          [
+            35.574183,
+            139.658725
+          ],
+          [
+            35.574292,
+            139.659252
+          ]
+        ],
+        "pointCount": 2,
+        "startTimeStr": "15:04",
+        "endTimeStr": "20:22",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-643-159c2mz6h5t",
+        "date": "2026-07-06",
+        "name": "in train / Google Timeline",
+        "type": "Travel",
+        "subType": "Train",
+        "rawType": "in train",
+        "distance": 7.13,
+        "durationMinutes": 17,
+        "avgSpeed": 25.2,
+        "start": [
+          35.576072,
+          139.659412
+        ],
+        "end": [
+          35.531483,
+          139.696496
+        ],
+        "representativePoints": [
+          [
+            35.576072,
+            139.659412
+          ],
+          [
+            35.531483,
+            139.696496
+          ]
+        ],
+        "pointCount": 2,
+        "startTimeStr": "07:42",
+        "endTimeStr": "07:59",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-644-vg23x300pqg",
+        "date": "2026-07-06",
+        "name": "walking / Google Timeline",
+        "type": "Walking",
+        "subType": "Unknown",
+        "rawType": "walking",
+        "distance": 0.17,
+        "durationMinutes": 4,
+        "avgSpeed": 2.6,
+        "start": [
+          35.531483,
+          139.696496
+        ],
+        "end": [
+          35.531905,
+          139.696316
+        ],
+        "representativePoints": [
+          [
+            35.531483,
+            139.696496
+          ],
+          [
+            35.531905,
+            139.696316
+          ]
+        ],
+        "pointCount": 2,
+        "startTimeStr": "07:59",
+        "endTimeStr": "08:02",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-647-ixc8i5w3ib",
+        "date": "2026-07-06",
+        "name": "in train / Google Timeline",
+        "type": "Travel",
+        "subType": "Train",
+        "rawType": "in train",
+        "distance": 9.92,
+        "durationMinutes": 12,
+        "avgSpeed": 49.6,
+        "start": [
+          35.531489,
+          139.696539
+        ],
+        "end": [
+          35.465905,
+          139.622284
+        ],
+        "representativePoints": [
+          [
+            35.531489,
+            139.696539
+          ],
+          [
+            35.465905,
+            139.622284
+          ]
+        ],
+        "pointCount": 2,
+        "startTimeStr": "18:04",
+        "endTimeStr": "18:16",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-649-t6s52dvk49",
+        "date": "2026-07-06",
+        "name": "in train / Google Timeline",
+        "type": "Travel",
+        "subType": "Train",
+        "rawType": "in train",
+        "distance": 12.71,
+        "durationMinutes": 16,
+        "avgSpeed": 47.7,
+        "start": [
+          35.466873,
+          139.622325
+        ],
+        "end": [
+          35.573666,
+          139.658828
+        ],
+        "representativePoints": [
+          [
+            35.466873,
+            139.622325
+          ],
+          [
+            35.573666,
+            139.658828
+          ]
+        ],
+        "pointCount": 2,
+        "startTimeStr": "19:43",
+        "endTimeStr": "19:59",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-650-odrxk6m0c7",
+        "date": "2026-07-06",
+        "name": "walking / Google Timeline",
+        "type": "Walking",
+        "subType": "Unknown",
+        "rawType": "walking",
+        "distance": 0.22,
+        "durationMinutes": 1,
+        "avgSpeed": 13.2,
+        "start": [
+          35.573666,
+          139.658828
+        ],
+        "end": [
+          35.575572,
+          139.65953
+        ],
+        "representativePoints": [
+          [
+            35.573666,
+            139.658828
+          ],
+          [
+            35.575572,
+            139.65953
+          ]
+        ],
+        "pointCount": 2,
+        "startTimeStr": "19:59",
+        "endTimeStr": "20:00",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-652-6yojq6fqlde",
+        "date": "2026-07-07",
+        "name": "walking / Google Timeline",
+        "type": "Walking",
+        "subType": "Unknown",
+        "rawType": "walking",
+        "distance": 0.12,
+        "durationMinutes": 2,
+        "avgSpeed": 3.6,
+        "start": [
+          35.575794,
+          139.659397
+        ],
+        "end": [
+          35.576865,
+          139.659118
+        ],
+        "representativePoints": [
+          [
+            35.575794,
+            139.659397
+          ],
+          [
+            35.576865,
+            139.659118
+          ]
+        ],
+        "pointCount": 2,
+        "startTimeStr": "07:10",
+        "endTimeStr": "07:12",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-653-wmezky2i9ym",
+        "date": "2026-07-07",
+        "name": "in train / Google Timeline",
+        "type": "Travel",
+        "subType": "Train",
+        "rawType": "in train",
+        "distance": 7.17,
+        "durationMinutes": 18,
+        "avgSpeed": 23.9,
+        "start": [
+          35.576865,
+          139.659118
+        ],
+        "end": [
+          35.532284,
+          139.697114
+        ],
+        "representativePoints": [
+          [
+            35.576865,
+            139.659118
+          ],
+          [
+            35.532284,
+            139.697114
+          ]
+        ],
+        "pointCount": 2,
+        "startTimeStr": "07:12",
+        "endTimeStr": "07:30",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-654-7y8c6ewacbj",
+        "date": "2026-07-07",
+        "name": "walking / Google Timeline",
+        "type": "Walking",
+        "subType": "Unknown",
+        "rawType": "walking",
+        "distance": 0.2,
+        "durationMinutes": 3,
+        "avgSpeed": 4,
+        "start": [
+          35.532284,
+          139.697114
+        ],
+        "end": [
+          35.532233,
+          139.695958
+        ],
+        "representativePoints": [
+          [
+            35.532284,
+            139.697114
+          ],
+          [
+            35.532233,
+            139.695958
+          ]
+        ],
+        "pointCount": 2,
+        "startTimeStr": "07:30",
+        "endTimeStr": "07:32",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-657-q6dbijlhwcm",
+        "date": "2026-07-07",
+        "name": "walking / Google Timeline",
+        "type": "Walking",
+        "subType": "Unknown",
+        "rawType": "walking",
+        "distance": 0.32,
+        "durationMinutes": 7,
+        "avgSpeed": 2.7,
+        "start": [
+          35.532327,
+          139.695683
+        ],
+        "end": [
+          35.530225,
+          139.695689
+        ],
+        "representativePoints": [
+          [
+            35.532327,
+            139.695683
+          ],
+          [
+            35.530225,
+            139.695689
+          ]
+        ],
+        "pointCount": 2,
+        "startTimeStr": "16:40",
+        "endTimeStr": "16:48",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-658-jqnkd8s15f",
+        "date": "2026-07-07",
+        "name": "in train / Google Timeline",
+        "type": "Travel",
+        "subType": "Train",
+        "rawType": "in train",
+        "distance": 6.98,
+        "durationMinutes": 13,
+        "avgSpeed": 32.2,
+        "start": [
+          35.530225,
+          139.695689
+        ],
+        "end": [
+          35.576553,
+          139.659923
+        ],
+        "representativePoints": [
+          [
+            35.530225,
+            139.695689
+          ],
+          [
+            35.576553,
+            139.659923
+          ]
+        ],
+        "pointCount": 2,
+        "startTimeStr": "16:48",
+        "endTimeStr": "17:01",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-659-g9zn44fruh4",
+        "date": "2026-07-07",
+        "name": "walking / Google Timeline",
+        "type": "Walking",
+        "subType": "Unknown",
+        "rawType": "walking",
+        "distance": 0.06,
+        "durationMinutes": 1,
+        "avgSpeed": 3.6,
+        "start": [
+          35.576553,
+          139.659923
+        ],
+        "end": [
+          35.576056,
+          139.659711
+        ],
+        "representativePoints": [
+          [
+            35.576553,
+            139.659923
+          ],
+          [
+            35.576056,
+            139.659711
+          ]
+        ],
+        "pointCount": 2,
+        "startTimeStr": "17:01",
+        "endTimeStr": "17:02",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-662-sounkp64hnd",
+        "date": "2026-07-08",
+        "name": "walking / Google Timeline",
+        "type": "Walking",
+        "subType": "Unknown",
+        "rawType": "walking",
+        "distance": 0.09,
+        "durationMinutes": 1,
+        "avgSpeed": 5.4,
+        "start": [
+          35.575653,
+          139.659739
+        ],
+        "end": [
+          35.576419,
+          139.659822
+        ],
+        "representativePoints": [
+          [
+            35.575653,
+            139.659739
+          ],
+          [
+            35.576419,
+            139.659822
+          ]
+        ],
+        "pointCount": 2,
+        "startTimeStr": "12:09",
+        "endTimeStr": "12:10",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-663-os52333ccbp",
+        "date": "2026-07-08",
+        "name": "in train / Google Timeline",
+        "type": "Travel",
+        "subType": "Train",
+        "rawType": "in train",
+        "distance": 6.92,
+        "durationMinutes": 43,
+        "avgSpeed": 9.7,
+        "start": [
+          35.644815,
+          139.699665
+        ],
+        "end": [
+          35.671301,
+          139.768925
+        ],
+        "representativePoints": [
+          [
+            35.644815,
+            139.699665
+          ],
+          [
+            35.671301,
+            139.768925
+          ]
+        ],
+        "pointCount": 2,
+        "startTimeStr": "12:10",
+        "endTimeStr": "12:53",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-665-rb04vxzojc",
+        "date": "2026-07-08",
+        "name": "walking / Google Timeline",
+        "type": "Walking",
+        "subType": "Unknown",
+        "rawType": "walking",
+        "distance": 0.4,
+        "durationMinutes": 6,
+        "avgSpeed": 4,
+        "start": [
+          35.671625,
+          139.769167
+        ],
+        "end": [
+          35.66907,
+          139.767936
+        ],
+        "representativePoints": [
+          [
+            35.671625,
+            139.769167
+          ],
+          [
+            35.66907,
+            139.767936
+          ]
+        ],
+        "pointCount": 2,
+        "startTimeStr": "13:47",
+        "endTimeStr": "13:53",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-666-z60yjsn7h5c",
+        "date": "2026-07-08",
+        "name": "in train / Google Timeline",
+        "type": "Travel",
+        "subType": "Train",
+        "rawType": "in train",
+        "distance": 16.86,
+        "durationMinutes": 30,
+        "avgSpeed": 33.7,
+        "start": [
+          35.66907,
+          139.767936
+        ],
+        "end": [
+          35.532483,
+          139.700534
+        ],
+        "representativePoints": [
+          [
+            35.66907,
+            139.767936
+          ],
+          [
+            35.532483,
+            139.700534
+          ]
+        ],
+        "pointCount": 2,
+        "startTimeStr": "13:53",
+        "endTimeStr": "14:23",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-667-9k7999mpu6h",
+        "date": "2026-07-08",
+        "name": "walking / Google Timeline",
+        "type": "Walking",
+        "subType": "Unknown",
+        "rawType": "walking",
+        "distance": 0.42,
+        "durationMinutes": 9,
+        "avgSpeed": 2.8,
+        "start": [
+          35.532483,
+          139.700534
+        ],
+        "end": [
+          35.532555,
+          139.696814
+        ],
+        "representativePoints": [
+          [
+            35.532483,
+            139.700534
+          ],
+          [
+            35.532555,
+            139.696814
+          ]
+        ],
+        "pointCount": 2,
+        "startTimeStr": "14:23",
+        "endTimeStr": "14:32",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-670-z3kii8s75yr",
+        "date": "2026-07-08",
+        "name": "in train / Google Timeline",
+        "type": "Travel",
+        "subType": "Train",
+        "rawType": "in train",
+        "distance": 7.28,
+        "durationMinutes": 20,
+        "avgSpeed": 21.8,
+        "start": [
+          35.531446,
+          139.69669
+        ],
+        "end": [
+          35.576626,
+          139.659465
+        ],
+        "representativePoints": [
+          [
+            35.531446,
+            139.69669
+          ],
+          [
+            35.576626,
+            139.659465
+          ]
+        ],
+        "pointCount": 2,
+        "startTimeStr": "17:15",
+        "endTimeStr": "17:34",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-671-cl5t5q3vx2g",
+        "date": "2026-07-08",
+        "name": "walking / Google Timeline",
+        "type": "Walking",
+        "subType": "Unknown",
+        "rawType": "walking",
+        "distance": 0.13,
+        "durationMinutes": 3,
+        "avgSpeed": 2.6,
+        "start": [
+          35.576626,
+          139.659465
+        ],
+        "end": [
+          35.57585,
+          139.660613
+        ],
+        "representativePoints": [
+          [
+            35.576626,
+            139.659465
+          ],
+          [
+            35.57585,
+            139.660613
+          ]
+        ],
+        "pointCount": 2,
+        "startTimeStr": "17:34",
+        "endTimeStr": "17:37",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-674-xg00vp0m04s",
+        "date": "2026-07-09",
+        "name": "walking / Google Timeline",
+        "type": "Walking",
+        "subType": "Unknown",
+        "rawType": "walking",
+        "distance": 0.2,
+        "durationMinutes": 5,
+        "avgSpeed": 2.4,
+        "start": [
+          35.576,
+          139.659868
+        ],
+        "end": [
+          35.576473,
+          139.660874
+        ],
+        "representativePoints": [
+          [
+            35.576,
+            139.659868
+          ],
+          [
+            35.576473,
+            139.660874
+          ]
+        ],
+        "pointCount": 2,
+        "startTimeStr": "10:11",
+        "endTimeStr": "10:16",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-675-dy8z56sl0dg",
+        "date": "2026-07-09",
+        "name": "in train / Google Timeline",
+        "type": "Travel",
+        "subType": "Train",
+        "rawType": "in train",
+        "distance": 6.96,
+        "durationMinutes": 16,
+        "avgSpeed": 26.1,
+        "start": [
+          35.576473,
+          139.660874
+        ],
+        "end": [
+          35.531357,
+          139.696724
+        ],
+        "representativePoints": [
+          [
+            35.576473,
+            139.660874
+          ],
+          [
+            35.531357,
+            139.696724
+          ]
+        ],
+        "pointCount": 2,
+        "startTimeStr": "10:16",
+        "endTimeStr": "10:32",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-678-909l99qhp9u",
+        "date": "2026-07-09",
+        "name": "in train / Google Timeline",
+        "type": "Travel",
+        "subType": "Train",
+        "rawType": "in train",
+        "distance": 6.59,
+        "durationMinutes": 11,
+        "avgSpeed": 35.9,
+        "start": [
+          35.528999,
+          139.693925
+        ],
+        "end": [
+          35.576547,
+          139.663203
+        ],
+        "representativePoints": [
+          [
+            35.528999,
+            139.693925
+          ],
+          [
+            35.576547,
+            139.663203
+          ]
+        ],
+        "pointCount": 2,
+        "startTimeStr": "15:12",
+        "endTimeStr": "15:23",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-679-whpekwe2cv",
+        "date": "2026-07-09",
+        "name": "walking / Google Timeline",
+        "type": "Walking",
+        "subType": "Unknown",
+        "rawType": "walking",
+        "distance": 0.34,
+        "durationMinutes": 5,
+        "avgSpeed": 4.1,
+        "start": [
+          35.576547,
+          139.663203
+        ],
+        "end": [
+          35.575606,
+          139.659654
+        ],
+        "representativePoints": [
+          [
+            35.576547,
+            139.663203
+          ],
+          [
+            35.575606,
+            139.659654
+          ]
+        ],
+        "pointCount": 2,
+        "startTimeStr": "15:23",
+        "endTimeStr": "15:28",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-681-khgsmjfwemc",
+        "date": "2026-07-10",
+        "name": "walking / Google Timeline",
+        "type": "Walking",
+        "subType": "Unknown",
+        "rawType": "walking",
+        "distance": 0.11,
+        "durationMinutes": 4,
+        "avgSpeed": 1.7,
+        "start": [
+          35.576107,
+          139.659454
+        ],
+        "end": [
+          35.576505,
+          139.660578
+        ],
+        "representativePoints": [
+          [
+            35.576107,
+            139.659454
+          ],
+          [
+            35.576505,
+            139.660578
+          ]
+        ],
+        "pointCount": 2,
+        "startTimeStr": "07:32",
+        "endTimeStr": "07:36",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-682-ljimp6uxqs8",
+        "date": "2026-07-10",
+        "name": "in train / Google Timeline",
+        "type": "Travel",
+        "subType": "Train",
+        "rawType": "in train",
+        "distance": 6.83,
+        "durationMinutes": 15,
+        "avgSpeed": 27.3,
+        "start": [
+          35.576505,
+          139.660578
+        ],
+        "end": [
+          35.53178,
+          139.697147
+        ],
+        "representativePoints": [
+          [
+            35.576505,
+            139.660578
+          ],
+          [
+            35.53178,
+            139.697147
+          ]
+        ],
+        "pointCount": 2,
+        "startTimeStr": "07:36",
+        "endTimeStr": "07:51",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-686-s49r10jqdne",
+        "date": "2026-07-10",
+        "name": "walking / Google Timeline",
+        "type": "Walking",
+        "subType": "Unknown",
+        "rawType": "walking",
+        "distance": 0.3,
+        "durationMinutes": 4,
+        "avgSpeed": 4.5,
+        "start": [
+          35.532124,
+          139.69631
+        ],
+        "end": [
+          35.532139,
+          139.699061
+        ],
+        "representativePoints": [
+          [
+            35.532124,
+            139.69631
+          ],
+          [
+            35.532139,
+            139.699061
+          ]
+        ],
+        "pointCount": 2,
+        "startTimeStr": "20:18",
+        "endTimeStr": "20:22",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-688-nvqunamy1a",
+        "date": "2026-07-10",
+        "name": "walking / Google Timeline",
+        "type": "Walking",
+        "subType": "Unknown",
+        "rawType": "walking",
+        "distance": 0.13,
+        "durationMinutes": 3,
+        "avgSpeed": 2.6,
+        "start": [
+          35.531836,
+          139.698829
+        ],
+        "end": [
+          35.531973,
+          139.697377
+        ],
+        "representativePoints": [
+          [
+            35.531836,
+            139.698829
+          ],
+          [
+            35.531973,
+            139.697377
+          ]
+        ],
+        "pointCount": 2,
+        "startTimeStr": "23:24",
+        "endTimeStr": "23:27",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-690-xx2eqx1rwl",
+        "date": "2026-07-10",
+        "name": "in train / Google Timeline",
+        "type": "Travel",
+        "subType": "Train",
+        "rawType": "in train",
+        "distance": 6.12,
+        "durationMinutes": 11,
+        "avgSpeed": 33.4,
+        "start": [
+          35.529377,
+          139.694275
+        ],
+        "end": [
+          35.572437,
+          139.667037
+        ],
+        "representativePoints": [
+          [
+            35.529377,
+            139.694275
+          ],
+          [
+            35.572437,
+            139.667037
+          ]
+        ],
+        "pointCount": 2,
+        "startTimeStr": "23:34",
+        "endTimeStr": "23:45",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-691-mv313udn6qr",
+        "date": "2026-07-10",
+        "name": "walking / Google Timeline",
+        "type": "Walking",
+        "subType": "Unknown",
+        "rawType": "walking",
+        "distance": 0.73,
+        "durationMinutes": 17,
+        "avgSpeed": 2.6,
+        "start": [
+          35.572437,
+          139.667037
+        ],
+        "end": [
+          35.574372,
+          139.661041
+        ],
+        "representativePoints": [
+          [
+            35.572437,
+            139.667037
+          ],
+          [
+            35.574372,
+            139.661041
+          ]
+        ],
+        "pointCount": 2,
+        "startTimeStr": "23:45",
+        "endTimeStr": "00:02",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-1040-baru1qtepnd",
+        "date": "2026-07-05",
+        "name": "timeline path / Google Timeline",
+        "type": "Walking",
+        "subType": "Unknown",
+        "rawType": "timeline path",
+        "distance": 0,
+        "durationMinutes": 120,
+        "avgSpeed": 0,
+        "start": [
+          35.575151,
+          139.659594
+        ],
+        "end": [
+          35.575151,
+          139.659594
+        ],
+        "representativePoints": [
+          [
+            35.575151,
+            139.659594
+          ],
+          [
+            35.575151,
+            139.659594
+          ],
+          [
+            35.575151,
+            139.659594
+          ]
+        ],
+        "pointCount": 3,
+        "startTimeStr": "06:00",
+        "endTimeStr": "08:00",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-1043-cwni2lsbuuq",
+        "date": "2026-07-05",
+        "name": "timeline path / Google Timeline",
+        "type": "Walking",
+        "subType": "Unknown",
+        "rawType": "timeline path",
+        "distance": 13.16,
+        "durationMinutes": 120,
+        "avgSpeed": 6.6,
+        "start": [
+          35.575151,
+          139.659594
+        ],
+        "end": [
+          35.466179,
+          139.622227
+        ],
+        "representativePoints": [
+          [
+            35.575151,
+            139.659594
+          ],
+          [
+            35.575577,
+            139.659702
+          ],
+          [
+            35.576032,
+            139.659905
+          ],
+          [
+            35.571516,
+            139.657607
+          ],
+          [
+            35.555593,
+            139.647771
+          ],
+          [
+            35.54145,
+            139.639153
+          ],
+          [
+            35.528955,
+            139.63211
+          ],
+          [
+            35.514132,
+            139.630849
+          ],
+          [
+            35.503979,
+            139.634738
+          ],
+          [
+            35.49807,
+            139.633344
+          ],
+          [
+            35.487442,
+            139.627922
+          ],
+          [
+            35.467195,
+            139.622733
+          ],
+          [
+            35.466706,
+            139.621859
+          ],
+          [
+            35.466179,
+            139.622227
+          ]
+        ],
+        "pointCount": 14,
+        "startTimeStr": "12:00",
+        "endTimeStr": "14:00",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-1044-oo5rotq9jnc",
+        "date": "2026-07-05",
+        "name": "timeline path / Google Timeline",
+        "type": "Walking",
+        "subType": "Unknown",
+        "rawType": "timeline path",
+        "distance": 13.02,
+        "durationMinutes": 120,
+        "avgSpeed": 6.5,
+        "start": [
+          35.465949,
+          139.621199
+        ],
+        "end": [
+          35.575141,
+          139.65919
+        ],
+        "representativePoints": [
+          [
+            35.465949,
+            139.621199
+          ],
+          [
+            35.46684,
+            139.622299
+          ],
+          [
+            35.482866,
+            139.629265
+          ],
+          [
+            35.485371,
+            139.628578
+          ],
+          [
+            35.505402,
+            139.634668
+          ],
+          [
+            35.512352,
+            139.630827
+          ],
+          [
+            35.523308,
+            139.630009
+          ],
+          [
+            35.557935,
+            139.649611
+          ],
+          [
+            35.575141,
+            139.65919
+          ]
+        ],
+        "pointCount": 9,
+        "startTimeStr": "14:00",
+        "endTimeStr": "16:00",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-1046-tfrpa68i06",
+        "date": "2026-07-05",
+        "name": "timeline path / Google Timeline",
+        "type": "Walking",
+        "subType": "Unknown",
+        "rawType": "timeline path",
+        "distance": 0.21,
+        "durationMinutes": 120,
+        "avgSpeed": 0.1,
+        "start": [
+          35.574183,
+          139.658725
+        ],
+        "end": [
+          35.575151,
+          139.659594
+        ],
+        "representativePoints": [
+          [
+            35.574183,
+            139.658725
+          ],
+          [
+            35.575135,
+            139.660088
+          ],
+          [
+            35.575151,
+            139.659594
+          ]
+        ],
+        "pointCount": 3,
+        "startTimeStr": "20:00",
+        "endTimeStr": "22:00",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-1047-xijuwfoe77",
+        "date": "2026-07-06",
+        "name": "timeline path / Google Timeline",
+        "type": "Walking",
+        "subType": "Unknown",
+        "rawType": "timeline path",
+        "distance": 7.18,
+        "durationMinutes": 120,
+        "avgSpeed": 3.6,
+        "start": [
+          35.575151,
+          139.659594
+        ],
+        "end": [
+          35.531483,
+          139.696496
+        ],
+        "representativePoints": [
+          [
+            35.575151,
+            139.659594
+          ],
+          [
+            35.576072,
+            139.659412
+          ],
+          [
+            35.572128,
+            139.66745
+          ],
+          [
+            35.55134,
+            139.675051
+          ],
+          [
+            35.5314,
+            139.68402
+          ],
+          [
+            35.527709,
+            139.686736
+          ],
+          [
+            35.531483,
+            139.696496
+          ]
+        ],
+        "pointCount": 7,
+        "startTimeStr": "06:00",
+        "endTimeStr": "08:00",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-1048-x9u4lvk0ub",
+        "date": "2026-07-06",
+        "name": "timeline path / Google Timeline",
+        "type": "Walking",
+        "subType": "Unknown",
+        "rawType": "timeline path",
+        "distance": 0.25,
+        "durationMinutes": 120,
+        "avgSpeed": 0.1,
+        "start": [
+          35.531849,
+          139.69728
+        ],
+        "end": [
+          35.532478,
+          139.694646
+        ],
+        "representativePoints": [
+          [
+            35.531849,
+            139.69728
+          ],
+          [
+            35.531905,
+            139.696316
+          ],
+          [
+            35.532478,
+            139.694646
+          ]
+        ],
+        "pointCount": 3,
+        "startTimeStr": "08:00",
+        "endTimeStr": "10:00",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-1049-qv8d79m447c",
+        "date": "2026-07-06",
+        "name": "timeline path / Google Timeline",
+        "type": "Travel",
+        "subType": "Unknown",
+        "rawType": "timeline path",
+        "distance": 22.68,
+        "durationMinutes": 120,
+        "avgSpeed": 11.3,
+        "start": [
+          35.531489,
+          139.696539
+        ],
+        "end": [
+          35.573666,
+          139.658828
+        ],
+        "representativePoints": [
+          [
+            35.531489,
+            139.696539
+          ],
+          [
+            35.465905,
+            139.622284
+          ],
+          [
+            35.466873,
+            139.622325
+          ],
+          [
+            35.50533,
+            139.634681
+          ],
+          [
+            35.515993,
+            139.63057
+          ],
+          [
+            35.536186,
+            139.634445
+          ],
+          [
+            35.573666,
+            139.658828
+          ]
+        ],
+        "pointCount": 7,
+        "startTimeStr": "18:00",
+        "endTimeStr": "20:00",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-1051-cyvnt77s9sd",
+        "date": "2026-07-07",
+        "name": "timeline path / Google Timeline",
+        "type": "Walking",
+        "subType": "Unknown",
+        "rawType": "timeline path",
+        "distance": 7.51,
+        "durationMinutes": 120,
+        "avgSpeed": 3.8,
+        "start": [
+          35.574548,
+          139.659801
+        ],
+        "end": [
+          35.532233,
+          139.695958
+        ],
+        "representativePoints": [
+          [
+            35.574548,
+            139.659801
+          ],
+          [
+            35.575794,
+            139.659397
+          ],
+          [
+            35.576865,
+            139.659118
+          ],
+          [
+            35.555674,
+            139.673089
+          ],
+          [
+            35.53192,
+            139.683968
+          ],
+          [
+            35.528443,
+            139.68593
+          ],
+          [
+            35.52864,
+            139.694009
+          ],
+          [
+            35.532284,
+            139.697114
+          ],
+          [
+            35.532233,
+            139.695958
+          ]
+        ],
+        "pointCount": 9,
+        "startTimeStr": "06:00",
+        "endTimeStr": "08:00",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-1053-icwzc8xeowm",
+        "date": "2026-07-07",
+        "name": "timeline path / Google Timeline",
+        "type": "Walking",
+        "subType": "Unknown",
+        "rawType": "timeline path",
+        "distance": 7.43,
+        "durationMinutes": 120,
+        "avgSpeed": 3.7,
+        "start": [
+          35.532327,
+          139.695683
+        ],
+        "end": [
+          35.575161,
+          139.659712
+        ],
+        "representativePoints": [
+          [
+            35.532327,
+            139.695683
+          ],
+          [
+            35.530225,
+            139.695689
+          ],
+          [
+            35.528709,
+            139.6938
+          ],
+          [
+            35.530945,
+            139.683888
+          ],
+          [
+            35.558258,
+            139.671875
+          ],
+          [
+            35.576241,
+            139.664635
+          ],
+          [
+            35.576553,
+            139.659923
+          ],
+          [
+            35.576056,
+            139.659711
+          ],
+          [
+            35.574861,
+            139.660142
+          ],
+          [
+            35.57519,
+            139.660113
+          ],
+          [
+            35.575161,
+            139.659712
+          ]
+        ],
+        "pointCount": 11,
+        "startTimeStr": "16:00",
+        "endTimeStr": "18:00",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-1055-bpmhr2xexr",
+        "date": "2026-07-08",
+        "name": "timeline path / Google Timeline",
+        "type": "Walking",
+        "subType": "Unknown",
+        "rawType": "timeline path",
+        "distance": 0,
+        "durationMinutes": 120,
+        "avgSpeed": 0,
+        "start": [
+          35.575148,
+          139.65959
+        ],
+        "end": [
+          35.57515,
+          139.659594
+        ],
+        "representativePoints": [
+          [
+            35.575148,
+            139.65959
+          ],
+          [
+            35.57515,
+            139.659594
+          ]
+        ],
+        "pointCount": 2,
+        "startTimeStr": "06:00",
+        "endTimeStr": "08:00",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-1057-duaaga1q954",
+        "date": "2026-07-08",
+        "name": "timeline path / Google Timeline",
+        "type": "Walking",
+        "subType": "Unknown",
+        "rawType": "timeline path",
+        "distance": 0,
+        "durationMinutes": 120,
+        "avgSpeed": 0,
+        "start": [
+          35.575151,
+          139.659594
+        ],
+        "end": [
+          35.575151,
+          139.659594
+        ],
+        "representativePoints": [
+          [
+            35.575151,
+            139.659594
+          ],
+          [
+            35.575151,
+            139.659594
+          ],
+          [
+            35.575151,
+            139.659594
+          ]
+        ],
+        "pointCount": 3,
+        "startTimeStr": "10:00",
+        "endTimeStr": "12:00",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-1058-a70jd5abx7",
+        "date": "2026-07-08",
+        "name": "timeline path / Google Timeline",
+        "type": "Travel",
+        "subType": "Unknown",
+        "rawType": "timeline path",
+        "distance": 16.35,
+        "durationMinutes": 120,
+        "avgSpeed": 8.2,
+        "start": [
+          35.57515,
+          139.659594
+        ],
+        "end": [
+          35.66907,
+          139.767936
+        ],
+        "representativePoints": [
+          [
+            35.57515,
+            139.659594
+          ],
+          [
+            35.575094,
+            139.658569
+          ],
+          [
+            35.575653,
+            139.659739
+          ],
+          [
+            35.576419,
+            139.659822
+          ],
+          [
+            35.581973,
+            139.662581
+          ],
+          [
+            35.584598,
+            139.664113
+          ],
+          [
+            35.616613,
+            139.675209
+          ],
+          [
+            35.627279,
+            139.684385
+          ],
+          [
+            35.637096,
+            139.690643
+          ],
+          [
+            35.643794,
+            139.698244
+          ],
+          [
+            35.644815,
+            139.699665
+          ],
+          [
+            35.671301,
+            139.768925
+          ],
+          [
+            35.672213,
+            139.770018
+          ],
+          [
+            35.672233,
+            139.769732
+          ],
+          [
+            35.67212,
+            139.769498
+          ],
+          [
+            35.671625,
+            139.769167
+          ],
+          [
+            35.670021,
+            139.767756
+          ],
+          [
+            35.66907,
+            139.767936
+          ]
+        ],
+        "pointCount": 18,
+        "startTimeStr": "12:00",
+        "endTimeStr": "14:00",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-1059-d3w505ym885",
+        "date": "2026-07-08",
+        "name": "timeline path / Google Timeline",
+        "type": "Walking",
+        "subType": "Unknown",
+        "rawType": "timeline path",
+        "distance": 11.96,
+        "durationMinutes": 120,
+        "avgSpeed": 6,
+        "start": [
+          35.627728,
+          139.737965
+        ],
+        "end": [
+          35.532614,
+          139.696329
+        ],
+        "representativePoints": [
+          [
+            35.627728,
+            139.737965
+          ],
+          [
+            35.619664,
+            139.740629
+          ],
+          [
+            35.577805,
+            139.734432
+          ],
+          [
+            35.532483,
+            139.700534
+          ],
+          [
+            35.531567,
+            139.698143
+          ],
+          [
+            35.532614,
+            139.696329
+          ]
+        ],
+        "pointCount": 6,
+        "startTimeStr": "14:00",
+        "endTimeStr": "16:00",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-1060-eg91qxh8p04",
+        "date": "2026-07-08",
+        "name": "timeline path / Google Timeline",
+        "type": "Walking",
+        "subType": "Unknown",
+        "rawType": "timeline path",
+        "distance": 7.58,
+        "durationMinutes": 120,
+        "avgSpeed": 3.8,
+        "start": [
+          35.531446,
+          139.69669
+        ],
+        "end": [
+          35.575259,
+          139.660061
+        ],
+        "representativePoints": [
+          [
+            35.531446,
+            139.69669
+          ],
+          [
+            35.526606,
+            139.690341
+          ],
+          [
+            35.527241,
+            139.687216
+          ],
+          [
+            35.561262,
+            139.670649
+          ],
+          [
+            35.572264,
+            139.667278
+          ],
+          [
+            35.576626,
+            139.659465
+          ],
+          [
+            35.57585,
+            139.660613
+          ],
+          [
+            35.574782,
+            139.660098
+          ],
+          [
+            35.575259,
+            139.660061
+          ]
+        ],
+        "pointCount": 9,
+        "startTimeStr": "16:00",
+        "endTimeStr": "18:00",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-1064-5xygzrojz3n",
+        "date": "2026-07-09",
+        "name": "timeline path / Google Timeline",
+        "type": "Walking",
+        "subType": "Unknown",
+        "rawType": "timeline path",
+        "distance": 7.24,
+        "durationMinutes": 120,
+        "avgSpeed": 3.6,
+        "start": [
+          35.576,
+          139.659868
+        ],
+        "end": [
+          35.532414,
+          139.695154
+        ],
+        "representativePoints": [
+          [
+            35.576,
+            139.659868
+          ],
+          [
+            35.576473,
+            139.660874
+          ],
+          [
+            35.572086,
+            139.66734
+          ],
+          [
+            35.544647,
+            139.678138
+          ],
+          [
+            35.52853,
+            139.685794
+          ],
+          [
+            35.530394,
+            139.695871
+          ],
+          [
+            35.531357,
+            139.696724
+          ],
+          [
+            35.532414,
+            139.695154
+          ]
+        ],
+        "pointCount": 8,
+        "startTimeStr": "10:00",
+        "endTimeStr": "12:00",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-1065-ny7c55trlk",
+        "date": "2026-07-09",
+        "name": "timeline path / Google Timeline",
+        "type": "Walking",
+        "subType": "Unknown",
+        "rawType": "timeline path",
+        "distance": 6.94,
+        "durationMinutes": 120,
+        "avgSpeed": 3.5,
+        "start": [
+          35.528999,
+          139.693925
+        ],
+        "end": [
+          35.575378,
+          139.659759
+        ],
+        "representativePoints": [
+          [
+            35.528999,
+            139.693925
+          ],
+          [
+            35.527258,
+            139.690082
+          ],
+          [
+            35.52844,
+            139.685744
+          ],
+          [
+            35.560196,
+            139.671183
+          ],
+          [
+            35.576263,
+            139.664256
+          ],
+          [
+            35.576547,
+            139.663203
+          ],
+          [
+            35.575606,
+            139.659654
+          ],
+          [
+            35.575378,
+            139.659759
+          ]
+        ],
+        "pointCount": 8,
+        "startTimeStr": "14:00",
+        "endTimeStr": "16:00",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-1066-lq4ilk07rth",
+        "date": "2026-07-10",
+        "name": "timeline path / Google Timeline",
+        "type": "Walking",
+        "subType": "Unknown",
+        "rawType": "timeline path",
+        "distance": 7.16,
+        "durationMinutes": 120,
+        "avgSpeed": 3.6,
+        "start": [
+          35.576107,
+          139.659454
+        ],
+        "end": [
+          35.532574,
+          139.69487
+        ],
+        "representativePoints": [
+          [
+            35.576107,
+            139.659454
+          ],
+          [
+            35.576505,
+            139.660578
+          ],
+          [
+            35.573217,
+            139.667159
+          ],
+          [
+            35.530656,
+            139.684654
+          ],
+          [
+            35.53178,
+            139.697147
+          ],
+          [
+            35.532458,
+            139.695054
+          ],
+          [
+            35.532574,
+            139.69487
+          ]
+        ],
+        "pointCount": 7,
+        "startTimeStr": "06:00",
+        "endTimeStr": "08:00",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-1068-5koknkeqnv",
+        "date": "2026-07-10",
+        "name": "timeline path / Google Timeline",
+        "type": "Walking",
+        "subType": "Unknown",
+        "rawType": "timeline path",
+        "distance": 0.48,
+        "durationMinutes": 120,
+        "avgSpeed": 0.2,
+        "start": [
+          35.533069,
+          139.694936
+        ],
+        "end": [
+          35.532139,
+          139.699061
+        ],
+        "representativePoints": [
+          [
+            35.533069,
+            139.694936
+          ],
+          [
+            35.532665,
+            139.694882
+          ],
+          [
+            35.532124,
+            139.69631
+          ],
+          [
+            35.531561,
+            139.698598
+          ],
+          [
+            35.532139,
+            139.699061
+          ]
+        ],
+        "pointCount": 5,
+        "startTimeStr": "20:00",
+        "endTimeStr": "22:00",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-1069-tz7kmj4gbu",
+        "date": "2026-07-10",
+        "name": "timeline path / Google Timeline",
+        "type": "Walking",
+        "subType": "Unknown",
+        "rawType": "timeline path",
+        "distance": 7.17,
+        "durationMinutes": 120,
+        "avgSpeed": 3.6,
+        "start": [
+          35.532429,
+          139.699344
+        ],
+        "end": [
+          35.57313,
+          139.663131
+        ],
+        "representativePoints": [
+          [
+            35.532429,
+            139.699344
+          ],
+          [
+            35.531836,
+            139.698829
+          ],
+          [
+            35.531973,
+            139.697377
+          ],
+          [
+            35.529377,
+            139.694275
+          ],
+          [
+            35.526289,
+            139.689771
+          ],
+          [
+            35.532887,
+            139.683646
+          ],
+          [
+            35.54008,
+            139.680149
+          ],
+          [
+            35.553468,
+            139.67424
+          ],
+          [
+            35.572437,
+            139.667037
+          ],
+          [
+            35.573426,
+            139.666895
+          ],
+          [
+            35.57313,
+            139.663131
+          ]
+        ],
+        "pointCount": 11,
+        "startTimeStr": "22:00",
+        "endTimeStr": "00:00",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-1070-hz7fhuf2z3i",
+        "date": "2026-07-11",
+        "name": "timeline path / Google Timeline",
+        "type": "Walking",
+        "subType": "Unknown",
+        "rawType": "timeline path",
+        "distance": 0.12,
+        "durationMinutes": 120,
+        "avgSpeed": 0.1,
+        "start": [
+          35.574341,
+          139.660255
+        ],
+        "end": [
+          35.575379,
+          139.660071
+        ],
+        "representativePoints": [
+          [
+            35.574341,
+            139.660255
+          ],
+          [
+            35.575379,
+            139.660071
+          ]
+        ],
+        "pointCount": 2,
+        "startTimeStr": "00:00",
+        "endTimeStr": "02:00",
+        "source": "google-timeline"
+      },
+      {
+        "id": "lh-1071-3n3y5u6a62j",
+        "date": "2026-07-11",
+        "name": "timeline path / Google Timeline",
+        "type": "Walking",
+        "subType": "Unknown",
+        "rawType": "timeline path",
+        "distance": 0.06,
+        "durationMinutes": 120,
+        "avgSpeed": 0,
+        "start": [
+          35.574753,
+          139.660269
+        ],
+        "end": [
+          35.575256,
+          139.660194
+        ],
+        "representativePoints": [
+          [
+            35.574753,
+            139.660269
+          ],
+          [
+            35.575256,
+            139.660194
+          ]
+        ],
+        "pointCount": 2,
+        "startTimeStr": "06:00",
+        "endTimeStr": "08:00",
         "source": "google-timeline"
       }
     ]
